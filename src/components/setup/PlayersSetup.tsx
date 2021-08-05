@@ -1,17 +1,26 @@
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import React, { useState } from 'react';
 import PeopleIcon from '@material-ui/icons/People';
-import { TextField, Typography } from '@material-ui/core';
+import { Container, Divider, TextField, Typography } from '@material-ui/core';
+import "../../styles/Setup.css";
+import { CSSProperties } from '@material-ui/styles';
+
+const verticalFlex: CSSProperties= {
+  display:' flex',
+  flexDirection: 'column',
+  alignItems: 'center'
+}
 
 const PlayersSetup = () => {
   const [playerCount, setPlayerCount] = useState<number | null>(4);
+  const [players, setPlayers] = useState<string[]>([]);
 
   const handleAlignment = (event: React.MouseEvent<HTMLElement>, newAlignment: number | null) => {
     setPlayerCount(newAlignment);
   };
 
   return (
-    <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+    <Container style={verticalFlex}>
       <ToggleButtonGroup
         size="large"
         value={playerCount}
@@ -38,12 +47,14 @@ const PlayersSetup = () => {
           </div>
         </ToggleButton>
       </ToggleButtonGroup>
-      <form style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}} noValidate autoComplete="off">
+      <Divider style={{width: '100%', marginTop: '0.5em'}} />
+      <form style={{...verticalFlex, marginTop: '0.5em'}} noValidate autoComplete="off">
         {Array.from(Array(playerCount).keys()).map(value => (
-          <TextField key={`Player ${value+1}`} id="outlined-basic" label={`Player ${value+1}`} variant="outlined" />
+          <TextField style={{marginTop: value ? '0.5em' : '0'}} key={`Player ${value+1}`} id="outlined-basic" label={`Player ${value+1}`} variant="outlined" />
         ))}
+        
       </form>
-    </div>
+    </Container>
   );
 };
 

@@ -1,0 +1,14 @@
+.setup-container {
+  width: 100%; 
+  display: flex !important; 
+  flex-direction: column; 
+  align-items: center;
+}
+
+.setup-container > * {
+  margin-top: 0.5em;
+}
+
+.setup-container > *:first-child {
+  margin-top: 0 !important;
+}
