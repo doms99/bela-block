@@ -1,9 +1,9 @@
-import { Button, Card, CardContent, CardHeader, Container, IconButton, Typography } from '@material-ui/core';
+import { Button, Card, CardContent, CardHeader, Container, Typography } from '@material-ui/core';
 import RoundEntry from './RoundEntry';
-import '../styles/Game.css';
-import { useEffect, useState } from 'react';
+import '../../styles/Game.css';
+import { useContext, useEffect, useState } from 'react';
 import ScoreBoard from './ScoreBoard';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { GlobalState } from '../../App';
 
 export interface Props {
   players: string[]
@@ -32,6 +32,9 @@ const Game: React.FC<Props> = ({ players }) => {
   const [roundNum, setRoundNum] = useState<number>(5);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [dealing, setDealing] = useState<number>(Math.floor(Math.random() * (players.length - 1)));
+  const { getState } = useContext(GlobalState);
+
+  const { dealer} = getState();
 
   // useEffect(() => {
   //   for(Object.keys)
