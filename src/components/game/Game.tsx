@@ -29,7 +29,7 @@ const Game: React.FC = () => {
     setResetRequest(false);
   }
 
-  const teamNames = teams ? teams.map(team => team.name) : players;  
+  const teamNames = teams ? teams.map(team => team.name) : players; 
 
   return (
     <Container style={{textAlign: 'center'}}>
@@ -45,8 +45,17 @@ const Game: React.FC = () => {
           title="Dealer"
           titleTypographyProps={{variant: 'subtitle1'}}
         />
-        <CardContent className="horizontal">
-          {players.map((player) => <Typography key={player} style={{color: dealer === player ? "black" : "gray"}} variant={dealer === player ? "h4" : "h5"}>{player}</Typography>)}
+        <CardContent className={playerCount === 4 ? "grid-2" : "horizontal"}>
+          {players.map((player) => (
+            <Typography
+              key={player}
+              style={{color: dealer === player ? "black" : "gray"}}
+              variant={dealer === player ? "h4" : "h5"}
+            >
+              {player}
+            </Typography>
+          )
+        )}
         </CardContent>
       </Card>
       <Button

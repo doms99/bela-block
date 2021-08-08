@@ -19,6 +19,13 @@
   grid-template-columns: auto auto auto;
 }
 
+.grid-2 {
+  display: grid;
+  row-gap: 0.2em;
+  column-gap: 0.2em;
+  grid-template-columns: auto auto;
+}
+
 .absolute-center {
   position: absolute;
   top: 0;
@@ -82,4 +89,8 @@
 
 .num-pad > button > span {
   font-size: 1.4em;
+}
+
+.full-width {
+  width: 100%;
 }
