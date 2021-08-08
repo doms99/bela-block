@@ -4,67 +4,74 @@ import '../../styles/Game.css';
 import { useContext, useEffect, useState } from 'react';
 import ScoreBoard from './ScoreBoard';
 import { GlobalState } from '../../App';
+import Winner from './Winner';
+import { useHistory } from 'react-router';
 
-export interface Props {
-  players: string[]
-}
-
-const generateRandomPoints = (num: number): number[] => {
-  const result: number[] = [];
-
-  if(num <= 0) return result;
-
-  let counter = 0;
-  while(counter < num) {
-    result.push(Math.round(Math.random() * 200));
-    counter++
-  }
-
-  return result;
-}
-
-const Game: React.FC<Props> = ({ players }) => {
-  const [playerScores, setPlayerScores] = useState<Record<string, {points: number[], declarations: number[]}>>(
-    players.reduce((obj, player) => ({...obj, [player]: {
-      points: generateRandomPoints(4), 
-      declarations: [20, 0, 0, 100]}
-    }), {}));
-  const [roundNum, setRoundNum] = useState<number>(5);
+const Game: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [dealing, setDealing] = useState<number>(Math.floor(Math.random() * (players.length - 1)));
-  const { getState } = useContext(GlobalState);
+  const [winner, setWinner] = useState<string | undefined>();
+  const history = useHistory();
 
-  const { dealer} = getState();
+  const { getState, editRound, enterRound, rematch } = useContext(GlobalState);
 
-  // useEffect(() => {
-  //   for(Object.keys)
-  //   if(sumOfPoints(pla))
-  // }, [playerScores]);
+  const { dealer, players, playerCount, rounds, teams } = getState();
 
   useEffect(() => {
-    setDealing(curr => (curr + 1) % players.length)
-  }, [roundNum, players]);
+    if(!playerCount) return;
 
-  const pointsReport = (roundPoints: Record<string, {points: number, declarations: number}>, index: number) => {
-    setEditIndex(undefined);
+    const score: Record<string, number> = {};
 
-    if(index + 1 === roundNum) setRoundNum(curr => curr + 1);
+    players.forEach(name => score[name] = 0);
 
-    setPlayerScores(curr => {
-      const newPoints = {...curr};
+    let names: string[];
+    if(playerCount === 4 && teams) {
+      names = [`${teams[0][0]} and ${teams[0][1]}`, `${teams[1][0]} and ${teams[1][1]}`];
+    } else {
+      names = players;
+    } 
 
-      for(let [player, round] of Object.entries(newPoints)) {
-        round.points[index] = roundPoints[player].points;
-        round.declarations[index] = roundPoints[player].declarations;
+    names.forEach(name => rounds.forEach(round => score[name] += round[name].points));
+
+    for(const [player, points] of Object.entries(score)) {
+      if(playerCount === 2 && points > 501) {
+        setWinner(player);
+        return;
       }
 
-      return newPoints;
-    });
+      if(playerCount === 3 && points > 701) {
+        setWinner(player);
+        return;
+      }
+
+      if(playerCount === 4 && points > 1001) {
+        setWinner(player);
+        return;
+      }
+    }
+    
+  }, [players, rounds, playerCount, teams]);
+
+  const pointsReport = (round: Record<string, {points: number, declarations: number}>, index: number) => {
+    if(index === rounds.length) enterRound(round);
+    else editRound(round, index);
+
+    setEditIndex(undefined);
+  }
+
+  const newGame = () => {
+    history.push('/setup');
   }
 
   return (
     <Container style={{textAlign: 'center', height: '100vh'}}>
-      <ScoreBoard playerScores={playerScores} setEditIndex={setEditIndex}/>
+      <ScoreBoard
+        teams={teams ? 
+          [`${teams[0][0]} and ${teams[0][1]}`, `${teams[1][0]} and ${teams[1][1]}`] : 
+          players  
+        }
+        rounds={rounds}
+        setEditIndex={setEditIndex}
+      />
       <Card style={{margin: '1em 0'}}>
         <CardHeader 
           style={{textAlign: 'left', color: 'gray', paddingBottom: 0, paddingTop: '8px'}}
@@ -72,20 +79,39 @@ const Game: React.FC<Props> = ({ players }) => {
           titleTypographyProps={{variant: 'subtitle1'}}
         />
         <CardContent className="horizontal">
-          {players.map((player, index) => <Typography key={player} style={{color: dealing === index ? "black" : "gray"}} variant={dealing === index ? "h4" : "h5"}>{player}</Typography>)}
+          {players.map((player) => <Typography key={player} style={{color: dealer === player ? "black" : "gray"}} variant={dealer === player ? "h4" : "h5"}>{player}</Typography>)}
         </CardContent>
       </Card>
-      <Button onClick={() => setEditIndex(roundNum - 1)} style={{margin: '1em'}} variant="contained" color="primary">New round</Button>
+      <Button
+        onClick={() => setEditIndex(rounds.length)}
+        style={{margin: '1em'}}
+        variant="contained"
+        color="primary"
+      >
+        New round
+      </Button>
+      {/* <Button
+        onClick={() => setEditIndex(rounds.length)}
+        style={{margin: '1em'}}
+        variant="contained"
+        color="secondary"
+      >
+        New Game
+      </Button> */}
       {editIndex !== undefined && (
         <RoundEntry
-          players={players}
+          players={teams ? 
+            [`${teams[0][0]} and ${teams[0][1]}`, `${teams[1][0]} and ${teams[1][1]}`] : 
+            players  
+          }
+          playerCount={playerCount!}
           cancel={() => setEditIndex(undefined)}
           pointsReport={(round: Record<string, {points: number, declarations: number}>) => pointsReport(round, editIndex)}
-          playerPoints={
-            Object.entries(playerScores).reduce(
-              (obj, [player, round]) => ({...obj, [player]: roundNum === editIndex + 1 ? {points: 0, declarations: 0} : {points: round.points[editIndex], declarations: round.declarations[editIndex]}}), {})
-          }
+          playerPoints={rounds[editIndex]}
         />
+      )}
+      {winner && (
+        <Winner newGame={newGame} rematch={rematch} winners={winner!.split('and')} />
       )}
     </Container>
   );

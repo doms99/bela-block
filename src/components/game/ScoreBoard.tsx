@@ -6,45 +6,48 @@ export const sumOfPoints = (points: number[], declarations: number[]) => {
 }
 
 export interface Props {
-  playerScores: Record<string, {points: number[], declarations: number[]}>,
+  rounds: Record<string, {points: number, declarations: number}>[],
+  teams: string[],
   setEditIndex: (index: number) => void
 }
 
-const ScoreBoard: React.FC<Props> = ({ playerScores, setEditIndex }) => {
+const ScoreBoard: React.FC<Props> = ({ teams, rounds, setEditIndex }) => {
 
   return (
     <Card style={{height: '50%'}}>
       <CardContent className="vertical max-height">
         <div className="horizontal">
-          {Object.entries(playerScores).map(([player, round]) => (
-            <div key={player}>
-              <Typography variant="subtitle1">{player}</Typography>
-              <Typography variant="h3">{sumOfPoints(round.points, round.declarations)}</Typography>
+          {teams.map((name) => (
+            <div key={name}>
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="h3">
+                {sumOfPoints(rounds.map(r => r[name].points),rounds.map(r => r[name].declarations))}
+              </Typography>
             </div>
           ))}
         </div>
         <Divider style={{marginBottom: '0.5em'}}/>
         <div className="horizontal width-100 overflow">
-          {Object.entries(playerScores).map(([player, round]) => (
-            <div className="width-100" key={player}>
-              {round.points.slice().reverse().map((point, index) => (
-                <div style={{display: 'flex', justifyContent: 'center'}} className="width-100" key={point * (index + 1)}>
+        {teams.map((name) => (
+            <div className="width-100" key={name}>
+              {rounds.slice().reverse().map(round => round[name]).map(({ points, declarations }, index) => (
+                <div style={{display: 'flex', justifyContent: 'center'}} className="width-100" key={`${index}`}>
                   <Typography 
                     variant="subtitle1"
-                    onClick={() => setEditIndex(round.points.length-1-index)}
+                    onClick={() => setEditIndex(rounds.length-1-index)}
                   >
-                    {point}
+                    {points}
                   </Typography>
-                  {round.declarations[round.points.length-1-index] !== 0 && (
+                  {declarations !== 0 && (
                     <Typography 
                       color="primary"
                       style={{
                         fontSize: '0.8em',
                         position: 'absolute',
-                        transform: Math.floor(round.points[round.points.length-1-index] / 100) > 0 ? 'translateX(120%)' : 'translateX(100%)'
+                        transform: Math.floor(points / 100) > 0 ? 'translateX(120%)' : 'translateX(100%)'
                       }}
                     >
-                      +{round.declarations[round.points.length-1-index]}
+                      +{declarations}
                     </Typography>
                   )}
                 </div>

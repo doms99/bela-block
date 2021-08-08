@@ -7,29 +7,32 @@ import {
   Redirect
 } from "react-router-dom"; 
 import { createContext, useEffect, useState } from "react";
+import LocalStorageKey from './constants';
 
 export interface State {
   players: string[],
   playerCount: number | undefined,
   teams: [[string, string], [string, string]] | null,
-  points: Record<string, number>,
+  rounds: Record<string, {points: number, declarations: number}>[],
   dealer: string | undefined
 }
 
 export type StateProperties = 'players' | 'playerCount' | 'teams' | 'points';
 
 export interface StateFunctions {
-  getState: (property?: StateProperties) => any,
+  getState: () => State,
   startGame: (players: string[]) => void,
-  restart: () => void,
-  enterRound: (round: Record<string, number>) => void
+  rematch: () => void,
+  reset: () => void,
+  enterRound: (round: Record<string, {points: number, declarations: number}>) => void,
+  editRound: (round: Record<string, {points: number, declarations: number}>, index: number) => void
 }
 
 const initialState: State = {
   players: [],
   playerCount: undefined,
   teams: null,
-  points: {},
+  rounds: [],
   dealer: undefined
 }
 
@@ -39,13 +42,16 @@ function App() {
   const [globalState, setGlobalState] = useState<State>(initialState);
 
   useEffect(() => {
+    const loadedState = localStorage.getItem(LocalStorageKey)
 
-  });
+    if(!loadedState) return;
 
-  const getState = (property?: StateProperties) => {
-    if(!property) return globalState;
-  
-    return globalState[property];
+    const state = JSON.parse(loadedState);
+    setGlobalState(curr => ({...curr, ...state}));
+  }, []);
+
+  const getState = (): State => {
+    return globalState;
   }
   
   const startGame = (players: string[]) => {
@@ -54,44 +60,63 @@ function App() {
     const newState: State = {
       ...globalState,
       players,
-      playerCount: players.length
+      playerCount: players.length,
+      rounds: [],
+      dealer: players[Math.floor(Math.random() * players.length - 0.001)]
     };
   
     if(players.length === 4) {
       newState.teams = [[players[0], players[2]], [players[1], players[3]]];
-      newState.points = {
-        [`${players[0]} and ${players[2]}`]: 0,
-        [`${players[1]} and ${players[3]}`]: 0
-      }
-    } else {
-      players.forEach(name => {
-        newState.points[name] = 0;
-      })
     }
   
     setGlobalState(newState);
+
+    localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
   }
   
-  const restart = () => {
-    const newState = {...globalState};
-    Object.keys(globalState.points).forEach(name => {
-      newState.points[name] = 0;
+  const rematch = () => { 
+    setGlobalState(curr => {
+      const newState = {
+        ...curr,
+        rounds: []
+      }
+
+      localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
+
+      return newState;
     })
-  
-    setGlobalState(newState);
   }
 
-  const enterRound = (round: Record<string, number>) => {
+  const reset = () => {
+    setGlobalState(initialState);
+    localStorage.setItem(LocalStorageKey, JSON.stringify(initialState));
+  }
+
+  const enterRound = (round: Record<string, {points: number, declarations: number}>) => {    
     if(!globalState.players.filter(name => !round[name])) return;
 
     setGlobalState(curr => {
       const newState = {
         ...curr,
+        rounds: [...curr.rounds, round],
         dealer: curr.players[(curr.players.indexOf(curr.dealer!) + 1) % curr.players.length]
       };
 
-      globalState.players.forEach(name => newState.points[name] += round[name]);
+      localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
 
+      return newState;
+    })
+  }
+
+  const editRound = (round: Record<string, {points: number, declarations: number}>, index: number) => {
+    if(!globalState.players.filter(name => !round[name])) return;
+
+    setGlobalState(curr => {
+      const newState = {...curr};
+      newState.rounds[index] = round;
+
+      localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
+      
       return newState;
     })
   }
@@ -99,21 +124,36 @@ function App() {
   const value = {
     getState,
     startGame,
-    restart,
-    enterRound
+    rematch,
+    reset,
+    enterRound,
+    editRound
   }
 
   return (
     <GlobalState.Provider value={value}>
       <BrowserRouter>
         <Switch>
-          <Redirect from="/" to="/setup" />
+          {/* {globalState.playerCount ? (
+            <>
+              <Redirect exact from="/" to="/game" />
+              <Redirect exact from="/setup" to="/game" />
+            </>
+          ) : (
+            <>
+              <Redirect exact from="/" to="/setup" />
+              <Redirect exact from="/game" to="/setup" />
+            </>
+          )} */}
+          <Redirect exact from="/" to="/setup" />
           <Route path="/setup">
             <PlayersSetup />
           </Route>
           <Route path="/game">
-            <Game players={['Player1', 'player2', 'player3']} />
+            {/* {globalState.playerCount ? <Game /> : <Redirect to="/setup" />} */}
+            <Game />
           </Route>
+
         </Switch>
       </BrowserRouter>
     </GlobalState.Provider>

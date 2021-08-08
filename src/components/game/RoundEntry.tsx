@@ -4,22 +4,23 @@ import { useCallback, useEffect, useState } from "react";
 
 export interface Props {
   players: string[],
-  playerPoints: Record<string, {points: number, declarations: number}>,
+  playerPoints?: Record<string, {points: number, declarations: number}>,
   pointsReport: (round: Record<string, {points: number, declarations: number}>) => void,
+  playerCount: number,
   cancel: () => void
 }
 
-const RoundEntry: React.FC<Props> = ({ players, playerPoints, pointsReport, cancel}) => {
-  const [values, setValues] = useState<Record<string, {points: number, declarations: number}>>(playerPoints);
+const zeroValues = (players: string[]) => {
+  return players.reduce((obj, player) => ({...obj, [player]: { points: 0, declarations: 0 }}), {});
+}
+
+const RoundEntry: React.FC<Props> = ({ players, playerPoints, playerCount, pointsReport, cancel }) => {
+  const [values, setValues] = useState<Record<string, {points: number, declarations: number}>>(playerPoints ? playerPoints : zeroValues(players));
   const [selected, setSelected] = useState<{player: string, input: 'points' | 'declarations'}>({player: players[0], input: 'points'});
   const [error, setError] = useState<string | undefined>();
 
   const calcPoints = useCallback(() => {
     return Object.values(values).map(value => value.points).reduce((sum, points) => sum + points, 0);
-  }, [values]);
-
-  const equalZero = useCallback(() => {
-    return Object.entries(values).filter(([_, value]) => value.points === 0).map(([player]) => player);
   }, [values]);
 
   useEffect(() => {
@@ -33,17 +34,18 @@ const RoundEntry: React.FC<Props> = ({ players, playerPoints, pointsReport, canc
   }, [values, calcPoints]);
 
   useEffect(() => {
-    const zeroPointsPlayers = equalZero();
-    if(zeroPointsPlayers.length !== 1) return;
+    if(playerCount !== 4) return;
+
+    const otherPlayer = players.filter(name => name !== selected.player)[0];
 
     setValues(curr => ({
       ...curr,
-      [zeroPointsPlayers[0]]: {
-        ...curr[zeroPointsPlayers[0]],
-        points: 162 - calcPoints()
+      [otherPlayer]: {
+        ...curr[otherPlayer],
+        points: 162 - curr[selected.player].points
       }
     }))
-  }, [equalZero, calcPoints]);
+  }, [playerCount, players, selected]);
 
   const setPoints = (digit: number) => {
     if(Math.floor(values[selected.player][selected.input]/100) !== 0) return;
@@ -78,7 +80,7 @@ const RoundEntry: React.FC<Props> = ({ players, playerPoints, pointsReport, canc
   }
 
   const end = () => {
-    if(calcPoints() !== 162) {
+    if(playerCount > 2 && calcPoints() !== 162) {
       setError("Sum of points doesn't equal 162");
 
       return;

@@ -42,8 +42,18 @@ const SittingOrder: React.FC<Props> = ({ playerCount, nameReport}) => {
   }
 
   const submit = () => {
-    if(players.slice(0, playerCount).map(player => player.name).filter(name => name === '').length) {
+    const slice = players.slice(0, playerCount);
+
+    if(slice.map(player => player.name).filter(name => name === '').length) {
       setError("All names must be entered")
+      return;
+    }
+
+    if(slice.map(player => player.name).filter((name) => {
+      const mapped = slice.map(p => p.name);
+      return mapped.indexOf(name) !== mapped.lastIndexOf(name);
+    }).length) {
+      setError("All names must be unique");
       return;
     }
 
@@ -63,8 +73,6 @@ const SittingOrder: React.FC<Props> = ({ playerCount, nameReport}) => {
       return newPlayerNames;
     })
   }
-
-  console.log(playerCount, players)
 
   return (
     <DragDropContext  onDragEnd={onDragEnd}>
@@ -93,7 +101,15 @@ const SittingOrder: React.FC<Props> = ({ playerCount, nameReport}) => {
                       style={getStyle(provided.draggableProps.style, snapshot)}
                     >
                       <PersonIcon style={{marginTop: '0.5em', color: players[i].color}} />
-                      <form style={{marginTop: '0.5em'}} noValidate autoComplete="off">
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          submit();
+                        }}
+                        style={{marginTop: '0.5em'}}
+                        noValidate
+                        autoComplete="off"
+                      >
                         <TextField
                           id="outlined-basic"
                           label={`Player ${i+1}`}

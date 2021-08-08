@@ -1,10 +1,12 @@
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PeopleIcon from '@material-ui/icons/People';
 import { Container, Divider, Typography } from '@material-ui/core';
 import "../../styles/Setup.css";
 import { CSSProperties } from '@material-ui/styles';
 import SittingOrder from './SittingOrder';
+import { GlobalState } from '../../App';
+import { useHistory } from 'react-router';
 
 const verticalFlex: CSSProperties= {
   display:' flex',
@@ -14,7 +16,8 @@ const verticalFlex: CSSProperties= {
 
 const PlayersSetup = () => {
   const [playerCount, setPlayerCount] = useState<number>(4);
-  const [players, setPlayers] = useState<string[]>([]);
+  const history = useHistory();
+  const { startGame } = useContext(GlobalState);
 
   const handleAlignment = (event: React.MouseEvent<HTMLElement>, newPlayerCount: number | null) => {
     if(!newPlayerCount) return;
@@ -23,12 +26,8 @@ const PlayersSetup = () => {
   };
 
   const nameReport = (names: string[]) => {
-    const startingState: Record<string, {name: string, points: number}> = {};
-    names.forEach(name => {
-      startingState[name] = {name, points: 0};
-    });
-    localStorage.setItem('game', JSON.stringify(startingState));
-    setPlayers(names);
+    startGame(names);
+    history.push('/game');
   }
 
   return (
@@ -60,12 +59,6 @@ const PlayersSetup = () => {
         </ToggleButton>
       </ToggleButtonGroup>
       <Divider style={{width: '100%', marginTop: '0.5em'}} />
-      {/* <form style={{...verticalFlex, marginTop: '0.5em'}} noValidate autoComplete="off">
-        {Array.from(Array(playerCount).keys()).map(value => (
-          <TextField style={{marginTop: value ? '0.5em' : '0'}} key={`Player ${value+1}`} id="outlined-basic" label={`Player ${value+1}`} variant="outlined" />
-        ))}
-        
-      </form> */}
       <SittingOrder playerCount={playerCount} nameReport={nameReport} />
     </Container>
   );
