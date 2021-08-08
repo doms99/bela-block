@@ -14,7 +14,7 @@ export interface Props {
 const ScoreBoard: React.FC<Props> = ({ teams, rounds, setEditIndex }) => {
 
   return (
-    <Card style={{height: '50%'}}>
+    <Card style={{height: '50vh'}}>
       <CardContent className="vertical max-height">
         <div className="horizontal">
           {teams.map((name) => (

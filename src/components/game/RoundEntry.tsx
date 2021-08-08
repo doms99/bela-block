@@ -95,27 +95,48 @@ const RoundEntry: React.FC<Props> = ({ players, playerPoints, playerCount, point
 
   return (
     <div className="before">
-      <Card className="absolute-center">
+      <Card className="round-entry">
         <CardContent>
           <div className="horizontal" style={{marginBottom: '0.5em'}}>
             {players.map((player) => 
               <Paper
-                style={{flexGrow: 1, padding: '0.5em', margin: '0 0.5em', width: '33.33%', color: 'gray'}}
+                className="points-enter"
                 key={player}
                 elevation={player === selected.player ? 4 : 1}
               >
-                <div style={{color: selected.player === player && selected.input === 'points' ? 'black' : 'inherit'}} onClick={() => setSelected({player,  input: 'points'})}>
-                  {values[player].points}
+                <div style={{
+                  color: selected.player === player && selected.input === 'points' ? 'black' : 'inherit'}}
+                  onClick={() => setSelected({player,  input: 'points'})}
+                >
+                  <Typography
+                    style={{
+                      fontSize: '1.2em',
+                      color: selected.player === player && selected.input === 'points' ? 'black' : 'lightgray',
+                      marginBottom: '4px'
+                    }}
+                  >
+                    {values[player].points
+                  }</Typography>
                 </div>
                 <Divider />
-                <div style={{color: selected.player === player && selected.input === 'declarations' ? 'black' : 'inherit'}} onClick={() => setSelected({player,  input: 'declarations'})}>
-                  {values[player].declarations}
+                <div
+                  onClick={() => setSelected({player,  input: 'declarations'})}
+                >
+                  <Typography
+                    style={{
+                      fontSize: '1.2em',
+                      color: selected.player === player && selected.input === 'declarations' ? 'black' : 'lightgray',
+                      marginTop: '4px'
+                    }}
+                  >
+                    {values[player].declarations}
+                  </Typography>
                 </div>
               </Paper>
             )}
           </div>
           <Typography style={{color: error ? 'red' : 'white'}}>{error ? error : 'i'}</Typography>
-          <div className="grid">
+          <div className="grid num-pad">
             <Button onClick={() => setPoints(1)}>1</Button>
             <Button onClick={() => setPoints(2)}>2</Button>
             <Button onClick={() => setPoints(3)}>3</Button>
