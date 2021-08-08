@@ -9,122 +9,171 @@ import {
 import { createContext, useEffect, useState } from "react";
 import LocalStorageKey from './constants';
 
+export type RoundType = Record<string, {points: number, declarations: number}>;
+
+export interface TeamType {
+  name: string,
+  players: [string, string]
+}
+
 export interface State {
   players: string[],
   playerCount: number | undefined,
-  teams: [[string, string], [string, string]] | null,
-  rounds: Record<string, {points: number, declarations: number}>[],
-  dealer: string | undefined
+  teams: [TeamType, TeamType] | undefined,
+  rounds: RoundType[],
+  dealer: string | undefined,
+  winner: string | undefined,
+  scoreTarget: number
 }
 
 export type StateProperties = 'players' | 'playerCount' | 'teams' | 'points';
 
 export interface StateFunctions {
   getState: () => State,
-  startGame: (players: string[]) => void,
-  rematch: () => void,
+  startGame: (players: string[], scoreTarget: number) => void,
+  restart: () => void,
   reset: () => void,
-  enterRound: (round: Record<string, {points: number, declarations: number}>) => void,
-  editRound: (round: Record<string, {points: number, declarations: number}>, index: number) => void
+  enterRound: (round: RoundType) => void,
+  editRound: (round: RoundType, index: number) => void
 }
 
 const initialState: State = {
   players: [],
   playerCount: undefined,
-  teams: null,
+  teams: undefined,
   rounds: [],
-  dealer: undefined
+  dealer: undefined,
+  winner: undefined,
+  scoreTarget: 1001
 }
 
 export const GlobalState = createContext<StateFunctions>({} as StateFunctions);
 
 function App() {
-  const [globalState, setGlobalState] = useState<State>(initialState);
+  const [players, setPlayers] = useState<string[]>(initialState.players);
+  const [playerCount, setPlayerCount] = useState<number | undefined>(initialState.playerCount);
+  const [teams, setTeams] = useState<[TeamType, TeamType] | undefined>(initialState.teams);
+  const [rounds, setRounds] = useState<RoundType[]>(initialState.rounds);
+  const [dealer, setDealer] = useState<string | undefined>(initialState.dealer);
+  const [winner, setWinner] = useState<string | undefined>(initialState.winner);
+  const [scoreTarget, setScoreTarget] = useState<number>(initialState.scoreTarget);
 
+  useEffect(() => {
+    if(!playerCount) return;
+
+    const score: Record<string, number> = {};
+
+    let names: string[];
+    if(playerCount === 4 && teams) {
+      names = teams.map(team => team.name);
+    } else {
+      names = players;
+    } 
+
+    names.forEach(name => score[name] = 0);
+
+    rounds.forEach(round => names.forEach(name => {
+      score[name] += round[name].points + round[name].declarations;
+    }))
+
+    for(const [player, points] of Object.entries(score)) {
+      if(points > scoreTarget) {
+        setWinner(player);
+        return;
+      }
+    }
+    
+  }, [scoreTarget, playerCount, players, rounds, teams]);
+  
   useEffect(() => {
     const loadedState = localStorage.getItem(LocalStorageKey)
 
     if(!loadedState) return;
+    const state = JSON.parse(loadedState) as State;
 
-    const state = JSON.parse(loadedState);
-    setGlobalState(curr => ({...curr, ...state}));
+    if(state.players && 
+       state.playerCount &&
+       state.teams &&
+       state.rounds &&
+       state.dealer &&
+       state.winner &&
+       state.scoreTarget) return;
+  
+    setPlayers(state.players);
+    setPlayerCount(state.playerCount);
+    setTeams(state.teams);
+    setRounds(state.rounds);
+    setDealer(state.dealer);
+    setWinner(state.winner);
+    setScoreTarget(state.scoreTarget);
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(LocalStorageKey, JSON.stringify({players, playerCount, teams, rounds, dealer, winner, scoreTarget}));
+  }, [players, playerCount, teams, rounds, dealer, winner, scoreTarget]);
+
   const getState = (): State => {
-    return globalState;
+    return {players, playerCount, teams, rounds, dealer, winner, scoreTarget};
   }
   
-  const startGame = (players: string[]) => {
+  const startGame = (players: string[], scoreTarget: number) => {
     if(!players.length) return;
-  
-    const newState: State = {
-      ...globalState,
-      players,
-      playerCount: players.length,
-      rounds: [],
-      dealer: players[Math.floor(Math.random() * players.length - 0.001)]
-    };
+
+
+    setPlayers(players);
+    setPlayerCount(players.length);
+    setRounds([]);
+    setDealer(players[Math.floor(Math.random() * players.length - 0.001)]);
+    setScoreTarget(scoreTarget);
   
     if(players.length === 4) {
-      newState.teams = [[players[0], players[2]], [players[1], players[3]]];
+      setTeams([{
+        name: `${players[0]} and ${players[2]}`,
+        players: [players[0], players[2]]
+      }, {
+        name: `${players[1]} and ${players[3]}`,
+        players: [players[1], players[3]]
+      }]);
     }
-  
-    setGlobalState(newState);
 
-    localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
   }
   
-  const rematch = () => { 
-    setGlobalState(curr => {
-      const newState = {
-        ...curr,
-        rounds: []
-      }
-
-      localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
-
-      return newState;
-    })
+  const restart = () => { 
+    setRounds([]);
+    setWinner(undefined);
   }
 
   const reset = () => {
-    setGlobalState(initialState);
-    localStorage.setItem(LocalStorageKey, JSON.stringify(initialState));
+    setPlayers(initialState.players);
+    setPlayerCount(initialState.playerCount);
+    setTeams(initialState.teams);
+    setRounds(initialState.rounds);
+    setDealer(initialState.dealer);
+    setWinner(initialState.winner);
   }
 
-  const enterRound = (round: Record<string, {points: number, declarations: number}>) => {    
-    if(!globalState.players.filter(name => !round[name])) return;
+  const enterRound = (round: RoundType) => {    
+    if(!players.filter(name => !round[name])) return;
 
-    setGlobalState(curr => {
-      const newState = {
-        ...curr,
-        rounds: [...curr.rounds, round],
-        dealer: curr.players[(curr.players.indexOf(curr.dealer!) + 1) % curr.players.length]
-      };
-
-      localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
-
-      return newState;
-    })
+    setRounds(curr => [...curr, round]);
+    setDealer(players[(players.indexOf(dealer!) + 1) % players.length]);
   }
 
-  const editRound = (round: Record<string, {points: number, declarations: number}>, index: number) => {
-    if(!globalState.players.filter(name => !round[name])) return;
+  const editRound = (round: RoundType, index: number) => {
+    if(!players.filter(name => !round[name])) return;
 
-    setGlobalState(curr => {
-      const newState = {...curr};
-      newState.rounds[index] = round;
-
-      localStorage.setItem(LocalStorageKey, JSON.stringify(newState));
+    setRounds(curr => {
+      const newRounds = [...curr];
+      newRounds[index] = round;
       
-      return newState;
-    })
+      return newRounds;
+    });
   }
 
   const value = {
     getState,
     startGame,
-    rematch,
+    restart,
     reset,
     enterRound,
     editRound

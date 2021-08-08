@@ -16,17 +16,24 @@ const verticalFlex: CSSProperties= {
 
 const PlayersSetup = () => {
   const [playerCount, setPlayerCount] = useState<number>(4);
+  const [scoreTarget, setScoreTarget] = useState<number>(1001);
   const history = useHistory();
   const { startGame } = useContext(GlobalState);
 
-  const handleAlignment = (event: React.MouseEvent<HTMLElement>, newPlayerCount: number | null) => {
+  const handlePlayerCount = (event: React.MouseEvent<HTMLElement>, newPlayerCount: number | null) => {
     if(!newPlayerCount) return;
 
     setPlayerCount(newPlayerCount);
   };
 
+  const handleScoreTarget = (event: React.MouseEvent<HTMLElement>, scoreTarget: number | null) => {
+    if(!scoreTarget) return;
+
+    setScoreTarget(scoreTarget);
+  };
+
   const nameReport = (names: string[]) => {
-    startGame(names);
+    startGame(names, scoreTarget);
     history.push('/game');
   }
 
@@ -36,8 +43,8 @@ const PlayersSetup = () => {
         size="large"
         value={playerCount}
         exclusive
-        onChange={handleAlignment}
-        aria-label="text alignment"
+        onChange={handlePlayerCount}
+        aria-label="player count"
       >
         <ToggleButton value={2} aria-label="left aligned">
           <div>
@@ -58,7 +65,25 @@ const PlayersSetup = () => {
           </div>
         </ToggleButton>
       </ToggleButtonGroup>
-      <Divider style={{width: '100%', marginTop: '0.5em'}} />
+      <Divider style={{width: '100%', margin: '0.5em 0'}} />
+      <ToggleButtonGroup
+        size="large"
+        value={scoreTarget}
+        exclusive
+        onChange={handleScoreTarget}
+        aria-label="score target"
+      >
+        <ToggleButton value={501} aria-label="right aligned">
+          501
+        </ToggleButton>
+        <ToggleButton value={701} aria-label="right aligned">
+          701
+        </ToggleButton>
+        <ToggleButton value={1001} aria-label="right aligned">
+          1001
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <Divider style={{width: '100%', margin: '0.5em 0'}} />
       <SittingOrder playerCount={playerCount} nameReport={nameReport} />
     </Container>
   );

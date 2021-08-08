@@ -2,26 +2,24 @@ import { Button, Card, CardActions, CardContent, Typography } from '@material-ui
 import React from 'react';
 
 export interface Props {
-  winners: string[],
+  winner: string,
   newGame: () => void,
   rematch: () => void
 }
 
-const Winner: React.FC<Props> = ({ winners, rematch, newGame }) => {
-  const message = winners.length === 2 ? 
-      `${winners[0]} and ${winners[1]} have won this matsh!` : 
-      `${winners[0]} has won this match!`;
-
+const Winner: React.FC<Props> = ({ winner, rematch, newGame }) => {
   return (
-    <Card>
-      <CardContent>
-        <Typography>{message}</Typography>
-      </CardContent>
-      <CardActions>
-        <Button onClick={rematch} variant="contained" color="primary">Rematch</Button>
-        <Button onClick={newGame} variant="contained" color="secondary">New game</Button>
-      </CardActions>
-    </Card>
+    <div className="before">
+      <Card className="absolute-card">
+        <CardContent>
+          <Typography><b>{winner}</b> won this match</Typography>
+        </CardContent>
+        <CardActions style={{justifyContent: 'space-around'}}>
+          <Button onClick={rematch} variant="contained" color="primary">Rematch</Button>
+          <Button onClick={newGame} variant="contained" color="secondary">New game</Button>
+        </CardActions>
+      </Card>
+    </div>
   );
 };
 

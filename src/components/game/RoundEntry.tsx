@@ -1,11 +1,12 @@
 import { Button, Card, CardActions, CardContent, Divider, Paper, Typography } from "@material-ui/core";
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import { useCallback, useEffect, useState } from "react";
+import { RoundType } from "../../App";
 
 export interface Props {
-  players: string[],
-  playerPoints?: Record<string, {points: number, declarations: number}>,
-  pointsReport: (round: Record<string, {points: number, declarations: number}>) => void,
+  teams: string[],
+  playerPoints?: RoundType,
+  pointsReport: (round: RoundType) => void,
   playerCount: number,
   cancel: () => void
 }
@@ -14,9 +15,9 @@ const zeroValues = (players: string[]) => {
   return players.reduce((obj, player) => ({...obj, [player]: { points: 0, declarations: 0 }}), {});
 }
 
-const RoundEntry: React.FC<Props> = ({ players, playerPoints, playerCount, pointsReport, cancel }) => {
-  const [values, setValues] = useState<Record<string, {points: number, declarations: number}>>(playerPoints ? playerPoints : zeroValues(players));
-  const [selected, setSelected] = useState<{player: string, input: 'points' | 'declarations'}>({player: players[0], input: 'points'});
+const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsReport, cancel }) => {
+  const [values, setValues] = useState<RoundType>(playerPoints ? playerPoints : zeroValues(teams));
+  const [selected, setSelected] = useState<{player: string, input: 'points' | 'declarations'}>({player: teams[0], input: 'points'});
   const [error, setError] = useState<string | undefined>();
 
   const calcPoints = useCallback(() => {
@@ -33,10 +34,10 @@ const RoundEntry: React.FC<Props> = ({ players, playerPoints, playerCount, point
     setError("More then 162 points entered");
   }, [values, calcPoints]);
 
-  const updateState = (state: Record<string, {points: number, declarations: number}>) => {
+  const updateState = (state: RoundType) => {
     if(playerCount !== 4) return state;
 
-    const otherPlayer = players.filter(name => name !== selected.player)[0];
+    const otherPlayer = teams.filter(name => name !== selected.player)[0];
 
     return {
       ...state,
@@ -95,10 +96,10 @@ const RoundEntry: React.FC<Props> = ({ players, playerPoints, playerCount, point
 
   return (
     <div className="before">
-      <Card className="round-entry">
+      <Card className="absolute-card">
         <CardContent>
           <div className="horizontal" style={{marginBottom: '0.5em'}}>
-            {players.map((player) => 
+            {teams.map((player) => 
               <Paper
                 className="points-enter"
                 key={player}

@@ -1,74 +1,41 @@
-import { Button, Card, CardContent, CardHeader, Container, Typography } from '@material-ui/core';
+import { Button, Card, CardContent, CardHeader, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@material-ui/core';
 import RoundEntry from './RoundEntry';
 import '../../styles/Game.css';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import ScoreBoard from './ScoreBoard';
-import { GlobalState } from '../../App';
+import { GlobalState, RoundType } from '../../App';
 import Winner from './Winner';
 import { useHistory } from 'react-router';
 
 const Game: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [winner, setWinner] = useState<string | undefined>();
+  const [resetRequest, setResetRequest] = useState(false);
   const history = useHistory();
 
-  const { getState, editRound, enterRound, rematch } = useContext(GlobalState);
+  const { getState, editRound, enterRound, restart } = useContext(GlobalState);
 
-  const { dealer, players, playerCount, rounds, teams } = getState();
+  const { dealer, players, playerCount, rounds, teams, winner, scoreTarget } = getState();
 
-  useEffect(() => {
-    if(!playerCount) return;
-
-    const score: Record<string, number> = {};
-
-    players.forEach(name => score[name] = 0);
-
-    let names: string[];
-    if(playerCount === 4 && teams) {
-      names = [`${teams[0][0]} and ${teams[0][1]}`, `${teams[1][0]} and ${teams[1][1]}`];
-    } else {
-      names = players;
-    } 
-
-    names.forEach(name => rounds.forEach(round => score[name] += round[name].points));
-
-    for(const [player, points] of Object.entries(score)) {
-      if(playerCount === 2 && points > 501) {
-        setWinner(player);
-        return;
-      }
-
-      if(playerCount === 3 && points > 701) {
-        setWinner(player);
-        return;
-      }
-
-      if(playerCount === 4 && points > 1001) {
-        setWinner(player);
-        return;
-      }
-    }
-    
-  }, [players, rounds, playerCount, teams]);
-
-  const pointsReport = (round: Record<string, {points: number, declarations: number}>, index: number) => {
+  const pointsReport = (round: RoundType, index: number) => {
     if(index === rounds.length) enterRound(round);
     else editRound(round, index);
 
     setEditIndex(undefined);
   }
 
-  const newGame = () => {
-    history.push('/setup');
+  const handleReset = (toReset: boolean) => {
+    if(toReset) restart();
+
+    setResetRequest(false);
   }
+
+  const teamNames = teams ? teams.map(team => team.name) : players;  
 
   return (
     <Container style={{textAlign: 'center'}}>
       <ScoreBoard
-        teams={teams ? 
-          [`${teams[0][0]} and ${teams[0][1]}`, `${teams[1][0]} and ${teams[1][1]}`] : 
-          players  
-        }
+        teams={teamNames}
+        scoreTarget={scoreTarget}
         rounds={rounds}
         setEditIndex={setEditIndex}
       />
@@ -88,31 +55,48 @@ const Game: React.FC = () => {
         variant="contained"
         color="primary"
       >
-        New round
+        Enter round
       </Button>
       <Button
-        onClick={newGame}
+        onClick={() => setResetRequest(true)}
         style={{margin: '1em'}}
         variant="contained"
         color="secondary"
       >
-        New Game
+        Reset
       </Button>
       {editIndex !== undefined && (
         <RoundEntry
-          players={teams ? 
-            [`${teams[0][0]} and ${teams[0][1]}`, `${teams[1][0]} and ${teams[1][1]}`] : 
-            players  
-          }
+          teams={teamNames}
           playerCount={playerCount!}
           cancel={() => setEditIndex(undefined)}
-          pointsReport={(round: Record<string, {points: number, declarations: number}>) => pointsReport(round, editIndex)}
+          pointsReport={(round: RoundType) => pointsReport(round, editIndex)}
           playerPoints={rounds[editIndex]}
         />
       )}
       {winner && (
-        <Winner newGame={newGame} rematch={rematch} winners={winner!.split('and')} />
+        <Winner newGame={() => history.push('/setup')} rematch={restart} winner={winner!} />
       )}
+      <Dialog
+        open={resetRequest}
+        onClose={() => handleReset(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          Are you sure tou want to reset the match?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleReset(true)} color="primary">
+            Yes
+          </Button>
+          <Button onClick={() => handleReset(false)} color="primary" autoFocus>
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
