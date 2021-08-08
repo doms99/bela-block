@@ -33,34 +33,38 @@ const RoundEntry: React.FC<Props> = ({ players, playerPoints, playerCount, point
     setError("More then 162 points entered");
   }, [values, calcPoints]);
 
-  useEffect(() => {
-    if(playerCount !== 4) return;
+  const updateState = (state: Record<string, {points: number, declarations: number}>) => {
+    if(playerCount !== 4) return state;
 
     const otherPlayer = players.filter(name => name !== selected.player)[0];
 
-    setValues(curr => ({
-      ...curr,
+    return {
+      ...state,
       [otherPlayer]: {
-        ...curr[otherPlayer],
-        points: 162 - curr[selected.player].points
+        ...state[otherPlayer],
+        points: Math.max(162 - state[selected.player].points, 0)
       }
-    }))
-  }, [playerCount, players, selected]);
+    };
+  }
 
   const setPoints = (digit: number) => {
     if(Math.floor(values[selected.player][selected.input]/100) !== 0) return;
 
-    setValues(curr => ({
-      ...curr,
-      [selected.player]: {
-        ...curr[selected.player],
-        [selected.input]: curr[selected.player][selected.input]*10 + digit
+    setValues(curr => {
+      const newState = {
+        ...curr,
+        [selected.player]: {
+          ...curr[selected.player],
+          [selected.input]: curr[selected.player][selected.input]*10 + digit
+        }
       }
-    }))
+
+      return updateState(newState);
+    })
   }
 
   const clear = () => {
-    setValues(curr => ({
+    setValues(curr => updateState({
       ...curr,
       [selected.player]: {
         ...curr[selected.player],
@@ -70,7 +74,7 @@ const RoundEntry: React.FC<Props> = ({ players, playerPoints, playerCount, point
   }
 
   const backspace = () => {
-    setValues(curr => ({
+    setValues(curr => updateState({
       ...curr,
       [selected.player]: {
         ...curr[selected.player],

@@ -25,8 +25,4 @@ const Winner: React.FC<Props> = ({ winners, rematch, newGame }) => {
   );
 };
 
-export interface Props {
-  winner: string
-}
-
 export default Winner;

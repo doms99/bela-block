@@ -90,14 +90,14 @@ const Game: React.FC = () => {
       >
         New round
       </Button>
-      {/* <Button
-        onClick={() => setEditIndex(rounds.length)}
+      <Button
+        onClick={newGame}
         style={{margin: '1em'}}
         variant="contained"
         color="secondary"
       >
         New Game
-      </Button> */}
+      </Button>
       {editIndex !== undefined && (
         <RoundEntry
           players={teams ? 
