@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@material-ui/core';
+import { Button, Card, CardContent, CardHeader, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, useMediaQuery } from '@material-ui/core';
 import RoundEntry from './RoundEntry';
 import '../../styles/Game.css';
 import { useContext, useState } from 'react';
@@ -11,6 +11,7 @@ const Game: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [resetRequest, setResetRequest] = useState(false);
   const history = useHistory();
+  const phoneSize = useMediaQuery('(max-width: 600px)');
 
   const { getState, editRound, enterRound, restart } = useContext(GlobalState);
 
@@ -45,7 +46,7 @@ const Game: React.FC = () => {
           title="Dealer"
           titleTypographyProps={{variant: 'subtitle1'}}
         />
-        <CardContent className={playerCount === 4 ? "grid-2" : "horizontal"}>
+        <CardContent className={playerCount === 4 && phoneSize ? "grid-2" : "horizontal"}>
           {players.map((player) => (
             <Typography
               key={player}
