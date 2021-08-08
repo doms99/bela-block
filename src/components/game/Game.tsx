@@ -63,7 +63,7 @@ const Game: React.FC = () => {
   }
 
   return (
-    <Container style={{textAlign: 'center', height: '100vh'}}>
+    <Container style={{textAlign: 'center'}}>
       <ScoreBoard
         teams={teams ? 
           [`${teams[0][0]} and ${teams[0][1]}`, `${teams[1][0]} and ${teams[1][1]}`] : 
