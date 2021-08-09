@@ -126,7 +126,7 @@ function App() {
     setDealer(players[Math.floor(Math.random() * players.length - 0.001)]);
     setScoreTarget(scoreTarget);
   
-    setTeams(playerCount === 4 ? [
+    setTeams(players.length === 4 ? [
       {
         name: `${players[0]} and ${players[2]}`,
         players: [players[0], players[2]]

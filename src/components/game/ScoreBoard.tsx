@@ -33,7 +33,7 @@ const ScoreBoard: React.FC<Props> = ({ teams, scoreTarget, rounds, setEditIndex 
                 {scores[name]}
               </Typography>
               <Typography style={{color: 'gray'}} variant="body2">
-                {scoreTarget - scores[name]}
+                {Math.max(0, scoreTarget - scores[name])}
               </Typography>
             </div>
           ))}
