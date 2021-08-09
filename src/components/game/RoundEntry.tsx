@@ -138,6 +138,15 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
                 >
                   <Typography
                     style={{
+                      textAlign: 'left',
+                      color: selected.player === player && selected.input === 'points' ? 'black' : 'gray',
+                      fontSize: '0.8em'
+                    }}
+                  >
+                    Points
+                  </Typography>
+                  <Typography
+                    style={{
                       fontSize: '1.2em',
                       color: selected.player === player && selected.input === 'points' ? 'black' : 'gray',
                       marginBottom: '4px'
@@ -158,6 +167,15 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
                     }}
                   >
                     {values[player].declarations}
+                  </Typography>
+                  <Typography
+                    style={{
+                      textAlign: 'left',
+                      color: selected.player === player && selected.input === 'declarations' ? 'black' : 'gray',
+                      fontSize: '0.8em'
+                    }}
+                  >
+                    Declarations
                   </Typography>
                 </div>
               </Paper>
