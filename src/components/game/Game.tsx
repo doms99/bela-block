@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, useMediaQuery } from '@material-ui/core';
+import { Button, Card, CardContent, CardHeader, Container, Dialog, DialogActions, DialogContent, DialogContentText, Typography, useMediaQuery } from '@material-ui/core';
 import RoundEntry from './RoundEntry';
 import '../../styles/Game.css';
 import { useContext, useState } from 'react';

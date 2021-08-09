@@ -19,6 +19,7 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
   const [values, setValues] = useState<RoundType>(playerPoints ? playerPoints : zeroValues(teams));
   const [selected, setSelected] = useState<{player: string, input: 'points' | 'declarations'}>({player: teams[0], input: 'points'});
   const [error, setError] = useState<string | undefined>();
+  const [edited, setEdited] = useState<boolean[]>(teams.map(_ => false));
 
   const calcPoints = useCallback(() => {
     return Object.values(values).map(value => value.points).reduce((sum, points) => sum + points, 0);
@@ -34,15 +35,38 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
     setError("More then 162 points entered");
   }, [values, calcPoints]);
 
-  const updateState = (state: RoundType) => {
-    if(playerCount !== 4) return state;
+  useEffect(() => {
+    setEdited(curr => {
+      const newEdited = [...curr];
+      newEdited[teams.indexOf(selected.player)] = true;
 
-    const otherPlayer = teams.filter(name => name !== selected.player)[0];
+      return newEdited;
+    })
+  }, [selected, teams]);
+
+  const updateState = (state: RoundType) => {
+    if(playerCount === 2) return state;
+
+    const otherPlayers = teams.filter(name => name !== selected.player);
+
+    if(playerCount === 3) {    
+      if(edited.reduce((val, status) => status ? val : val+1, 0) !== 1) return state;
+
+      const uneditedPlayer = teams[edited.indexOf(false)];
+      
+      return {
+        ...state,
+        [uneditedPlayer]: {
+          ...state[uneditedPlayer],
+          points: Math.max(0, 162 - teams.filter(name => name !== uneditedPlayer).reduce((val, name) => val += state[name].points, 0))
+        }
+      }
+    }
 
     return {
       ...state,
-      [otherPlayer]: {
-        ...state[otherPlayer],
+      [otherPlayers[0]]: {
+        ...state[otherPlayers[0]],
         points: Math.max(162 - state[selected.player].points, 0)
       }
     };
@@ -98,6 +122,9 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
     <div className="before">
       <Card className="absolute-card">
         <CardContent>
+          <div className="horizontal">
+            {teams.map(name => <Typography key={name}>{name}</Typography>)}
+          </div>
           <div className="horizontal" style={{marginBottom: '0.5em'}}>
             {teams.map((player) => 
               <Paper
@@ -112,7 +139,7 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
                   <Typography
                     style={{
                       fontSize: '1.2em',
-                      color: selected.player === player && selected.input === 'points' ? 'black' : 'lightgray',
+                      color: selected.player === player && selected.input === 'points' ? 'black' : 'gray',
                       marginBottom: '4px'
                     }}
                   >
@@ -126,7 +153,7 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
                   <Typography
                     style={{
                       fontSize: '1.2em',
-                      color: selected.player === player && selected.input === 'declarations' ? 'black' : 'lightgray',
+                      color: selected.player === player && selected.input === 'declarations' ? 'black' : 'gray',
                       marginTop: '4px'
                     }}
                   >
