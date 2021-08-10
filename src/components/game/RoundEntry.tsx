@@ -8,44 +8,37 @@ export interface Props {
   playerPoints?: RoundType,
   pointsReport: (round: RoundType) => void,
   playerCount: number,
-  cancel: () => void
+  cancel: () => void,
+  teamOnCall: string
 }
 
 const zeroValues = (players: string[]) => {
   return players.reduce((obj, player) => ({...obj, [player]: { points: 0, declarations: 0 }}), {});
 }
 
-const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsReport, cancel }) => {
+const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCount, pointsReport, cancel }) => {
   const [values, setValues] = useState<RoundType>(playerPoints ? playerPoints : zeroValues(teams));
   const [selected, setSelected] = useState<{player: string, input: 'points' | 'declarations'}>({player: teams[0], input: 'points'});
   const [error, setError] = useState<string | undefined>();
   const [edited, setEdited] = useState<boolean[]>(teams.map(_ => false));
 
-  const calcPoints = useCallback(() => {
-    return Object.values(values).map(value => value.points).reduce((sum, points) => sum + points, 0);
-  }, [values]);
+  // const calcPoints = useCallback(() => {
+  //   return Object.values(values).map(value => value.points).reduce((sum, points) => sum + points, 0);
+  // }, [values]);
 
-  useEffect(() => {
-    if(calcPoints() <= 162) {
-      setError(undefined);
+  // useEffect(() => {
+  //   if(calcPoints() <= 162) {
+  //     setError(undefined);
 
-      return;
-    }
+  //     return;
+  //   }
 
-    setError("More then 162 points entered");
-  }, [values, calcPoints]);
-
-  useEffect(() => {
-    setEdited(curr => {
-      const newEdited = [...curr];
-      newEdited[teams.indexOf(selected.player)] = true;
-
-      return newEdited;
-    })
-  }, [selected, teams]);
+  //   setError("More then 162 points entered");
+  // }, [values, calcPoints]);
 
   const updateState = (state: RoundType) => {
     if(playerCount === 2) return state;
+    if(selected.input === 'declarations') return state;
 
     const otherPlayers = teams.filter(name => name !== selected.player);
 
@@ -53,6 +46,22 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
       if(edited.reduce((val, status) => status ? val : val+1, 0) !== 1) return state;
 
       const uneditedPlayer = teams[edited.indexOf(false)];
+
+      let uneditedPlayerPoints = 162 - teams.filter(name => name !== uneditedPlayer).reduce((val, name) => val += state[name].points, 0);
+      uneditedPlayerPoints += state[uneditedPlayer].declarations;
+      const rest = teams.filter(team => team !== uneditedPlayer);
+      const sumOfRest = rest.reduce((sum, name) => sum += state[name].points + state[name].declarations, 0);
+
+      console.log(uneditedPlayerPoints, sumOfRest, teamOnCall, uneditedPlayer)
+      if(uneditedPlayer === teamOnCall && sumOfRest >= uneditedPlayerPoints) {
+        return {
+          ...state,
+          [uneditedPlayer]: {
+            ...state[uneditedPlayer],
+            points: 0
+          }
+        }
+      }
       
       return {
         ...state,
@@ -74,6 +83,15 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
 
   const setPoints = (digit: number) => {
     if(Math.floor(values[selected.player][selected.input]/100) !== 0) return;
+
+    if(selected.input === 'points') {
+      setEdited(curr => {
+        const newEdited = [...curr];
+        newEdited[teams.indexOf(selected.player)] = true;
+  
+        return newEdited;
+      })
+    }
 
     setValues(curr => {
       const newState = {
@@ -109,13 +127,20 @@ const RoundEntry: React.FC<Props> = ({ teams, playerPoints, playerCount, pointsR
   }
 
   const end = () => {
-    if(playerCount > 2 && calcPoints() !== 162) {
-      setError("Sum of points doesn't equal 162");
+    // if(playerCount > 3 && calcPoints() !== 162) {
+    //   setError("Sum of points doesn't equal 162");
 
-      return;
+    //   return;
+    // }
+
+    const reportState = {...values};
+    for(const name of teams) {
+      if(reportState[name].points === 0) {
+        reportState[name].declarations = 0;
+      }
     }
 
-    pointsReport(values);
+    pointsReport(reportState);
   }
 
   return (

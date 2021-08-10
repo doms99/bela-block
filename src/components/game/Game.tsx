@@ -30,7 +30,10 @@ const Game: React.FC = () => {
     setResetRequest(false);
   }
 
-  const teamNames = teams ? teams.map(team => team.name) : players; 
+  const teamNames = teams ? teams.map(team => team.name) : players;
+  const teamOnCall = playerCount === 4 ? (
+    teams!.reduce((value, team) => value = team.players.includes(dealer!) ? team.name : value, '')
+  ) : players[Math.floor((players.indexOf(dealer!) + 1) % playerCount!)];
 
   return (
     <Container style={{textAlign: 'center'}}>
@@ -77,6 +80,7 @@ const Game: React.FC = () => {
       </Button>
       {editIndex !== undefined && (
         <RoundEntry
+        teamOnCall={teamOnCall!}
           teams={teamNames}
           playerCount={playerCount!}
           cancel={() => setEditIndex(undefined)}
