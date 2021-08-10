@@ -16,10 +16,13 @@ const zeroValues = (players: string[]) => {
   return players.reduce((obj, player) => ({...obj, [player]: { points: 0, declarations: 0 }}), {});
 }
 
+const pointOnCallStyle = {border: '1px solid'}
+
 const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCount, pointsReport, cancel }) => {
   const [values, setValues] = useState<RoundType>(playerPoints ? playerPoints : zeroValues(teams));
   const [selected, setSelected] = useState<{player: string, input: 'points' | 'declarations'}>({player: teams[0], input: 'points'});
   const [error, setError] = useState<string | undefined>();
+  const [pass, setPass] = useState<boolean>(true);
   const [edited, setEdited] = useState<boolean[]>(teams.map(_ => false));
 
   // const calcPoints = useCallback(() => {
@@ -52,8 +55,8 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
       const rest = teams.filter(team => team !== uneditedPlayer);
       const sumOfRest = rest.reduce((sum, name) => sum += state[name].points + state[name].declarations, 0);
 
-      console.log(uneditedPlayerPoints, sumOfRest, teamOnCall, uneditedPlayer)
       if(uneditedPlayer === teamOnCall && sumOfRest >= uneditedPlayerPoints) {
+        setPass(false);
         return {
           ...state,
           [uneditedPlayer]: {
@@ -156,6 +159,7 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
                 className="points-enter"
                 key={player}
                 elevation={player === selected.player ? 4 : 1}
+                style={player === teamOnCall ? {...pointOnCallStyle, borderColor: pass ? 'green' : 'red'} : {}}
               >
                 <div style={{
                   color: selected.player === player && selected.input === 'points' ? 'black' : 'inherit'}}
@@ -223,8 +227,8 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
           </div>
         </CardContent>
         <CardActions className="horizontal">
-          <Button disabled={!!error || Object.values(values).reduce((acc, value) => acc+value.points, 0) === 0} onClick={end} variant="contained" color="primary">Save</Button>
           <Button onClick={cancel} variant="contained" color="secondary">Cancel</Button>
+          <Button disabled={!!error || Object.values(values).reduce((acc, value) => acc+value.points, 0) === 0} onClick={end} variant="contained" color="primary">Save</Button>
         </CardActions>
       </Card>
     </div>
