@@ -1,6 +1,7 @@
 .horizontal {
   display: flex;
   justify-content: space-around;
+  align-items: center;
 }
 
 .horizontal > * {
@@ -93,4 +94,16 @@
 
 .full-width {
   width: 100%;
+}
+
+.points-grid-3 {
+  display: grid;
+  column-gap: 0.2em;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.points-grid-2 {
+  display: grid;
+  column-gap: 0.2em;
+  grid-template-columns: 1fr 1fr;
 }

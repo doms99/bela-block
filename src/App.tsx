@@ -9,7 +9,12 @@ import {
 import { createContext, useEffect, useState } from "react";
 import LocalStorageKey from './constants';
 
-export type RoundType = Record<string, {points: number, declarations: number}>;
+export interface Round {
+  [key: string] : {
+    points: number,
+    declarations: number
+  }
+};
 
 export interface TeamType {
   name: string,
@@ -20,7 +25,7 @@ export interface State {
   players: string[],
   playerCount: number | undefined,
   teams: [TeamType, TeamType] | undefined,
-  rounds: RoundType[],
+  rounds: Round[],
   dealer: string | undefined,
   winner: string | undefined,
   scoreTarget: number
@@ -33,8 +38,9 @@ export interface StateFunctions {
   startGame: (players: string[], scoreTarget: number) => void,
   restart: () => void,
   reset: () => void,
-  enterRound: (round: RoundType) => void,
-  editRound: (round: RoundType, index: number) => void
+  editDealer: (player: string) => void,
+  enterRound: (round: Round) => void,
+  editRound: (round: Round, index: number) => void
 }
 
 const initialState: State = {
@@ -53,7 +59,7 @@ function App() {
   const [players, setPlayers] = useState<string[]>(initialState.players);
   const [playerCount, setPlayerCount] = useState<number | undefined>(initialState.playerCount);
   const [teams, setTeams] = useState<[TeamType, TeamType] | undefined>(initialState.teams);
-  const [rounds, setRounds] = useState<RoundType[]>(initialState.rounds);
+  const [rounds, setRounds] = useState<Round[]>(initialState.rounds);
   const [dealer, setDealer] = useState<string | undefined>(initialState.dealer);
   const [winner, setWinner] = useState<string | undefined>(initialState.winner);
   const [scoreTarget, setScoreTarget] = useState<number>(initialState.scoreTarget);
@@ -125,6 +131,7 @@ function App() {
     setRounds([]);
     setDealer(players[Math.floor(Math.random() * players.length - 0.001)]);
     setScoreTarget(scoreTarget);
+    setWinner(undefined);
   
     setTeams(players.length === 4 ? [
       {
@@ -135,8 +142,12 @@ function App() {
         players: [players[1], players[3]]
       }
     ] : undefined);
+  }
 
+  const editDealer = (player: string) => {
+    if(!players.includes(player)) return;
 
+    setDealer(player);
   }
   
   const restart = () => { 
@@ -153,14 +164,14 @@ function App() {
     setWinner(initialState.winner);
   }
 
-  const enterRound = (round: RoundType) => {    
+  const enterRound = (round: Round) => {    
     if(!players.filter(name => !round[name])) return;
 
     setRounds(curr => [...curr, round]);
     setDealer(players[(players.indexOf(dealer!) + 1) % players.length]);
   }
 
-  const editRound = (round: RoundType, index: number) => {
+  const editRound = (round: Round, index: number) => {
     if(!players.filter(name => !round[name])) return;
 
     setRounds(curr => {
@@ -176,6 +187,7 @@ function App() {
     startGame,
     restart,
     reset,
+    editDealer,
     enterRound,
     editRound
   }

@@ -1,31 +1,37 @@
-import { Card, CardContent, Divider, Typography } from '@material-ui/core';
-import React from 'react';
-import { RoundType } from '../../App';
+import { Card, CardContent, Divider, IconButton, Typography } from '@material-ui/core';
+import RestoreIcon from '@material-ui/icons/Restore';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Round } from '../../App';
 
 export const sumOfPoints = (points: number[], declarations: number[]) => {
   return points.reduce((acc, curr) => acc + curr, 0) + declarations.reduce((acc, curr) => acc + curr, 0);
 }
 
 export interface Props {
-  rounds: RoundType[],
+  rounds: Round[],
   teams: string[],
   setEditIndex: (index: number) => void,
   scoreTarget: number
 }
 
 const ScoreBoard: React.FC<Props> = ({ teams, scoreTarget, rounds, setEditIndex }) => {
+  const [selectedRound, setSelectedRound] = useState<number>(rounds.length - 1);
 
-  const scores: Record<string, number> = teams.reduce((obj, name) => (
-    {
+  useEffect(() => {
+    setSelectedRound(rounds.length-1)
+  }, [rounds]);
+
+  const scores: Record<string, number> = useMemo(() => teams.reduce((obj, name) => ({
       ...obj, 
-      [name]: sumOfPoints(rounds.map(r => r[name].points),rounds.map(r => r[name].declarations))
-    }
-  ), {});
+      [name]: sumOfPoints(rounds.slice(0, selectedRound+1).map(r => r[name].points),rounds.slice(0, selectedRound+1).map(r => r[name].declarations))
+  }), {}), [rounds, selectedRound, teams]);
+
+  const grid = teams.length === 3 ? "points-grid-3" : "points-grid-2";
 
   return (
     <Card style={{height: '50vh'}}>
       <CardContent className="vertical max-height">
-        <div className="horizontal">
+        <div className={grid}>
           {teams.map((name) => (
             <div key={name}>
               <Typography variant="subtitle1">{name}</Typography>
@@ -39,33 +45,48 @@ const ScoreBoard: React.FC<Props> = ({ teams, scoreTarget, rounds, setEditIndex 
           ))}
         </div>
         <Divider style={{marginBottom: '0.5em'}}/>
-        <div className="horizontal width-100 overflow">
-        {teams.map((name) => (
-            <div className="width-100" key={name}>
-              {rounds.slice().reverse().map(round => round[name]).map(({ points, declarations }, index) => (
-                <div style={{display: 'flex', justifyContent: 'center'}} className="width-100" key={`${index}`}>
+        <div style={{position: 'relative'}} className="width-100 overflow">
+        {rounds.slice().reverse().map((round, index) => (
+          <div
+            style={selectedRound === rounds.length-1-index ?
+              {backgroundColor: 'lightgray', borderRadius: '5px'} : 
+              rounds.length-1-index > selectedRound ? {color: 'lightgray'} : {}}
+            key={index}
+            className={grid}
+          >
+            {teams.map(team => (
+              <div 
+                style={{display: 'flex', justifyContent: 'center', cursor: 'pointer'}} 
+                className="width-100"
+                key={team}
+                onClick={() => setEditIndex(rounds.length-1-index)}
+              >
+                <Typography variant="subtitle1">
+                  {round[team].points}
+                </Typography>
+                {round[team].declarations !== 0 && (
                   <Typography 
-                    variant="subtitle1"
-                    onClick={() => setEditIndex(rounds.length-1-index)}
+                    color="primary"
+                    style={{
+                      fontSize: '0.8em',
+                      position: 'absolute',
+                      transform: Math.floor(round[team].points / 100) > 0 ? 'translateX(120%)' : 'translateX(100%)'
+                    }}
                   >
-                    {points}
+                    +{round[team].declarations}
                   </Typography>
-                  {declarations !== 0 && (
-                    <Typography 
-                      color="primary"
-                      style={{
-                        fontSize: '0.8em',
-                        position: 'absolute',
-                        transform: Math.floor(points / 100) > 0 ? 'translateX(120%)' : 'translateX(100%)'
-                      }}
-                    >
-                      +{declarations}
-                    </Typography>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
+                )}
+              </div>
+            ))}
+            <IconButton
+              size="small"
+              style={{position: 'absolute', right: 0}}
+              onClick={() => setSelectedRound(rounds.length-1-index)}
+            >
+              <RestoreIcon fontSize="small" />
+            </IconButton>
+          </div>
+        ))}
         </div>
       </CardContent>
     </Card>

@@ -1,27 +1,35 @@
-import { Button, Card, CardContent, CardHeader, Container, Dialog, DialogActions, DialogContent, DialogContentText, Typography, useMediaQuery } from '@material-ui/core';
+import { Button, Card, CardContent, CardHeader, Container, Dialog, DialogActions, DialogContent, DialogContentText, IconButton, Typography, useMediaQuery } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@material-ui/icons/Close';
 import RoundEntry from './RoundEntry';
 import '../../styles/Game.css';
 import { useContext, useState } from 'react';
 import ScoreBoard from './ScoreBoard';
-import { GlobalState, RoundType } from '../../App';
+import { GlobalState, Round } from '../../App';
 import Winner from './Winner';
 import { useHistory } from 'react-router';
 
 const Game: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [resetRequest, setResetRequest] = useState(false);
+  const [resetRequest, setResetRequest] = useState<boolean>(false);
+  const [dealerEdit, setDealerEdit] = useState<boolean>(false);
   const history = useHistory();
   const phoneSize = useMediaQuery('(max-width: 600px)');
 
-  const { getState, editRound, enterRound, restart } = useContext(GlobalState);
+  const { getState, editDealer, editRound, enterRound, restart } = useContext(GlobalState);
 
   const { dealer, players, playerCount, rounds, teams, winner, scoreTarget } = getState();
 
-  const pointsReport = (round: RoundType, index: number) => {
+  const pointsReport = (round: Round, index: number) => {
     if(index === rounds.length) enterRound(round);
     else editRound(round, index);
 
     setEditIndex(undefined);
+  }
+
+  const setDealer = (player: string) => {
+    editDealer(player);
+    setDealerEdit(false);
   }
 
   const handleReset = (toReset: boolean) => {
@@ -31,9 +39,9 @@ const Game: React.FC = () => {
   }
 
   const teamNames = teams ? teams.map(team => team.name) : players;
-  const teamOnCall = playerCount === 4 ? (
-    teams!.reduce((value, team) => value = team.players.includes(dealer!) ? team.name : value, '')
-  ) : players[Math.floor((players.indexOf(dealer!) + 1) % playerCount!)];
+  const teamOnCall = playerCount !== 3? 
+    undefined :
+    players[(players.indexOf(dealer!) + 1 - (rounds.length - editIndex!) % playerCount!) % playerCount!];
 
   return (
     <Container style={{textAlign: 'center'}}>
@@ -45,16 +53,26 @@ const Game: React.FC = () => {
       />
       <Card style={{margin: '1em 0'}}>
         <CardHeader 
-          style={{textAlign: 'left', color: 'gray', paddingBottom: 0, paddingTop: '8px'}}
+          style={{textAlign: 'left', color: 'gray'}}
           title="Dealer"
+          action={dealerEdit ? (
+            <IconButton onClick={() => setDealerEdit(false)} aria-label="settings">
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          ) : (
+            <IconButton onClick={() => setDealerEdit(true)} aria-label="settings">
+              <EditIcon fontSize="small" />
+            </IconButton>
+          )}
           titleTypographyProps={{variant: 'subtitle1'}}
         />
         <CardContent className={playerCount === 4 && phoneSize ? "grid-2" : "horizontal"}>
           {players.map((player) => (
             <Typography
               key={player}
-              style={{color: dealer === player ? "black" : "gray"}}
-              variant={dealer === player ? "h4" : "h5"}
+              style={{color: dealer === player || dealerEdit ? "black" : "gray", cursor: dealerEdit ? 'pointer' : 'inherit'}}
+              variant={dealer === player || dealerEdit ? "h4" : "h5"}
+              onClick={() => setDealer(player)}
             >
               {player}
             </Typography>
@@ -80,11 +98,11 @@ const Game: React.FC = () => {
       </Button>
       {editIndex !== undefined && (
         <RoundEntry
-        teamOnCall={teamOnCall!}
+          teamOnCall={teamOnCall!}
           teams={teamNames}
           playerCount={playerCount!}
           cancel={() => setEditIndex(undefined)}
-          pointsReport={(round: RoundType) => pointsReport(round, editIndex)}
+          pointsReport={(round: Round) => pointsReport(round, editIndex)}
           playerPoints={rounds[editIndex]}
         />
       )}
