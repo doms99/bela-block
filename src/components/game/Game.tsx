@@ -28,6 +28,8 @@ const Game: React.FC = () => {
   }
 
   const setDealer = (player: string) => {
+    if(!dealerEdit) return;
+    
     editDealer(player);
     setDealerEdit(false);
   }
