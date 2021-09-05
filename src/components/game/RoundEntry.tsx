@@ -442,8 +442,8 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
           </div>
         </CardContent>
         <CardActions className="horizontal">
-          <Button onClick={cancel} variant="contained" color="secondary">Cancel</Button>
-          <Button disabled={!!error || Object.values(values).reduce((acc, value) => acc+value.points, 0) === 0} onClick={end} variant="contained" color="primary">Save</Button>
+          <Button fullWidth onClick={cancel} variant="contained" color="secondary">Cancel</Button>
+          <Button fullWidth disabled={!!error || Object.values(values).reduce((acc, value) => acc+value.points, 0) === 0} onClick={end} variant="contained" color="primary">Save</Button>
         </CardActions>
       </Card>
     </div>
