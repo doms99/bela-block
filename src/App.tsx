@@ -8,6 +8,7 @@ import {
 } from "react-router-dom"; 
 import { createContext, useEffect, useState } from "react";
 import LocalStorageKey from './constants';
+import { createTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
 
 export interface Round {
   [key: string] : {
@@ -64,6 +65,17 @@ function App() {
   const [dealer, setDealer] = useState<string | undefined>(initialState.dealer);
   const [winner, setWinner] = useState<string | undefined>(initialState.winner);
   const [scoreTarget, setScoreTarget] = useState<number>(initialState.scoreTarget);
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        light: '#53ff4d',
+        main: '#20b31b',
+        dark: '#255c23',
+        contrastText: '#fff',
+      }
+    },
+  });
 
   useEffect(() => {
     if(!playerCount) return;
@@ -137,7 +149,7 @@ function App() {
     setPlayers(players);
     setPlayerCount(players.length);
     setRounds([]);
-    setDealer(players[Math.floor(Math.random() * players.length - 0.001)]);
+    setDealer(players[Math.round(Math.random() * (players.length - 1))]);
     setScoreTarget(scoreTarget);
     setWinner(undefined);
   
@@ -201,32 +213,24 @@ function App() {
   }
 
   return (
-    <GlobalState.Provider value={value}>
-      <BrowserRouter>
-        <Switch>
-          {/* {globalState.playerCount ? (
-            <>
-              <Redirect exact from="/" to="/game" />
-              <Redirect exact from="/setup" to="/game" />
-            </>
-          ) : (
-            <>
-              <Redirect exact from="/" to="/setup" />
-              <Redirect exact from="/game" to="/setup" />
-            </>
-          )} */}
-          <Redirect exact from="/" to="/setup" />
-          <Route path="/setup">
-            <PlayersSetup />
-          </Route>
-          <Route path="/game">
-            {/* {globalState.playerCount ? <Game /> : <Redirect to="/setup" />} */}
-            <Game />
-          </Route>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <GlobalState.Provider value={value}>
+        <BrowserRouter>
+          <Switch>
 
-        </Switch>
-      </BrowserRouter>
-    </GlobalState.Provider>
+            <Redirect exact from="/" to="/setup" />
+            <Route path="/setup">
+              <PlayersSetup />
+            </Route>
+            <Route path="/game">
+              <Game />
+            </Route>
+
+          </Switch>
+        </BrowserRouter>
+      </GlobalState.Provider>
+    </ThemeProvider>
   );
 }
 

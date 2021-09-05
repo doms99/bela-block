@@ -49,7 +49,7 @@ const ScoreBoard: React.FC<Props> = ({ teams, scoreTarget, rounds, setEditIndex 
         {rounds.slice().reverse().map((round, index) => (
           <div
             style={selectedRound === rounds.length-1-index ?
-              {backgroundColor: 'lightgray', borderRadius: '5px'} : 
+              {backgroundColor: 'rgba(0, 0, 0, .1)', borderRadius: '5px'} : 
               rounds.length-1-index > selectedRound ? {color: 'lightgray'} : {}}
             key={index}
             className={grid}
