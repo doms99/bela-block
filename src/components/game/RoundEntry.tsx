@@ -31,15 +31,17 @@ const zeroBonuses = (teams: string[]) => {
   return result;
 }
 
+const bonusPoints = 90;
+
 const adjustPlayerPoints = (playerPoints: Round): [Round, Bonus] => {
   const bonuses = zeroBonuses(Object.keys(playerPoints));
   const newPlayerPoints: Round = {};
 
   for(const [team, round] of Object.entries(playerPoints)) {
     newPlayerPoints[team] = {...round};
-    if(round.points === 162) {
-      newPlayerPoints[team].declarations -= 80;
-      bonuses[team] = {value: 80, confirmed: true};
+    if(round.bonus) {
+      newPlayerPoints[team].declarations -= bonusPoints;
+      bonuses[team] = {value: bonusPoints, confirmed: true};
     }
   }
 
@@ -75,11 +77,17 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
   }, [values, calcPoints]);
 
   useEffect(() => {
+    if(Object.values(values).map((round) => round.points).reduce((sum, val) => sum += val, 0) === 0) {
+      setEdited(teams.map(_ => false));
+    }
+  }, [values, teams]);
+
+  useEffect(() => {
     if(!!fallen) return;
 
     for(const team of teams) {
       if(values[team].points === 162) {
-        setBonuses(curr => ({...curr, [team]: {value: 80, confirmed: playerCount === 3 ? true : false}}));
+        setBonuses(curr => ({...curr, [team]: {value: bonusPoints, confirmed: values[team].bonus ? true : playerCount === 3 ? true : false}}));
         continue;
       }
 
@@ -95,12 +103,22 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
       .map(([team, round]) => round.points + round.declarations + (bonuses[team].confirmed ? bonuses[team].value : 0))
       .reduce((sum, points) => sum += points, 0);
 
+    if(otherTeamsPoints === 0 && values[teamOnCall!].points !== 162) {
+      setPass(undefined);
+      return;
+    }
+
     if(otherTeamsPoints === 162) {
       setPass(false);
       return;
     }
 
-    if(edited.reduce((val, status) => status ? val : val+1, 0) !== 1) return;
+    if(values[teamOnCall!].points === 162) {
+      setPass(true);
+      return;
+    }
+
+    if(edited.reduce((val, status) => status ? val : val+1, 0) > 1) return;
 
     if(values[teamOnCall!].points + values[teamOnCall!].declarations + (bonuses[teamOnCall!].confirmed ? bonuses[teamOnCall!].value : 0) <= otherTeamsPoints) {
       setPass(false);
@@ -143,27 +161,31 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
     const uneditedPlayer = teams[edited.indexOf(false)];
 
     let uneditedPlayerPoints = 162 - teams.filter(name => name !== uneditedPlayer).reduce((val, name) => val += state[name].points, 0);
-    uneditedPlayerPoints += state[uneditedPlayer].declarations;
-    const rest = teams.filter(team => team !== uneditedPlayer);
-    const sumOfRest = rest.reduce((sum, name) => sum += state[name].points + state[name].declarations, 0);
+    let newState = {
+      ...state,
+      [uneditedPlayer]: {
+        ...state[uneditedPlayer],
+        points: Math.max(0, uneditedPlayerPoints)
+      }
+    };
 
-    if(uneditedPlayer === teamOnCall && sumOfRest >= uneditedPlayerPoints) {
+    const teamOnCallPoints = newState[teamOnCall!].points + newState[teamOnCall!].declarations + bonuses[teamOnCall!].value;
+    const sumOfRest = Object.entries(newState)
+                        .filter(([team]) => team !== teamOnCall)
+                        .map(([team, round]) => round.points + round.declarations + bonuses[team].value)
+                        .reduce((sum, val) => sum + val, 0);
+    
+    if(sumOfRest >= teamOnCallPoints) {
       return {
-        ...state,
-        [uneditedPlayer]: {
-          ...state[uneditedPlayer],
+        ...newState,
+        [teamOnCall!]: {
+          ...state[teamOnCall!],
           points: 0
         }
       }
     }
     
-    return {
-      ...state,
-      [uneditedPlayer]: {
-        ...state[uneditedPlayer],
-        points: Math.max(0, 162 - teams.filter(name => name !== uneditedPlayer).reduce((val, name) => val += state[name].points, 0))
-      }
-    }
+    return newState;
   }
 
   const updateState_4 = (state: Round) => {
@@ -193,9 +215,7 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
       updateState = updateState_2;
   }
 
-  const setPoints = (digit: number) => {
-    if(Math.floor(values[selected.player][selected.input]/100) !== 0) return;
-    
+  const updateEdited = () => {
     let passedEdited: boolean[] = edited;
     if(selected.input === 'points') {
       setEdited(curr => {
@@ -206,6 +226,14 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
         return newEdited;
       })
     }
+
+    return passedEdited;
+  }
+
+  const setValue = (digit: number) => {
+    if(Math.floor(values[selected.player][selected.input]/100) !== 0) return;
+    
+    const passedEdited = updateEdited();
 
     setFallen(undefined);
 
@@ -219,11 +247,13 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
       }
 
       return updateState(newState, passedEdited);
-    })
+    });
   }
 
   const clear = () => {
     if(values[selected.player][selected.input] !== 0) setFallen(undefined);
+
+    const passedEdited = updateEdited();
     
     setValues(curr => updateState({
       ...curr,
@@ -231,11 +261,13 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
         ...curr[selected.player],
         [selected.input]: 0
       }
-    }, edited))
+    }, passedEdited));
   }
 
   const backspace = () => {
     if(values[selected.player][selected.input] !== 0) setFallen(undefined);
+
+    const passedEdited = updateEdited();
 
     setValues(curr => updateState({
       ...curr,
@@ -243,7 +275,7 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
         ...curr[selected.player],
         [selected.input]: Math.floor(curr[selected.player][selected.input] / 10)
       }
-    }, edited))
+    }, passedEdited));
   }
 
   const end = () => {
@@ -262,6 +294,9 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
 
       if(bonuses[team].confirmed) {
         reportState[team].declarations += bonuses[team].value;
+        reportState[team].bonus = true;
+      } else {
+        reportState[team].bonus = false;
       }
     }
 
@@ -392,17 +427,17 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
           </div>
           <Typography style={{color: error ? 'red' : 'white'}}>{error ? error : 'i'}</Typography>
           <div className="grid num-pad">
-            <Button onClick={() => setPoints(1)}>1</Button>
-            <Button onClick={() => setPoints(2)}>2</Button>
-            <Button onClick={() => setPoints(3)}>3</Button>
-            <Button onClick={() => setPoints(4)}>4</Button>
-            <Button onClick={() => setPoints(5)}>5</Button>
-            <Button onClick={() => setPoints(6)}>6</Button>
-            <Button onClick={() => setPoints(7)}>7</Button>
-            <Button onClick={() => setPoints(8)}>8</Button>
-            <Button onClick={() => setPoints(9)}>9</Button>
+            <Button onClick={() => setValue(1)}>1</Button>
+            <Button onClick={() => setValue(2)}>2</Button>
+            <Button onClick={() => setValue(3)}>3</Button>
+            <Button onClick={() => setValue(4)}>4</Button>
+            <Button onClick={() => setValue(5)}>5</Button>
+            <Button onClick={() => setValue(6)}>6</Button>
+            <Button onClick={() => setValue(7)}>7</Button>
+            <Button onClick={() => setValue(8)}>8</Button>
+            <Button onClick={() => setValue(9)}>9</Button>
             <Button onClick={backspace}><KeyboardBackspaceIcon/></Button>
-            <Button onClick={() => setPoints(0)}>0</Button>
+            <Button onClick={() => setValue(0)}>0</Button>
             <Button onClick={clear}>clear</Button>
           </div>
         </CardContent>

@@ -12,7 +12,8 @@ import LocalStorageKey from './constants';
 export interface Round {
   [key: string] : {
     points: number,
-    declarations: number
+    declarations: number,
+    bonus: boolean
   }
 };
 
@@ -82,11 +83,18 @@ function App() {
       score[name] += round[name].points + round[name].declarations;
     }))
 
-    for(const [player, points] of Object.entries(score)) {
-      if(points > scoreTarget) {
-        setWinner(player);
-        return;
+    let max = -1;
+    let maxPlayer: string;
+
+    for(let [player, points] of Object.entries(score)) {
+      if(points > scoreTarget && points > max) {
+        max = points;
+        maxPlayer = player;
       }
+    }
+
+    if(max > -1) {
+      setWinner(maxPlayer!);
     }
     
   }, [scoreTarget, playerCount, players, rounds, teams]);
