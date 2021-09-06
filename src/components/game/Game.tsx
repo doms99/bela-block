@@ -93,7 +93,7 @@ const Game: React.FC = () => {
       </Button>
       <Button
         onClick={() => setResetRequest(true)}
-        style={{marginTop: '0.2em'}}
+        style={{marginTop: '0.5em'}}
         fullWidth
         size="small"
       >
