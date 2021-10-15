@@ -1,11 +1,12 @@
 import React from 'react';
+import { Sugestion } from '../../interfaces';
 
 export interface Props {
   points: number,
   declarations: number,
   selected: 'points' | 'declarations' | undefined,
   setSelected: (value: 'points' | 'declarations') => void,
-  sugestion?: {text: string, callback: () => void}
+  sugestion?: Sugestion
 }
 
 const EnteredPoints: React.FC<Props> = ({ points, declarations, selected, setSelected, sugestion }) => {

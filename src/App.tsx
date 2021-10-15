@@ -8,45 +8,9 @@ import {
 } from "react-router-dom"; 
 import { createContext, useEffect, useState } from "react";
 import { LocalStorageKey } from './constants';
+import { GameState, StateFunctions, TeamType, Round } from "./interfaces";
 
-export interface Round {
-  [key: string] : {
-    points: number,
-    declarations: number,
-    bonus: boolean
-  }
-};
-
-export interface TeamType {
-  name: string,
-  players: [string, string]
-}
-
-export interface State {
-  players: string[],
-  playerCount: number | undefined,
-  teams: [TeamType, TeamType] | undefined,
-  rounds: Round[],
-  dealer: string | undefined,
-  winner: string | undefined,
-  scoreTarget: number,
-  started: boolean
-}
-
-export type StateProperties = 'players' | 'playerCount' | 'teams' | 'points';
-
-export interface StateFunctions {
-  getState: () => State,
-  startGame: (players: string[], scoreTarget: number) => void,
-  restart: () => void,
-  reset: () => void,
-  editDealer: (player: string) => void,
-  enterRound: (round: Round) => void,
-  editRound: (round: Round, index: number) => void,
-  deleteRound: (index: number) => void
-}
-
-const initialState: State = {
+const initialState: GameState = {
   players: [],
   playerCount: undefined,
   teams: undefined,
@@ -107,7 +71,7 @@ function App() {
     const loadedState = localStorage.getItem(LocalStorageKey)
 
     if(!loadedState) return;
-    const state = JSON.parse(loadedState) as State;
+    const state = JSON.parse(loadedState) as GameState;
 
     if(state.players && 
        state.playerCount &&
@@ -132,7 +96,7 @@ function App() {
     localStorage.setItem(LocalStorageKey, JSON.stringify({players, playerCount, teams, rounds, dealer, winner, scoreTarget, started}));
   }, [players, playerCount, teams, rounds, dealer, winner, scoreTarget, started]);
 
-  const getState = (): State => {
+  const getState = (): GameState => {
     return {players, playerCount, teams, rounds, dealer, winner, scoreTarget, started};
   }
   
