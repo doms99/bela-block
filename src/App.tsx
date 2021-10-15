@@ -7,9 +7,7 @@ import {
   Redirect
 } from "react-router-dom"; 
 import { createContext, useEffect, useState } from "react";
-import LocalStorageKey from './constants';
-import { createTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
-import AppBar from "./components/AppBar";
+import { LocalStorageKey } from './constants';
 
 export interface Round {
   [key: string] : {
@@ -44,7 +42,8 @@ export interface StateFunctions {
   reset: () => void,
   editDealer: (player: string) => void,
   enterRound: (round: Round) => void,
-  editRound: (round: Round, index: number) => void
+  editRound: (round: Round, index: number) => void,
+  deleteRound: (index: number) => void
 }
 
 const initialState: State = {
@@ -69,17 +68,6 @@ function App() {
   const [winner, setWinner] = useState<string | undefined>(initialState.winner);
   const [scoreTarget, setScoreTarget] = useState<number>(initialState.scoreTarget);
   const [started, setStarted] = useState<boolean>(initialState.started);
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        light: '#53ff4d',
-        main: '#20b31b',
-        dark: '#255c23',
-        contrastText: '#fff',
-      }
-    },
-  });
 
   useEffect(() => {
     if(!playerCount) return;
@@ -209,6 +197,17 @@ function App() {
     });
   }
 
+  const deleteRound = (index: number) => {
+    if(index < 0 || index > rounds.length-1) return;
+
+    setRounds(curr => {
+      const newRounds = [...curr];
+      newRounds.splice(index, 1);
+
+      return newRounds;
+    });
+  }
+
   const value = {
     getState,
     startGame,
@@ -216,29 +215,26 @@ function App() {
     reset,
     editDealer,
     enterRound,
-    editRound
+    editRound,
+    deleteRound
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <GlobalState.Provider value={value}>
-        <BrowserRouter>
-          <AppBar />
-          <Switch>
-            <Redirect exact from="/" to="/setup" />
+    <GlobalState.Provider value={value}>
+      <BrowserRouter>
+        <Switch>
+          <Redirect exact from="/" to="/setup" />
 
-            <Route path="/setup">
-              <PlayersSetup />
-            </Route>
-            <Route path="/game">
-              <Game />
-            </Route>
+          <Route path="/setup">
+            <PlayersSetup />
+          </Route>
+          <Route path="/game">
+            <Game />
+          </Route>
 
-          </Switch>
-        </BrowserRouter>
-      </GlobalState.Provider>
-    </ThemeProvider>
+        </Switch>
+      </BrowserRouter>
+    </GlobalState.Provider>
   );
 }
 

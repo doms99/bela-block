@@ -1,4 +1,3 @@
-import { Button, Card, CardActions, CardContent, Typography } from '@material-ui/core';
 import React from 'react';
 
 export interface Props {
@@ -10,15 +9,15 @@ export interface Props {
 const Winner: React.FC<Props> = ({ winner, rematch, newGame }) => {
   return (
     <div className="before">
-      <Card className="absolute-card">
-        <CardContent>
-          <Typography><b>{winner}</b> won this match</Typography>
-        </CardContent>
-        <CardActions style={{justifyContent: 'space-around'}}>
-          <Button onClick={rematch} variant="contained" color="primary">Rematch</Button>
-          <Button onClick={newGame} variant="contained" color="secondary">New game</Button>
-        </CardActions>
-      </Card>
+      <section className="absolute-card">
+        <div>
+          <span><b>{winner}</b> won this match</span>
+        </div>
+        <div style={{justifyContent: 'space-around'}}>
+          <button onClick={rematch}>Rematch</button>
+          <button onClick={newGame}>New game</button>
+        </div>
+      </section>
     </div>
   );
 };

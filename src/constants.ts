@@ -1,3 +1,3 @@
-const LocalStorageKey = 'bela-block-game-state';
+export const LocalStorageKey = 'bela-block-game-state';
 
-export default LocalStorageKey;
+export const bonusPoints = 90;

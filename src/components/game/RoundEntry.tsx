@@ -1,7 +1,9 @@
-import { Button, Card, CardActions, CardContent, Divider, Paper, Typography } from "@material-ui/core";
-import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import { useCallback, useEffect, useState } from "react";
 import { Round } from "../../App";
+import BackspaceIcon from "../icons/BackspaceIcon";
+import CancelIcon from "../icons/CancelIcon";
+import ConfirmIcon from "../icons/ConfirmIcon";
+import EnteredPoints from "./EnteredPoints";
 
 interface Bonus {
   [key: string]: {
@@ -31,8 +33,6 @@ const zeroBonuses = (teams: string[]) => {
   return result;
 }
 
-const bonusPoints = 90;
-
 const adjustPlayerPoints = (playerPoints: Round): [Round, Bonus] => {
   const bonuses = zeroBonuses(Object.keys(playerPoints));
   const newPlayerPoints: Round = {};
@@ -48,13 +48,13 @@ const adjustPlayerPoints = (playerPoints: Round): [Round, Bonus] => {
   return [newPlayerPoints, bonuses];
 } 
 
-const pointOnCallStyle = {border: '2px solid'}
+const bonusPoints = 90;
 
 const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCount, pointsReport, cancel }) => {
   const [playerPointsAdjusted, bonusesCalculated] = playerPoints ? adjustPlayerPoints(playerPoints) : [zeroValues(teams), zeroBonuses(teams)];
   
   const [values, setValues] = useState<Round>(playerPointsAdjusted);
-  const [selected, setSelected] = useState<{player: string, input: 'points' | 'declarations'}>({player: teams[0], input: 'points'});
+  const [selected, setSelected] = useState<{team: string, input: 'points' | 'declarations'}>({team: teams[0], input: 'points'});
   const [error, setError] = useState<string | undefined>();
   const [pass, setPass] = useState<boolean | undefined>(undefined);
   const [edited, setEdited] = useState<boolean[]>(teams.map(team => !playerPoints || team === teamOnCall ? false : true));
@@ -192,13 +192,13 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
     if(playerCount === 2) return state;
     if(selected.input === 'declarations') return state;
 
-    const otherPlayers = teams.filter(name => name !== selected.player);
+    const otherPlayers = teams.filter(name => name !== selected.team);
 
     return {
       ...state,
       [otherPlayers[0]]: {
         ...state[otherPlayers[0]],
-        points: Math.max(162 - state[selected.player].points, 0)
+        points: Math.max(162 - state[selected.team].points, 0)
       }
     };
   }
@@ -220,7 +220,7 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
     if(selected.input === 'points') {
       setEdited(curr => {
         const newEdited = [...curr];
-        newEdited[teams.indexOf(selected.player)] = true;
+        newEdited[teams.indexOf(selected.team)] = true;
   
         passedEdited = newEdited;
         return newEdited;
@@ -231,7 +231,7 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
   }
 
   const setValue = (digit: number) => {
-    if(Math.floor(values[selected.player][selected.input]/100) !== 0) return;
+    if(Math.floor(values[selected.team][selected.input]/100) !== 0) return;
     
     const passedEdited = updateEdited();
 
@@ -240,9 +240,9 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
     setValues(curr => {
       const newState = {
         ...curr,
-        [selected.player]: {
-          ...curr[selected.player],
-          [selected.input]: curr[selected.player][selected.input]*10 + digit
+        [selected.team]: {
+          ...curr[selected.team],
+          [selected.input]: curr[selected.team][selected.input]*10 + digit
         }
       }
 
@@ -251,29 +251,29 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
   }
 
   const clear = () => {
-    if(values[selected.player][selected.input] !== 0) setFallen(undefined);
+    if(values[selected.team][selected.input] !== 0) setFallen(undefined);
 
     const passedEdited = updateEdited();
     
     setValues(curr => updateState({
       ...curr,
-      [selected.player]: {
-        ...curr[selected.player],
+      [selected.team]: {
+        ...curr[selected.team],
         [selected.input]: 0
       }
     }, passedEdited));
   }
 
   const backspace = () => {
-    if(values[selected.player][selected.input] !== 0) setFallen(undefined);
+    if(values[selected.team][selected.input] !== 0) setFallen(undefined);
 
     const passedEdited = updateEdited();
 
     setValues(curr => updateState({
       ...curr,
-      [selected.player]: {
-        ...curr[selected.player],
-        [selected.input]: Math.floor(curr[selected.player][selected.input] / 10)
+      [selected.team]: {
+        ...curr[selected.team],
+        [selected.input]: Math.floor(curr[selected.team][selected.input] / 10)
       }
     }, passedEdited));
   }
@@ -319,134 +319,201 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
     })
   }
 
-  const borderColor = pass === undefined ? 'gray' : pass ? 'green' : 'red';
-  const status = pass === undefined ? 'call' : pass ? 'pass' : 'fail';
-  const grid = teams.length === 3 ? "points-grid-3" : "points-grid-2";
-
   return (
-    <div className="before">
-      <Card className="absolute-card">
-        <CardContent>
-          <div className={grid}>
-            {teams.map(name => <Typography key={name}>{name}</Typography>)}
-          </div>
-          <div className="horizontal" style={{marginBottom: '0.5em'}}>
-            {teams.map((team, index) => 
-              <Paper
-                className="points-enter"
-                key={team}
-                elevation={team === selected.player ? 4 : 1}
-                style={team === teamOnCall ? 
-                  {...pointOnCallStyle,
-                    position: 'relative',
-                    borderColor
-                  } : fallen === team ? 
-                    {position: 'relative', ...pointOnCallStyle, borderColor: 'red'} : 
-                    {position: 'relative'}
-                }
-              >
-                {(teamOnCall === team || fallen === team) && (
-                  <div style={{borderRadius: '0 5px', position: 'absolute', right: -1, top: -1, padding: '4px 8px', color: 'white', backgroundColor: playerCount === 3 ? borderColor : 'red'}}>
-                    <Typography style={{fontSize: '0.8em'}}>{playerCount ===3 ? status : 'fail'}</Typography>
-                  </div>
-                )}
-                {!!bonuses[team].value && (
-                  <Paper
-                    elevation={2}
-                    style={{cursor: 'pointer',color: bonuses[team].confirmed ? 'inherit' : 'lightgray', position: 'absolute', right: '-0.5em', top: '50%', transform: 'translateY(-50%)', padding: '4px 6px'}}
-                    onClick={() => setBonuses(curr => ({...curr, [team]: {...curr[team], confirmed: !curr[team].confirmed}}))}
-                  >
-                    <Typography>+{bonuses[team].value}</Typography>
-                    <Typography style={{fontSize: '0.6em', marginTop: '-0.8em'}}>bonus</Typography>
-                  </Paper>
-                )}
-                {fallSuggestion[index] && (
-                  <Paper
-                    elevation={2}
-                    style={{cursor: 'pointer', position: 'absolute', right: '-0.5em', top: '50%', transform: 'translateY(-50%)', padding: '4px 6px'}}
-                    onClick={() => fall(team)}
-                  >
-                    <Typography>fall?</Typography>
-                  </Paper>
-                )}
-                <div style={{
-                  color: selected.player === team && selected.input === 'points' ? 'black' : 'inherit'}}
-                  onClick={() => setSelected({player: team,  input: 'points'})}
-                >
-                  <Typography
-                    style={{
-                      textAlign: 'left',
-                      color: selected.player === team && selected.input === 'points' ? 'black' : 'gray',
-                      fontSize: '0.8em'
-                    }}
-                  >
-                    Points
-                  </Typography>
-                  <Typography
-                    style={{
-                      fontSize: '1.2em',
-                      color: selected.player === team && selected.input === 'points' ? 'black' : 'gray',
-                      marginBottom: '4px'
-                    }}
-                  >
-                    {values[team].points}
-                  </Typography>
-                </div>
-                <div className="horizontal">
-                  <Divider style={{flexGrow: 1, marginRight: '0.4em'}} />
-                  <Typography style={{fontSize: '0.8em'}}>
-                    {team === teamOnCall && pass === false ? 0 :
-                      values[team].points+values[team].declarations+(bonuses[team].confirmed ? bonuses[team].value : 0)}
-                  </Typography>
-                  <Divider style={{flexGrow: 1, marginLeft: '0.4em'}}/>
-                </div>
-                <div
-                  onClick={() => setSelected({player: team,  input: 'declarations'})}
-                >
-                  <Typography
-                    style={{
-                      fontSize: '1.2em',
-                      color: selected.player === team && selected.input === 'declarations' ? 'black' : 'gray',
-                      marginTop: '4px'
-                    }}
-                  >
-                    {values[team].declarations}
-                  </Typography>
-                  <Typography
-                    style={{
-                      textAlign: 'left',
-                      color: selected.player === team && selected.input === 'declarations' ? 'black' : 'gray',
-                      fontSize: '0.8em'
-                    }}
-                  >
-                    Declarations
-                  </Typography>
-                </div>
-              </Paper>
-            )}
-          </div>
-          <Typography style={{color: error ? 'red' : 'white'}}>{error ? error : 'i'}</Typography>
-          <div className="grid num-pad">
-            <Button onClick={() => setValue(1)}>1</Button>
-            <Button onClick={() => setValue(2)}>2</Button>
-            <Button onClick={() => setValue(3)}>3</Button>
-            <Button onClick={() => setValue(4)}>4</Button>
-            <Button onClick={() => setValue(5)}>5</Button>
-            <Button onClick={() => setValue(6)}>6</Button>
-            <Button onClick={() => setValue(7)}>7</Button>
-            <Button onClick={() => setValue(8)}>8</Button>
-            <Button onClick={() => setValue(9)}>9</Button>
-            <Button onClick={backspace}><KeyboardBackspaceIcon/></Button>
-            <Button onClick={() => setValue(0)}>0</Button>
-            <Button onClick={clear}>clear</Button>
-          </div>
-        </CardContent>
-        <CardActions className="horizontal">
-          <Button fullWidth onClick={cancel} variant="contained" color="secondary">Cancel</Button>
-          <Button fullWidth disabled={!!error || Object.values(values).reduce((acc, value) => acc+value.points, 0) === 0} onClick={end} variant="contained" color="primary">Save</Button>
-        </CardActions>
-      </Card>
+    <div className="green-backdrop">
+      <section className={`grid grid-cols-${teams.length} ml-10 mr-10`}>
+        {teams.map((team, index) => (
+          <EnteredPoints
+            sugestion={
+              fallSuggestion[index] ? {text: "fall?", callback: () => fall(team)} : 
+              !!bonuses[team].value ? {text: `+${bonusPoints} points`, callback: () => setBonuses(curr => ({...curr, [team]: {...curr[team], confirmed: !curr[team].confirmed}}))} :
+              undefined
+            }
+            points={values[team].points}
+            declarations={values[team].declarations}
+            selected={selected.team === team ? selected.input : undefined}
+            setSelected={(input: 'points' | 'declarations') => setSelected({team, input})}
+          />
+        ))}
+      </section>
+      <div className="h-8 w-full text-center">
+          { error && <span className="text-lg font-bold">{error}</span> }
+      </div>
+      <section className="text-center bg-white text-black pt-4 ml-16 pb-10 h-50vh rounded-b-ellipse rounded-t-5xl mr-16">
+        <div className="grid grid-cols-3 text-3xl h-full" >
+          {Array.from(Array(9).keys()).map(num => (
+            <button 
+              className="no-bg-btn"
+              onClick={() => setValue(num+1)}
+            >
+              {num+1}
+            </button>
+          ))}
+          
+          <button 
+            className="no-bg-btn text-black hover:text-gray-500"
+            onClick={backspace}
+          >
+            <BackspaceIcon className="w-6 m-auto" />
+          </button>
+          <button 
+            className="no-bg-btn"
+            onClick={() => setValue(0)}
+          >
+            {0}
+          </button>
+          <button 
+            className="no-bg-btn text-black hover:text-gray-500"
+            onClick={clear}
+          >
+            <CancelIcon className="w-6 m-auto" />
+          </button>
+
+        </div>
+      </section>
+      <div className="w-full -mt-10 h-24 flex justify-between">
+        <div className="ml-28 w-24 h-24">
+          <button
+            className="outlined-bnt text-error hover:text-error-active"
+            onClick={cancel}
+          >
+            <CancelIcon className="w-2/4 m-auto" />
+          </button>
+        </div>
+        <div className="mr-28 w-24 h-24">
+          <button 
+            className="outlined-bnt text-primary hover:text-primary-active"
+            disabled={!!error || !edited.some(v => v)}
+            onClick={end}
+          >
+            <ConfirmIcon className="w-4/6 m-auto"/>
+          </button>
+        </div>
+      </div>
     </div>
+    // <div className="before">
+    //   <section className="absolute-card">
+    //     <div>
+    //       <div className={grid}>
+    //         {teams.map(name => <span key={name}>{name}</span>)}
+    //       </div>
+    //       <div className="horizontal" style={{marginBottom: '0.5em'}}>
+    //         {teams.map((team, index) => 
+    //           <div
+    //             className="points-enter"
+    //             key={team}
+    //             // elevation={team === selected.player ? 4 : 1}
+    //             style={team === teamOnCall ? 
+    //               {...pointOnCallStyle,
+    //                 position: 'relative',
+    //                 borderColor
+    //               } : fallen === team ? 
+    //                 {position: 'relative', ...pointOnCallStyle, borderColor: 'red'} : 
+    //                 {position: 'relative'}
+    //             }
+    //           >
+    //             {(teamOnCall === team || fallen === team) && (
+    //               <div style={{borderRadius: '0 5px', position: 'absolute', right: -1, top: -1, padding: '4px 8px', color: 'white', backgroundColor: playerCount === 3 ? borderColor : 'red'}}>
+    //                 <span style={{fontSize: '0.8em'}}>{playerCount ===3 ? status : 'fail'}</span>
+    //               </div>
+    //             )}
+    //             {!!bonuses[team].value && (
+    //               <div
+    //                 // elevation={2}
+    //                 style={{cursor: 'pointer',color: bonuses[team].confirmed ? 'inherit' : 'lightgray', position: 'absolute', right: '-0.5em', top: '50%', transform: 'translateY(-50%)', padding: '4px 6px'}}
+    //                 onClick={() => setBonuses(curr => ({...curr, [team]: {...curr[team], confirmed: !curr[team].confirmed}}))}
+    //               >
+    //                 <span>+{bonuses[team].value}</span>
+    //                 <span style={{fontSize: '0.6em', marginTop: '-0.8em'}}>bonus</span>
+    //               </div>
+    //             )}
+    //             {fallSuggestion[index] && (
+    //               <div
+    //                 // elevation={2}
+    //                 style={{cursor: 'pointer', position: 'absolute', right: '-0.5em', top: '50%', transform: 'translateY(-50%)', padding: '4px 6px'}}
+    //                 onClick={() => fall(team)}
+    //               >
+    //                 <span>fall?</span>
+    //               </div>
+    //             )}
+    //             <div style={{
+    //               color: selected.player === team && selected.input === 'points' ? 'black' : 'inherit'}}
+    //               onClick={() => setSelected({player: team,  input: 'points'})}
+    //             >
+    //               <span
+    //                 style={{
+    //                   textAlign: 'left',
+    //                   color: selected.player === team && selected.input === 'points' ? 'black' : 'gray',
+    //                   fontSize: '0.8em'
+    //                 }}
+    //               >
+    //                 Points
+    //               </span>
+    //               <span
+    //                 style={{
+    //                   fontSize: '1.2em',
+    //                   color: selected.player === team && selected.input === 'points' ? 'black' : 'gray',
+    //                   marginBottom: '4px'
+    //                 }}
+    //               >
+    //                 {values[team].points}
+    //               </span>
+    //             </div>
+    //             <div className="horizontal">
+    //               <hr style={{flexGrow: 1, marginRight: '0.4em'}} />
+    //               <span style={{fontSize: '0.8em'}}>
+    //                 {team === teamOnCall && pass === false ? 0 :
+    //                   values[team].points+values[team].declarations+(bonuses[team].confirmed ? bonuses[team].value : 0)}
+    //               </span>
+    //               <hr style={{flexGrow: 1, marginLeft: '0.4em'}}/>
+    //             </div>
+    //             <div
+    //               onClick={() => setSelected({player: team,  input: 'declarations'})}
+    //             >
+    //               <span
+    //                 style={{
+    //                   fontSize: '1.2em',
+    //                   color: selected.player === team && selected.input === 'declarations' ? 'black' : 'gray',
+    //                   marginTop: '4px'
+    //                 }}
+    //               >
+    //                 {values[team].declarations}
+    //               </span>
+    //               <span
+    //                 style={{
+    //                   textAlign: 'left',
+    //                   color: selected.player === team && selected.input === 'declarations' ? 'black' : 'gray',
+    //                   fontSize: '0.8em'
+    //                 }}
+    //               >
+    //                 Declarations
+    //               </span>
+    //             </div>
+    //           </div>
+    //         )}
+    //       </div>
+    //       <span style={{color: error ? 'red' : 'white'}}>{error ? error : 'i'}</span>
+    //       <div className="grid num-pad">
+    //         <button onClick={() => setValue(1)}>1</button>
+    //         <button onClick={() => setValue(2)}>2</button>
+    //         <button onClick={() => setValue(3)}>3</button>
+    //         <button onClick={() => setValue(4)}>4</button>
+    //         <button onClick={() => setValue(5)}>5</button>
+    //         <button onClick={() => setValue(6)}>6</button>
+    //         <button onClick={() => setValue(7)}>7</button>
+    //         <button onClick={() => setValue(8)}>8</button>
+    //         <button onClick={() => setValue(9)}>9</button>
+    //         <button onClick={backspace}>b</button>
+    //         <button onClick={() => setValue(0)}>0</button>
+    //         <button onClick={clear}>clear</button>
+    //       </div>
+    //     </div>
+    //     <div className="horizontal">
+    //       <button onClick={cancel} color="secondary">Cancel</button>
+    //       <button disabled={!!error || Object.values(values).reduce((acc, value) => acc+value.points, 0) === 0} onClick={end} >Save</button>
+    //     </div>
+    //   </section>
+    // </div>
   );
 };
 

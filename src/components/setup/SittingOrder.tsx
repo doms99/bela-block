@@ -1,6 +1,4 @@
 import React, { ChangeEvent, useState } from 'react';
-import PersonIcon from '@material-ui/icons/Person';
-import { Button, TextField, Typography } from '@material-ui/core';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DraggingStyle, Droppable, DropResult, NotDraggingStyle } from 'react-beautiful-dnd';
 
 export interface Props {
@@ -100,7 +98,6 @@ const SittingOrder: React.FC<Props> = ({ playerCount, nameReport}) => {
                       className="draggable"
                       style={getStyle(provided.draggableProps.style, snapshot)}
                     >
-                      <PersonIcon style={{marginTop: '0.5em', color: players[i].color}} />
                       <form
                         onSubmit={(e) => {
                           e.preventDefault();
@@ -110,10 +107,11 @@ const SittingOrder: React.FC<Props> = ({ playerCount, nameReport}) => {
                         noValidate
                         autoComplete="off"
                       >
-                        <TextField
+                        <input
+                          type="text"
                           id="outlined-basic"
-                          label={`Player ${i+1}`}
-                          variant="outlined"
+                          // label={`Player ${i+1}`}
+                          // variant="outlined"
                           value={players[i].name}
                           onChange={(e) => handleChange(e, i)}
                         />
@@ -127,16 +125,14 @@ const SittingOrder: React.FC<Props> = ({ playerCount, nameReport}) => {
           </Droppable>
         ))}
       </div>
-      <Button
-        variant="contained"
-        color="primary"
+      <button
         style={{width: '100px'}}
         onClick={submit}
       >
         Start
-      </Button>
+      </button>
       {error && (
-        <Typography color="error" style={{marginTop: '0.5em'}}>{error}</Typography>
+        <span color="error" style={{marginTop: '0.5em'}}>{error}</span>
       )}
     </DragDropContext>
   );

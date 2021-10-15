@@ -1,7 +1,7 @@
-import { Card, CardContent, Divider, IconButton, Typography } from '@material-ui/core';
-import RestoreIcon from '@material-ui/icons/Restore';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Round } from '../../App';
+import '../../styles/Game.css';
+import TotalPoints from './TotalPoints';
 
 export const sumOfPoints = (points: number[], declarations: number[]) => {
   return points.reduce((acc, curr) => acc + curr, 0) + declarations.reduce((acc, curr) => acc + curr, 0);
@@ -29,22 +29,14 @@ const ScoreBoard: React.FC<Props> = ({ teams, scoreTarget, rounds, setEditIndex 
   const grid = teams.length === 3 ? "points-grid-3" : "points-grid-2";
 
   return (
-    <Card style={{height: '50vh'}}>
-      <CardContent className="vertical max-height">
+    <section className="h-50vh overflow-x-hidden">
+      <div>
         <div className={grid}>
           {teams.map((name) => (
-            <div key={name}>
-              <Typography variant="subtitle1">{name}</Typography>
-              <Typography variant="h3">
-                {scores[name]}
-              </Typography>
-              <Typography style={{color: 'gray'}} variant="body2">
-                {Math.max(0, scoreTarget - scores[name])}
-              </Typography>
-            </div>
+            <TotalPoints key={name} points={scores[name]} scoreTarget={scoreTarget} />
           ))}
         </div>
-        <Divider style={{marginBottom: '0.5em'}}/>
+        <hr style={{marginBottom: '0.5em'}}/>
         <div style={{position: 'relative'}} className="width-100 overflow">
         {rounds.slice().reverse().map((round, index) => (
           <div
@@ -61,12 +53,11 @@ const ScoreBoard: React.FC<Props> = ({ teams, scoreTarget, rounds, setEditIndex 
                 key={team}
                 onClick={() => setEditIndex(rounds.length-1-index)}
               >
-                <Typography variant="subtitle1">
+                <span>
                   {round[team].points}
-                </Typography>
+                </span>
                 {round[team].declarations !== 0 && (
-                  <Typography 
-                    color="primary"
+                  <span 
                     style={{
                       fontSize: '0.8em',
                       position: 'absolute',
@@ -74,22 +65,21 @@ const ScoreBoard: React.FC<Props> = ({ teams, scoreTarget, rounds, setEditIndex 
                     }}
                   >
                     +{round[team].declarations}
-                  </Typography>
+                  </span>
                 )}
               </div>
             ))}
-            <IconButton
-              size="small"
+            <button
               style={{position: 'absolute', right: 0}}
               onClick={() => setSelectedRound(rounds.length-1-index)}
             >
-              <RestoreIcon fontSize="small" />
-            </IconButton>
+              b
+            </button>
           </div>
         ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 };
 
