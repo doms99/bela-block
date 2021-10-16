@@ -304,7 +304,7 @@ const RoundEntryControler: React.FC<Props> = ({ teams, teamOnCall, playerPoints,
           }
         ), {})
       }
-      canSaveRound={!!error || !edited.some(v => v)}
+      canSaveRound={!!!error && edited.some(v => v)}
       selected={selected}
       setSelected={(team: string, input: Input) => setSelected({team, input})}
       cancel={cancel}

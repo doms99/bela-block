@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Round } from '../../App';
+import { Round } from '../../interfaces';
 import TeamRoundPoints from './TeamRoundPoints';
 
 export interface Props {

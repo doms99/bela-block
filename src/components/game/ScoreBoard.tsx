@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Round } from '../../App';
+import { Round } from '../../interfaces';
 import '../../styles/Game.css';
 import TotalPoints from './TotalPoints';
 

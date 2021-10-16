@@ -1,7 +1,8 @@
 import RoundEntry from './RoundEntry';
 import { useContext, useEffect, useState } from 'react';
 import ScoreBoard from './ScoreBoard';
-import { GlobalState, Round } from '../../App';
+import { GlobalState } from '../../App';
+import { Round } from "../../interfaces";
 import Winner from './Winner';
 import { useHistory } from 'react-router';
 import TotalPoints from './TotalPoints';
@@ -9,6 +10,7 @@ import EditIcon from '../icons/EditIcon';
 import AddIcon from '../icons/AddIcon';
 import RoundPoints from './RoundPoints';
 import CancelIcon from '../icons/CancelIcon';
+import RoundEntryControler from './controlers/RoundEntryControler';
 
 const Game: React.FC = () => {
   const { getState, editDealer, editRound, enterRound, restart, deleteRound } = useContext(GlobalState);
@@ -98,7 +100,7 @@ const Game: React.FC = () => {
           </section>
         </div>
         ) : (
-          <RoundEntry
+          <RoundEntryControler
             teamOnCall={teamOnCall!}
             teams={teamNames}
             playerCount={playerCount!}
