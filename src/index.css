@@ -11,6 +11,10 @@
     @apply rounded-full z-50 w-full h-full border-primary border-bold active:border-extra font-bold bg-white;
   }
 
+  .outlined-bnt-flipped {
+    @apply rounded-full z-50 w-full h-full border-white border-bold active:border-extra font-bold bg-primary;
+  }
+
   .green-backdrop {
     @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-8 pb-5;
   }
@@ -24,7 +28,7 @@
   }
 
   .content-box {
-    @apply text-center bg-white text-black pt-4 ml-16 pb-10 rounded-b-ellipse rounded-t-5xl mr-16;
+    @apply text-center bg-white text-black pt-4 ml-16 mr-16 pb-10 rounded-b-ellipse rounded-t-5xl;
   }
 }
 

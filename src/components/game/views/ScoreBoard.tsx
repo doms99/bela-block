@@ -44,7 +44,7 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
         })}
       </section>
       <div className="w-full -mt-10 h-24 flex justify-between">
-        <div />
+        <div className="placeholder" />
         <div className="mr-28 w-24 h-24">
           <button
             className="outlined-bnt text-primary hover:text-primary-active"
