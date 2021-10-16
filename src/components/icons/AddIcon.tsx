@@ -1,7 +1,7 @@
 import * as React from "react";
-import IconProps from "./iconInterface";
+import IconProps from "../../iconInterface";
 
-function AddIcon({className}: IconProps) {
+function AddIcon({ className }: IconProps) {
 
   return (
     <svg viewBox="0 0 95.02 95.02" className={className}>

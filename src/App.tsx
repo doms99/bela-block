@@ -1,4 +1,4 @@
-import Game from "./components/game/Game";
+import Game from "./components/game/controllers/Game";
 import PlayersSetup from "./components/setup/PlayersSetup";
 import {
   BrowserRouter,

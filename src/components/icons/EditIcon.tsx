@@ -1,5 +1,5 @@
 import * as React from "react";
-import IconProps from "./iconInterface";
+import IconProps from "../../iconInterface";
 
 function EditIcon({className}: IconProps) {
   return (

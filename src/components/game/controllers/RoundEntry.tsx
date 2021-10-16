@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { bonusPoints } from '../../../constants';
 import { Bonus, Input, Round, SelectedInput } from "../../../interfaces";
 import { adjustBonusesAndDeclarations, zeroRoundValues } from '../../../utils';
-import RoundEntry from '../RoundEntry';
+import RoundEntryView from '../views/RoundEntryView';
 
 export interface Props {
   teams: string[],
@@ -14,7 +14,7 @@ export interface Props {
   teamOnCall?: string
 }
 
-const RoundEntryControler: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCount, pointsReport, cancel }) => {
+const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCount, pointsReport, cancel }) => {
   const [playerPointsAdjusted, bonusesCalculated] = playerPoints ? adjustBonusesAndDeclarations(playerPoints) : zeroRoundValues(teams);
   
   const [values, setValues] = useState<Round>(playerPointsAdjusted);
@@ -284,7 +284,7 @@ const RoundEntryControler: React.FC<Props> = ({ teams, teamOnCall, playerPoints,
   }
 
   return (
-    <RoundEntry 
+    <RoundEntryView 
       teams={teams}
       round={values}
       error={error}
@@ -316,4 +316,4 @@ const RoundEntryControler: React.FC<Props> = ({ teams, teamOnCall, playerPoints,
   );
 };
 
-export default RoundEntryControler;
+export default RoundEntry;

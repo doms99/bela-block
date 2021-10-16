@@ -45,3 +45,7 @@ export interface SelectedInput {
   team: string, 
   input: Input
 }
+export interface RoundActions {
+  name: string, 
+  action: (index: number) => void
+}

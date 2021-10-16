@@ -1,8 +1,8 @@
-import { Round } from "../../interfaces";
-import { Input, SelectedInput, Sugestion } from "../../interfaces";
-import BackspaceIcon from "../icons/BackspaceIcon";
-import CancelIcon from "../icons/CancelIcon";
-import ConfirmIcon from "../icons/ConfirmIcon";
+import { Round } from "../../../interfaces";
+import { Input, SelectedInput, Sugestion } from "../../../interfaces";
+import BackspaceIcon from "../../icons/BackspaceIcon";
+import CancelIcon from "../../icons/CancelIcon";
+import ConfirmIcon from "../../icons/ConfirmIcon";
 import EnteredPoints from "./EnteredPoints";
 
 export interface Props {
@@ -39,7 +39,7 @@ const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSe
       <div className="h-8 w-full text-center">
           { error && <span className="text-lg font-bold">{error}</span> }
       </div>
-      <section className="text-center bg-white text-black pt-4 ml-16 pb-10 h-50vh rounded-b-ellipse rounded-t-5xl mr-16">
+      <section className="h-50vh content-box">
         <div className="grid grid-cols-3 text-3xl h-full" >
           {Array.from(Array(9).keys()).map(num => (
             <button 

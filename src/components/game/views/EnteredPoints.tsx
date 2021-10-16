@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sugestion } from '../../interfaces';
+import { Sugestion } from '../../../interfaces';
 
 export interface Props {
   points: number,

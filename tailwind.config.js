@@ -16,6 +16,7 @@ module.exports = {
       height: {
         'custom-full': 'calc(100vh - 1px)',
         '50vh': '50vh',
+        '65vh': '65vh',
         '90': '90%'
       },
       width: {

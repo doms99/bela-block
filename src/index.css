@@ -8,7 +8,7 @@
   }
 
   .outlined-bnt {
-    @apply rounded-full w-full h-full border-primary border-bold active:border-extra font-bold bg-white;
+    @apply rounded-full z-50 w-full h-full border-primary border-bold active:border-extra font-bold bg-white;
   }
 
   .green-backdrop {
@@ -21,6 +21,10 @@
 
   .appearing-btn.appearing-invisible {
     @apply h-0 w-0 border-0;
+  }
+
+  .content-box {
+    @apply text-center bg-white text-black pt-4 ml-16 pb-10 rounded-b-ellipse rounded-t-5xl mr-16;
   }
 }
 
