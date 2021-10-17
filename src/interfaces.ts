@@ -49,3 +49,10 @@ export interface RoundActions {
   name: string, 
   action: (index: number) => void
 }
+export interface IconProps {
+  className?: string,
+}
+export interface PlayersError {
+  text: string, 
+  sources: number[]
+}

@@ -21,6 +21,8 @@ module.exports = {
       },
       width: {
         expanded: '120%',
+        '50vh': '50vh',
+        '65vh': '65vh',
         '90': '90%'
       },
       margin: {
@@ -49,7 +51,8 @@ module.exports = {
       backgroundColor: ['active'],
       width: ['active'],
       height: ['active'],
-      borderWidth: ['active']
+      borderWidth: ['active'],
+      borderColor: ['focus']
     }
   },
   plugins: [],

@@ -1,45 +1,106 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import SittingOrder from './SittingOrder';
 import { GlobalState } from '../../App';
 import { useHistory } from 'react-router';
 import NumberOfPLayers from './views/NumberOfPLayers';
 import ConfirmIcon from '../icons/ConfirmIcon';
-import Border4 from '../icons/Border4';
+import { PlayersError } from '../../interfaces';
 
 const PlayersSetup = () => {
   const [playerCount, setPlayerCount] = useState<number>(4);
   const [scoreTarget, setScoreTarget] = useState<number>(1001);
+  const [playerNames, setPlayerNames] = useState<string[]>(["", "", "", ""]);
+  const [error, setError] = useState<PlayersError>();
   const history = useHistory();
   const { startGame } = useContext(GlobalState);
 
-  const handlePlayerCount = (event: React.MouseEvent<HTMLElement>, newPlayerCount: number | null) => {
-    if(!newPlayerCount) return;
+  const validateNames = useCallback((): PlayersError | undefined => {
+    const current = playerNames.slice(0, playerCount);
 
+    const nonEntered = current.map((name, index) => ({name, index})).filter(obj => obj.name.trim() === "").map(obj => obj.index);
+    if(nonEntered.length !== 0) return {text: "All names must be entered", sources: nonEntered};
+
+    const sameNames: number[] = [];
+
+    for(const [index, name] of current.entries()) {
+      if(sameNames.includes(index)) continue;
+
+      const first = current.indexOf(name.trim());
+      const last = current.lastIndexOf(name.trim());
+      if(first === last) continue;
+
+      sameNames.push(first);
+      sameNames.push(last);
+    }
+    
+
+    if(sameNames.length !== 0) {
+      return {text: "Names must be unique", sources: sameNames};
+    }
+
+    return;
+  }, [playerNames, playerCount]);
+
+  useEffect(() => {
+    setError(validateNames());
+  }, [playerNames, validateNames]);
+
+  const handlePlayerCount = (newPlayerCount: number) => {
     setPlayerCount(newPlayerCount);
+    setScoreTarget(newPlayerCount === 4 ? 1001 : newPlayerCount === 3 ? 701 : 501);
   };
 
-  const handleScoreTarget = (event: React.MouseEvent<HTMLElement>, scoreTarget: number | null) => {
-    if(!scoreTarget) return;
+  const start = () => {
+    const validationResult = validateNames();
+    if(!!validateNames) {
+      setError(validationResult);
+      return;
+    }
 
-    setScoreTarget(scoreTarget);
-  };
-
-  const nameReport = (names: string[]) => {
-    startGame(names, scoreTarget);
+    startGame(playerNames, scoreTarget);
     history.push('/game');
   }
+
+  const handleNameChange = (name: string, index: number) => {
+    setPlayerNames(curr => {
+      const newPlayerNames = [...curr];
+      newPlayerNames[index] = name;
+
+      return newPlayerNames;
+    })
+  }
+
+  // const submit = () => {
+  //   const slice = players.slice(0, playerCount);
+
+  //   if(slice.map(player => player.name).filter(name => name === '').length) {
+  //     setError("All names must be entered")
+  //     return;
+  //   }
+
+  //   if(slice.map(player => player.name).filter((name) => {
+  //     const mapped = slice.map(p => p.name);
+  //     return mapped.indexOf(name) !== mapped.lastIndexOf(name);
+  //   }).length) {
+  //     setError("All names must be unique");
+  //     return;
+  //   }
+
+  //   if(error) setError(undefined);
+
+  //   nameReport(players.slice(0, playerCount).map(player => player.name));
+  // }
 
   return (
     <div className="text-right text-white overflow-x-hidden">
       <main className="green-backdrop pb-12 pt-4">
-        <div className="h-65vh w-full relative">
-          <Border4 className="absolute w-80 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-          <div className=" text-center grid grid-cols-3 grid-rows-3 w-80 h-full bg-red-700 m-auto">
-            <div className="col-start-2 row-start-3">1</div>
-            <div className="col-start-3 row-start-2">2</div>
-            <div className="col-start-2 row-start-1">3</div>
-            <div className="col-start-1 row-start-2">4</div>
-          </div>
+        <div className="h-65vh w-full pt-12">
+          <SittingOrder 
+            playerCount={playerCount}
+            playerNames={playerNames}
+            setName={handleNameChange}
+            error={error}
+          />
         </div>
       </main>
       <div className="w-full -mt-12 h-24 flex justify-between">
@@ -47,6 +108,7 @@ const PlayersSetup = () => {
         <div className="mr-28 w-24 h-24">
           <button
             className="outlined-bnt-flipped text-white hover:text-white-active"
+            onClick={start}
           >
             <ConfirmIcon className="w-4/6 m-auto" />
           </button>
@@ -54,7 +116,7 @@ const PlayersSetup = () => {
       </div>
       <NumberOfPLayers 
         value={playerCount}
-        setValue={(num: number) => setPlayerCount(num)}
+        setValue={handlePlayerCount}
       />
     {/* <div>
         <button value={2} aria-label="left aligned">

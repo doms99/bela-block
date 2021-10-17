@@ -1,5 +1,5 @@
 import * as React from "react";
-import IconProps from "../../iconInterface";
+import { IconProps } from "../../interfaces";
 
 function Players3({ className }: IconProps) {
   return (

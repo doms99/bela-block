@@ -1,5 +1,5 @@
 import * as React from "react";
-import IconProps from "../../iconInterface";
+import { IconProps } from "../../interfaces";
 
 function BackspaceIcon({className}: IconProps) {
 

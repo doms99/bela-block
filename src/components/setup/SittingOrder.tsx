@@ -1,9 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DraggingStyle, Droppable, DropResult, NotDraggingStyle } from 'react-beautiful-dnd';
+import { PlayersError } from '../../interfaces';
+import PlayerBox from './views/PlayerBox';
 
 export interface Props {
   playerCount: number,
-  nameReport: (names: string[]) => void
+  playerNames: string[],
+  setName: (name: string, index: number) => void,
+  error?: PlayersError
 }
 
 const getStyle = (style: DraggingStyle | NotDraggingStyle | undefined, snapshot: DraggableStateSnapshot) => {
@@ -17,124 +21,71 @@ const getStyle = (style: DraggingStyle | NotDraggingStyle | undefined, snapshot:
   };
 }
 
-const colors = ['red', 'blue', 'green', 'pink']
-
-const SittingOrder: React.FC<Props> = ({ playerCount, nameReport}) => {
-  const [players, setPlayer] = useState<{name: string, color: string}[]>(Array.from(Array(4).keys()).map(i => ({name: '', color: colors[i]})));
-  const [error, setError] = useState<string | undefined>();
-
+const SittingOrder: React.FC<Props> = ({ playerCount, playerNames, setName, error }) => {
+  
   const onDragEnd = (result: DropResult) => {
     const {source, destination } = result;
 
     if(!destination) return;
     if(destination.droppableId === source.droppableId) return;
 
-    setPlayer(curr => {
-      const newPlayerNames = [...curr];
-
-      newPlayerNames[destination.index] = curr[source.index];
-      newPlayerNames[source.index] = curr[destination.index];
-
-      return newPlayerNames;
-    })
-  }
-
-  const submit = () => {
-    const slice = players.slice(0, playerCount);
-
-    if(slice.map(player => player.name).filter(name => name === '').length) {
-      setError("All names must be entered")
-      return;
-    }
-
-    if(slice.map(player => player.name).filter((name) => {
-      const mapped = slice.map(p => p.name);
-      return mapped.indexOf(name) !== mapped.lastIndexOf(name);
-    }).length) {
-      setError("All names must be unique");
-      return;
-    }
-
-    if(error) setError(undefined);
-
-    nameReport(players.slice(0, playerCount).map(player => player.name));
-  }
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
-    setPlayer(curr => {
-      const newPlayerNames = [...curr];
-      newPlayerNames[index] = {
-        ...curr[index],
-        name: e.target.value.trim()
-      };
-
-      return newPlayerNames;
-    })
+    const temp = playerNames[source.index];
+    setName(playerNames[destination.index], source.index);
+    setName(temp, destination.index);
   }
 
   return (
-    <DragDropContext  onDragEnd={onDragEnd}>
-      <div className="droppable-container">
-        {Array.from(Array(playerCount).keys()).map(i => (
-          <Droppable
-            key={`Player ${i+1}`}
-            droppableId={`Position ${i}`}
-          >
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className={`droppable players-${playerCount}`}
-              >
-                <Draggable
-                  draggableId={`${i}`}
-                  index={i}
-                >
-                  {(provided, snapshot) => (
-                    <div
-                      {...provided.dragHandleProps}
-                      {...provided.draggableProps}
-                      ref={provided.innerRef}
-                      className="draggable"
-                      style={getStyle(provided.draggableProps.style, snapshot)}
-                    >
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          submit();
-                        }}
-                        style={{marginTop: '0.5em'}}
-                        noValidate
-                        autoComplete="off"
-                      >
-                        <input
-                          type="text"
-                          id="outlined-basic"
-                          // label={`Player ${i+1}`}
-                          // variant="outlined"
-                          value={players[i].name}
-                          onChange={(e) => handleChange(e, i)}
-                        />
-                      </form>
-                    </div>
-                  )}
-                </Draggable>
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        ))}
-      </div>
-      <button
-        style={{width: '100px'}}
-        onClick={submit}
-      >
-        Start
-      </button>
-      {error && (
-        <span color="error" style={{marginTop: '0.5em'}}>{error}</span>
-      )}
-    </DragDropContext>
+    <div className="relative w-50vh h-50vh m-auto border-8 rounded-full border-white">
+      {playerNames.slice(0, playerCount).map((name, index) => (
+        <PlayerBox
+          name={name}
+          playerNumber={index + 1}
+          setName={(name: string) => setName(name, index)}
+          playerCount={playerCount}
+          error={error?.sources.includes(index)}
+        />
+      ))}
+    </div>
+    // <DragDropContext  onDragEnd={onDragEnd}>
+    //   <div className="relative w-50vh h-50vh m-auto border-8 rounded-full border-white">
+    //     {playerNames.slice(0, playerCount).map((name, index) => (
+    //       <Droppable
+    //         key={`Player ${index+1}`}
+    //         droppableId={`Position ${index}`}
+    //       >
+    //         {(provided) => (
+    //           <div
+    //             {...provided.droppableProps}
+    //             ref={provided.innerRef}
+    //             className={`droppable players-${playerCount}`}
+    //           >
+    //             <Draggable
+    //               draggableId={`${index}`}
+    //               index={index}
+    //             >
+    //               {(provided, snapshot) => (
+    //                 <div
+    //                   {...provided.dragHandleProps}
+    //                   {...provided.draggableProps}
+    //                   ref={provided.innerRef}
+    //                   style={getStyle(provided.draggableProps.style, snapshot)}
+    //                 >
+    //                   <PlayerBox
+    //                     name={name}
+    //                     playerNumber={index + 1}
+    //                     setName={(name: string) => setName(name, index)}
+    //                     playerCount={playerCount}
+    //                   />                      
+    //                 </div>
+    //               )}
+    //             </Draggable>
+    //             {provided.placeholder}
+    //           </div>
+    //         )}
+    //       </Droppable>
+    //     ))}
+    //   </div>
+    // </DragDropContext>
   );
 };
 
