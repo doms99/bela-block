@@ -6,7 +6,7 @@ export interface Props {
   playerNumber: number,
   playerCount: number,
   setName: (name: string) => void,
-  error?: boolean
+  error?: boolean,
 }
 
 const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, playerCount, error }) => {

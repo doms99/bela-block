@@ -11,6 +11,7 @@ const PlayersSetup = () => {
   const [scoreTarget, setScoreTarget] = useState<number>(1001);
   const [playerNames, setPlayerNames] = useState<string[]>(["", "", "", ""]);
   const [error, setError] = useState<PlayersError>();
+  const [startTried, setStartTried] = useState<boolean>(false);
   const history = useHistory();
   const { startGame } = useContext(GlobalState);
 
@@ -41,9 +42,15 @@ const PlayersSetup = () => {
     return;
   }, [playerNames, playerCount]);
 
-  useEffect(() => {
+  const updateError = useCallback(() => {
+    if(!startTried) return;
+
     setError(validateNames());
-  }, [playerNames, validateNames]);
+  }, [startTried, validateNames]);
+
+  useEffect(() => {
+    updateError();
+  }, [updateError]);
 
   const handlePlayerCount = (newPlayerCount: number) => {
     setPlayerCount(newPlayerCount);
@@ -51,11 +58,8 @@ const PlayersSetup = () => {
   };
 
   const start = () => {
-    const validationResult = validateNames();
-    if(!!validateNames) {
-      setError(validationResult);
-      return;
-    }
+    setStartTried(true);
+    if(!startTried || !!error) return;
 
     startGame(playerNames, scoreTarget);
     history.push('/game');
