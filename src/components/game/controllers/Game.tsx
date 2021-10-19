@@ -41,13 +41,18 @@ const Game: React.FC = () => {
   }
 
   const teamNames = teams ? teams.map(team => team.name) : players;
-  const teamOnCall = playerCount !== 3? 
+  const teamOnCall = playerCount !== 3 ? 
     undefined :
-    players[(players.indexOf(dealer!) + 1 - (rounds.length - editIndex!) % playerCount!) % playerCount!];
+    players[(players.indexOf(dealer!) + 1) % playerCount];
 
   return (
     <>
       <main className="text-right text-white overflow-x-hidden">
+        {teamNames.length === 3 && !!teamOnCall ? (
+          <div className="absolute px-10 top-0 w-full grid grid-cols-3">
+            <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teamNames.indexOf(teamOnCall)+1}`} />
+          </div>
+        ) : undefined}
         {editIndex === undefined ? ( 
           <ScoreBoard 
             lastSumIndex={selectedRound}

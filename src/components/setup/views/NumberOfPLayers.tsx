@@ -36,7 +36,7 @@ const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
         <span>4 players</span>
       </button>
       <div 
-        className={`rounded-b-none mt-2 rounded-t-full bg-primary w-16 h-8 col-start-${value-1} m-auto`}
+        className={`rounded-indicator bg-primary col-start-${value-1}`}
       />
     </section>
   );

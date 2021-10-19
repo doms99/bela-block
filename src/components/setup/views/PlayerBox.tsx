@@ -17,17 +17,23 @@ const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, playerCount, 
   }
 
   return (
-    <div className={`absolute flex justify-center items-center flex-col text-center w-32 h-32 rounded-full bg-primary player-${playerNumber}-${playerCount}-players`}>
+    <form 
+      onSubmit={(e) => e.preventDefault()} 
+      className={`border-transparent focus-within:border-white border-8 
+                  absolute flex justify-center items-center flex-col 
+                  text-center w-32 h-32 rounded-full bg-primary 
+                  player-${playerNumber}-${playerCount}-players`}
+    >
       <Players1 className={`${error ? "text-error" : "text-white"} mb-2 h-6`} />
       <input
         type="text" 
         name={hint} 
         placeholder={hint} 
         value={name} 
-        className="appearance-none rounded-xl p-1 border-transparent border-2 focus:border-white placeholder-white font-medium w-28 bg-transparent focus:outline-none text-white text-center"
+        className="appearance-none rounded-xl p-1 placeholder-white font-medium w-28 bg-transparent focus:outline-none text-white text-center"
         onChange={handleChange} 
       />
-    </div>
+    </form>
   );
 };
 

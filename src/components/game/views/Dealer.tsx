@@ -25,7 +25,7 @@ const Dealer: React.FC<Props> = ({ players, dealer, setDealer, dealerEdit, editM
         )
       )}
       <button 
-        className={`rounded-b-none mt-2 rounded-t-full bg-primary w-16 h-8 col-start-${players.indexOf(dealer!)+1} m-auto`}
+        className={`rounded-indicator bg-primary col-start-${players.indexOf(dealer!)+1}`}
         onClick={editModeToggle}
       >
         {dealerEdit ? <CancelIcon className="w-3 m-auto mt-1" /> : <EditIcon className="w-3 m-auto mt-1" />}

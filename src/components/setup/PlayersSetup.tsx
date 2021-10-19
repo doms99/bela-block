@@ -15,12 +15,8 @@ const PlayersSetup = () => {
   const history = useHistory();
   const { startGame } = useContext(GlobalState);
 
-  const validateNames = useCallback((): PlayersError | undefined => {
+  const hasRepeatedNames = useCallback((): PlayersError | undefined => {
     const current = playerNames.slice(0, playerCount);
-
-    const nonEntered = current.map((name, index) => ({name, index})).filter(obj => obj.name.trim() === "").map(obj => obj.index);
-    if(nonEntered.length !== 0) return {text: "All names must be entered", sources: nonEntered};
-
     const sameNames: number[] = [];
 
     for(const [index, name] of current.entries()) {
@@ -34,19 +30,23 @@ const PlayersSetup = () => {
       sameNames.push(last);
     }
     
-
     if(sameNames.length !== 0) {
       return {text: "Names must be unique", sources: sameNames};
     }
 
-    return;
+  }, [playerNames, playerCount]);
+
+  const hasEmptyNames = useCallback((): PlayersError | undefined => {
+    const current = playerNames.slice(0, playerCount);
+
+    const nonEntered = current.map((name, index) => ({name, index})).filter(obj => obj.name.trim() === "").map(obj => obj.index);
+    if(nonEntered.length !== 0) return {text: "All names must be entered", sources: nonEntered};
+
   }, [playerNames, playerCount]);
 
   const updateError = useCallback(() => {
-    if(!startTried) return;
-
-    setError(validateNames());
-  }, [startTried, validateNames]);
+    setError(hasEmptyNames() || hasRepeatedNames());
+  }, [hasEmptyNames, hasRepeatedNames]);
 
   useEffect(() => {
     updateError();
@@ -58,10 +58,12 @@ const PlayersSetup = () => {
   };
 
   const start = () => {
-    setStartTried(true);
-    if(!startTried || !!error) return;
+    if(!!error) {
+      setStartTried(true);
+      return;
+    }
 
-    startGame(playerNames, scoreTarget);
+    startGame(playerNames.slice(0, playerCount), scoreTarget);
     history.push('/game');
   }
 
@@ -74,49 +76,27 @@ const PlayersSetup = () => {
     })
   }
 
-  // const submit = () => {
-  //   const slice = players.slice(0, playerCount);
-
-  //   if(slice.map(player => player.name).filter(name => name === '').length) {
-  //     setError("All names must be entered")
-  //     return;
-  //   }
-
-  //   if(slice.map(player => player.name).filter((name) => {
-  //     const mapped = slice.map(p => p.name);
-  //     return mapped.indexOf(name) !== mapped.lastIndexOf(name);
-  //   }).length) {
-  //     setError("All names must be unique");
-  //     return;
-  //   }
-
-  //   if(error) setError(undefined);
-
-  //   nameReport(players.slice(0, playerCount).map(player => player.name));
-  // }
-
   return (
     <div className="text-right text-white overflow-x-hidden">
-      <main className="green-backdrop pb-12 pt-4">
+      <main className="green-backdrop pb-8 pt-8">
         <div className="h-65vh w-full pt-12">
           <SittingOrder 
             playerCount={playerCount}
             playerNames={playerNames}
             setName={handleNameChange}
-            error={error}
+            error={startTried ? error : undefined}
           />
         </div>
       </main>
       <div className="w-full -mt-12 h-24 flex justify-between">
         <div className="placeholder" />
-        <div className="mr-28 w-24 h-24">
-          <button
-            className="outlined-bnt-flipped text-white hover:text-white-active"
-            onClick={start}
-          >
-            <ConfirmIcon className="w-4/6 m-auto" />
-          </button>
-        </div>
+        <button
+          className="mr-16 w-24 h-24 outlined-bnt-flipped 
+                   text-white hover:text-white-active"
+          onClick={start}
+        >
+          <ConfirmIcon className="w-4/6 m-auto" />
+        </button>
       </div>
       <NumberOfPLayers 
         value={playerCount}

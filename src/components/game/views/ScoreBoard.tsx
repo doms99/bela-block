@@ -19,7 +19,7 @@ export interface Props {
 const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds, setEditIndex, lastSumIndex }) => {
   return (
     <div className="green-backdrop">
-      <section className={`grid grid-cols-${teams.length} ml-10 mr-10 mb-8`}>
+      <section className={`grid grid-cols-${teams.length} mx-10 mb-8`}>
         {teams.map(name => (
           <TotalPoints
             key={name}
@@ -30,7 +30,9 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
           />
         ))}
       </section>
-      <section className="content-box h-50vh overflow-x-hidden overflow-y-auto">
+      <section className="content-box h-50vh overflow-x-hidden
+                          overflow-y-auto py-4 pb-10"
+      >
         {[...rounds].reverse().map((round, i) => {
           const index = rounds.length - 1 - i;
           return <RoundPoints
@@ -43,9 +45,9 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
           />
         })}
       </section>
-      <div className="w-full -mt-10 h-24 flex justify-between">
+      <div className="w-full -mt-12 h-24 flex justify-between">
         <div className="placeholder" />
-        <div className="mr-28 w-24 h-24">
+        <div className="mr-20 w-24 h-24">
           <button
             className="outlined-bnt text-primary hover:text-primary-active"
             onClick={() => setEditIndex(rounds.length)}

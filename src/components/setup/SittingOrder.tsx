@@ -35,7 +35,7 @@ const SittingOrder: React.FC<Props> = ({ playerCount, playerNames, setName, erro
   }
 
   return (
-    <div className="relative w-50vh h-50vh m-auto border-8 rounded-full border-white">
+    <div className="relative w-2/3 h-4/5 m-auto border-8 rounded-full border-white">
       {playerNames.slice(0, playerCount).map((name, index) => (
         <PlayerBox
           name={name}

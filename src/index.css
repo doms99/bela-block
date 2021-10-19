@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
 @layer components {
   .no-bg-btn {
     @apply font-extrabold hover:text-primary-active text-4xl text-primary;
@@ -28,7 +34,11 @@
   }
 
   .content-box {
-    @apply text-center bg-white text-black pt-4 ml-16 mr-16 pb-10 rounded-b-ellipse rounded-t-5xl;
+    @apply text-center bg-white text-black ml-16 mr-16 pb-10 rounded-b-ellipse rounded-t-5xl;
+  }
+
+  .rounded-indicator {
+    @apply mt-2 rounded-t-full w-16 h-8 m-auto;
   }
 
   .player-1-2-players, .player-1-3-players, .player-1-4-players {

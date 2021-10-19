@@ -35,7 +35,7 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
   return (
     <div 
       onClick={menuAnchor ? undefined : click}
-      className={`grid grid-cols-${teams.length} border-primary ${selected ? "text-black" : "text-gray-300"} hover:bg-gray-100 bg-transparent text-xl font-medium`}
+      className={`grid grid-cols-${teams.length} px-5 border-primary ${selected ? "text-black" : "text-gray-400"} hover:bg-gray-100 bg-transparent text-xl font-medium`}
     >
       {teams.map(team => (
         <TeamRoundPoints 
