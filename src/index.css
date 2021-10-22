@@ -9,8 +9,12 @@
 }
 
 @layer components {
-  .no-bg-btn {
-    @apply font-extrabold hover:text-primary-active text-4xl text-primary;
+  .no-bg-green {
+    @apply font-extrabold active:text-primary-active text-4xl text-primary;
+  }
+
+  .no-bg-black {
+    @apply font-extrabold active:text-gray-500 text-4xl text-black;
   }
 
   .outlined-bnt {
@@ -34,7 +38,7 @@
   }
 
   .content-box {
-    @apply text-center bg-white text-black ml-16 mr-16 pb-10 rounded-b-ellipse rounded-t-5xl;
+    @apply text-center bg-white text-black ml-10 mr-10 pb-10 rounded-b-ellipse rounded-t-5xl;
   }
 
   .rounded-indicator {

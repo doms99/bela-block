@@ -52,7 +52,8 @@ module.exports = {
       width: ['active'],
       height: ['active'],
       borderWidth: ['active'],
-      borderColor: ['focus-within']
+      borderColor: ['focus-within'],
+      textColor: ['active']
     }
   },
   plugins: [],

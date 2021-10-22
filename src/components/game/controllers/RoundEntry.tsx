@@ -19,12 +19,12 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
   
   const [values, setValues] = useState<Round>(playerPointsAdjusted);
   const [selected, setSelected] = useState<SelectedInput>({team: teams[0], input: 'points'});
-  const [error, setError] = useState<string | undefined>();
-  const [pass, setPass] = useState<boolean | undefined>(undefined);
+  const [error, setError] = useState<string>();
+  const [pass, setPass] = useState<boolean>();
   const [edited, setEdited] = useState<boolean[]>(teams.map(team => !playerPoints || team === teamOnCall ? false : true));
   const [bonuses, setBonuses] = useState<Bonus>(bonusesCalculated);
   const [fallSuggestion, setFallSuggestion] = useState<boolean[]>(teams.map(_ => false));
-  const [fallen, setFallen] = useState<string | undefined>();
+  const [fallen, setFallen] = useState<string>();
 
   const calcPoints = useCallback(() => {
     return Object.values(values).map(value => value.points).reduce((sum, points) => sum + points, 0);
@@ -283,27 +283,27 @@ const RoundEntry: React.FC<Props> = ({ teams, teamOnCall, playerPoints, playerCo
     })
   }
 
+  const sugestions = teams.reduce((res, team, index) => (
+    { ...res,
+      [team]: fallSuggestion[index] ? {
+        text: "fall?", 
+        callback: () => fall(team)
+      } : 
+      !!bonuses[team].value ? 
+        {
+          text: `+${bonusPoints} points`,
+          callback: () => setBonuses(curr => ({...curr, [team]: {...curr[team], confirmed: !curr[team].confirmed}}))
+        } :
+      undefined
+    }
+  ), {});
+
   return (
     <RoundEntryView 
       teams={teams}
       round={values}
       error={error}
-      sugestions={
-        teams.reduce((res, team, index) => (
-          { ...res,
-            [team]: fallSuggestion[index] ? {
-              text: "fall?", 
-              callback: () => fall(team)
-            } : 
-            !!bonuses[team].value ? 
-              {
-                text: `+${bonusPoints} points`,
-                callback: () => setBonuses(curr => ({...curr, [team]: {...curr[team], confirmed: !curr[team].confirmed}}))
-              } :
-            undefined
-          }
-        ), {})
-      }
+      sugestions={sugestions}
       canSaveRound={!!!error && edited.some(v => v)}
       selected={selected}
       setSelected={(team: string, input: Input) => setSelected({team, input})}

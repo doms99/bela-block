@@ -6,7 +6,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom"; 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { LocalStorageKey } from './constants';
 import { GameState, StateFunctions, TeamType, Round } from "./interfaces";
 
@@ -23,16 +23,37 @@ const initialState: GameState = {
 
 export const GlobalState = createContext<StateFunctions>({} as StateFunctions);
 
-function App() {
-  const [players, setPlayers] = useState<string[]>(initialState.players);
-  const [playerCount, setPlayerCount] = useState<number | undefined>(initialState.playerCount);
-  const [teams, setTeams] = useState<[TeamType, TeamType] | undefined>(initialState.teams);
-  const [rounds, setRounds] = useState<Round[]>(initialState.rounds);
-  const [dealer, setDealer] = useState<string | undefined>(initialState.dealer);
-  const [winner, setWinner] = useState<string | undefined>(initialState.winner);
-  const [scoreTarget, setScoreTarget] = useState<number>(initialState.scoreTarget);
-  const [started, setStarted] = useState<boolean>(initialState.started);
+const getInitialState = (): GameState => {
+  const loadedState = localStorage.getItem(LocalStorageKey)
 
+  if(!loadedState) return initialState;
+  const state = JSON.parse(loadedState) as GameState;
+
+  // if(state.players && 
+  //   state.playerCount &&
+  //   state.teams &&
+  //   state.rounds &&
+  //   state.dealer &&
+  //   state.winner &&
+  //   state.scoreTarget &&
+  //   state.started) return initialState;
+
+  return state;
+}
+
+function App() {
+  const state = useMemo(getInitialState, []);
+  
+  const [players, setPlayers] = useState<string[]>(state.players);
+  const [playerCount, setPlayerCount] = useState<number | undefined>(state.playerCount);
+  const [teams, setTeams] = useState<[TeamType, TeamType] | undefined>(state.teams);
+  const [rounds, setRounds] = useState<Round[]>(state.rounds);
+  const [dealer, setDealer] = useState<string | undefined>(state.dealer);
+  const [winner, setWinner] = useState<string | undefined>(state.winner);
+  const [scoreTarget, setScoreTarget] = useState<number>(state.scoreTarget);
+  const [started, setStarted] = useState<boolean>(state.started);
+
+  // Winner evaluation and setting
   useEffect(() => {
     if(!playerCount) return;
 
@@ -67,30 +88,30 @@ function App() {
     
   }, [scoreTarget, playerCount, players, rounds, teams]);
   
-  useEffect(() => {
-    const loadedState = localStorage.getItem(LocalStorageKey)
+  // useEffect(() => {
+  //   const loadedState = localStorage.getItem(LocalStorageKey)
 
-    if(!loadedState) return;
-    const state = JSON.parse(loadedState) as GameState;
+  //   if(!loadedState) return;
+  //   const state = JSON.parse(loadedState) as GameState;
 
-    if(state.players && 
-       state.playerCount &&
-       state.teams &&
-       state.rounds &&
-       state.dealer &&
-       state.winner &&
-       state.scoreTarget &&
-       state.started) return;
+  //   if(state.players && 
+  //      state.playerCount &&
+  //      state.teams &&
+  //      state.rounds &&
+  //      state.dealer &&
+  //      state.winner &&
+  //      state.scoreTarget &&
+  //      state.started) return;
   
-    setPlayers(state.players);
-    setPlayerCount(state.playerCount);
-    setTeams(state.teams);
-    setRounds(state.rounds);
-    setDealer(state.dealer);
-    setWinner(state.winner);
-    setScoreTarget(state.scoreTarget);
-    setStarted(state.started);
-  }, []);
+  //   setPlayers(state.players);
+  //   setPlayerCount(state.playerCount);
+  //   setTeams(state.teams);
+  //   setRounds(state.rounds);
+  //   setDealer(state.dealer);
+  //   setWinner(state.winner);
+  //   setScoreTarget(state.scoreTarget);
+  //   setStarted(state.started);
+  // }, []);
 
   useEffect(() => {
     localStorage.setItem(LocalStorageKey, JSON.stringify({players, playerCount, teams, rounds, dealer, winner, scoreTarget, started}));

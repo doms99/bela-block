@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IconProps } from "../../interfaces";
 
-function CancelIcon({className}: IconProps) {
+function CancelIconSource({className}: IconProps) {
 
   return (
     <svg viewBox="0 0 81.62 81.62" className={className}>
@@ -24,4 +24,5 @@ function CancelIcon({className}: IconProps) {
   );
 }
 
+const CancelIcon = React.memo(CancelIconSource);
 export default CancelIcon;

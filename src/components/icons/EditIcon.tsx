@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IconProps } from "../../interfaces";
 
-function EditIcon({className}: IconProps) {
+function EditIconSource({className}: IconProps) {
   return (
     <svg viewBox="0 0 28.05 40.12" className={className}>
       <rect
@@ -22,4 +22,5 @@ function EditIcon({className}: IconProps) {
   );
 }
 
+const EditIcon = React.memo(EditIconSource);
 export default EditIcon;

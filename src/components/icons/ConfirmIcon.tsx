@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IconProps } from "../../interfaces";
 
-function ConfirmIcon({className}: IconProps) {
+function ConfirmIconSource({className}: IconProps) {
   return (
     <svg viewBox="0 0 102.92 74.72" className={className}>
       <path
@@ -13,4 +13,5 @@ function ConfirmIcon({className}: IconProps) {
   );
 }
 
+const ConfirmIcon = React.memo(ConfirmIconSource);
 export default ConfirmIcon;

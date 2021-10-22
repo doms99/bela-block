@@ -57,6 +57,15 @@ const PlayersSetup = () => {
     setScoreTarget(newPlayerCount === 4 ? 1001 : newPlayerCount === 3 ? 701 : 501);
   };
 
+  const handleNameChange = useCallback((name: string, index: number) => {
+    setPlayerNames(curr => {
+      const newPlayerNames = [...curr];
+      newPlayerNames[index] = name;
+
+      return newPlayerNames;
+    })
+  }, [setPlayerNames]);
+
   const start = () => {
     if(!!error) {
       setStartTried(true);
@@ -67,22 +76,12 @@ const PlayersSetup = () => {
     history.push('/game');
   }
 
-  const handleNameChange = (name: string, index: number) => {
-    setPlayerNames(curr => {
-      const newPlayerNames = [...curr];
-      newPlayerNames[index] = name;
-
-      return newPlayerNames;
-    })
-  }
-
   return (
     <div className="text-right text-white overflow-x-hidden">
       <main className="green-backdrop pb-8 pt-8">
         <div className="h-65vh w-full pt-12">
           <SittingOrder 
-            playerCount={playerCount}
-            playerNames={playerNames}
+            playerNames={playerNames.slice(0, playerCount)}
             setName={handleNameChange}
             error={startTried ? error : undefined}
           />
@@ -102,40 +101,6 @@ const PlayersSetup = () => {
         value={playerCount}
         setValue={handlePlayerCount}
       />
-    {/* <div>
-        <button value={2} aria-label="left aligned">
-          <div>
-            
-            <span>2 players</span>
-          </div>
-        </button>
-        <button value={3} aria-label="centered">
-          <div>
-            
-            <span>3 players</span>
-          </div>
-        </button>
-        <button value={4} aria-label="right aligned">
-          <div>
-            
-            <span>4 players</span>
-          </div>
-        </button>
-      </div>
-      <hr style={{width: '100%', margin: '0.5em 0'}} />
-      <div>
-        <button value={501} aria-label="right aligned">
-          501
-        </button>
-        <button value={701} aria-label="right aligned">
-          701
-        </button>
-        <button value={1001} aria-label="right aligned">
-          1001
-        </button>
-      </div>
-      <hr style={{width: '100%', margin: '0.5em 0'}} />
-      <SittingOrder playerCount={playerCount} nameReport={nameReport} /> */}
       <NumberOfPLayers 
         value={playerCount}
         setValue={(num: number) => setPlayerCount(num)}

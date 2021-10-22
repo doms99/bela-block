@@ -4,25 +4,23 @@ import Players1 from '../../icons/Players1';
 export interface Props {
   name: string,
   playerNumber: number,
-  playerCount: number,
-  setName: (name: string) => void,
+  setName: (name: string, playerNum: number) => void,
   error?: boolean,
 }
 
-const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, playerCount, error }) => {
+const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, error }) => {
   const hint = `Player ${playerNumber}`;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    setName(e.target.value, playerNumber);
   }
 
   return (
     <form 
       onSubmit={(e) => e.preventDefault()} 
       className={`border-transparent focus-within:border-white border-8 
-                  absolute flex justify-center items-center flex-col 
-                  text-center w-32 h-32 rounded-full bg-primary 
-                  player-${playerNumber}-${playerCount}-players`}
+                  flex justify-center items-center flex-col 
+                  text-center w-32 h-32 rounded-full bg-primary`}
     >
       <Players1 className={`${error ? "text-error" : "text-white"} mb-2 h-6`} />
       <input
@@ -37,4 +35,4 @@ const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, playerCount, 
   );
 };
 
-export default PlayerBox;
+export default React.memo(PlayerBox);

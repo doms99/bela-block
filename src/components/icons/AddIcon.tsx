@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IconProps } from "../../interfaces";
 
-function AddIcon({ className }: IconProps) {
+function AddIconSource({ className }: IconProps) {
 
   return (
     <svg viewBox="0 0 95.02 95.02" className={className}>
@@ -16,4 +16,5 @@ function AddIcon({ className }: IconProps) {
   );
 }
 
+const AddIcon = React.memo(AddIconSource);
 export default AddIcon;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IconProps } from "../../interfaces";
 
-function Players4({ className }: IconProps) {
+function Players4Source({ className }: IconProps) {
   return (
     <svg viewBox="0 0 154.57 108.55" className={className}>
       <g data-name="Layer 2">
@@ -15,4 +15,5 @@ function Players4({ className }: IconProps) {
   );
 }
 
+const Players4 = React.memo(Players4Source);
 export default Players4;

@@ -1,5 +1,5 @@
 import RoundEntry from "./RoundEntry";
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ScoreBoard from '../views/ScoreBoard';
 import { GlobalState } from '../../../App';
 import { Round } from "../../../interfaces";
@@ -7,7 +7,7 @@ import Winner from '../views/Winner';
 import { useHistory } from 'react-router';
 import Dealer from '../views/Dealer';
 
-const Game: React.FC = () => {
+const GameComp: React.FC = () => {
   const { getState, editDealer, editRound, enterRound, restart, deleteRound } = useContext(GlobalState);
   const { dealer, players, playerCount, rounds, teams, winner, scoreTarget } = getState();
 
@@ -128,4 +128,5 @@ const Game: React.FC = () => {
   );
 };
 
+const Game = React.memo(GameComp);
 export default Game;

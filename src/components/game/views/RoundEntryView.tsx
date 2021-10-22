@@ -43,27 +43,26 @@ const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSe
         <div className="grid grid-cols-3 text-3xl h-full" >
           {Array.from(Array(9).keys()).map(num => (
             <button 
-              className="no-bg-btn"
+              className="no-bg-green"
               onClick={() => numberClick(num+1)}
             >
               {num+1}
             </button>
           ))}
-          
           <button 
-            className="no-bg-btn text-black hover:text-gray-500"
+            className="no-bg-black"
             onClick={backspace}
           >
             <BackspaceIcon className="w-6 m-auto" />
           </button>
           <button 
-            className="no-bg-btn"
+            className="no-bg-green"
             onClick={() => numberClick(0)}
           >
             {0}
           </button>
           <button 
-            className="no-bg-btn text-black hover:text-gray-500"
+            className="no-bg-black"
             onClick={clear}
           >
             <CancelIcon className="w-6 m-auto" />

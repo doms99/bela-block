@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IconProps } from "../../interfaces";
 
-function BackspaceIcon({className}: IconProps) {
+function BackspaceIconSource({className}: IconProps) {
 
   return (
     <svg viewBox="0 0 98.59 51.98" className={className}>
@@ -24,4 +24,5 @@ function BackspaceIcon({className}: IconProps) {
   );
 }
 
+const BackspaceIcon = React.memo(BackspaceIconSource);
 export default BackspaceIcon;
