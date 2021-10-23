@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import SittingOrder from './SittingOrder';
+import SittingOrder from './views/SittingOrder';
 import { GlobalState } from '../../App';
 import { useHistory } from 'react-router';
 import NumberOfPLayers from './views/NumberOfPLayers';
@@ -52,10 +52,10 @@ const PlayersSetup = () => {
     updateError();
   }, [updateError]);
 
-  const handlePlayerCount = (newPlayerCount: number) => {
+  const handlePlayerCount = useCallback((newPlayerCount: number) => {
     setPlayerCount(newPlayerCount);
     setScoreTarget(newPlayerCount === 4 ? 1001 : newPlayerCount === 3 ? 701 : 501);
-  };
+  }, []);
 
   const handleNameChange = useCallback((name: string, index: number) => {
     setPlayerNames(curr => {
@@ -64,7 +64,7 @@ const PlayersSetup = () => {
 
       return newPlayerNames;
     })
-  }, [setPlayerNames]);
+  }, []);
 
   const start = () => {
     if(!!error) {
@@ -100,10 +100,6 @@ const PlayersSetup = () => {
       <NumberOfPLayers 
         value={playerCount}
         setValue={handlePlayerCount}
-      />
-      <NumberOfPLayers 
-        value={playerCount}
-        setValue={(num: number) => setPlayerCount(num)}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { PlayersError } from '../../interfaces';
-import PlayerBox from './views/PlayerBox';
+import { PlayersError } from '../../../interfaces';
+import PlayerBox from './PlayerBox';
 
 export interface Props {
   playerNames: string[],
@@ -18,9 +18,9 @@ const SittingOrder: React.FC<Props> = ({ playerNames, setName, error }) => {
       {playerNames.map((name, index) => (
         <div className={`absolute player-${index + 1}-${playerNames.length}-players`}>
           <PlayerBox
-            key={name+index}
+            key={index}
             name={name}
-            playerNumber={index}
+            playerNumber={index+1}
             setName={handleSetName}
             error={error?.sources.includes(index)}
           />

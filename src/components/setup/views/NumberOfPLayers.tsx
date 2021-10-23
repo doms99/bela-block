@@ -42,4 +42,4 @@ const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
   );
 };
 
-export default NumberOfPLayers;
+export default React.memo(NumberOfPLayers);
