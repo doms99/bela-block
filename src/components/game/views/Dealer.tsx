@@ -13,7 +13,7 @@ export interface Props {
 
 const Dealer: React.FC<Props> = ({ players, dealer, setDealer, dealerEdit, editModeToggle }) => {
   return (
-    <section className={`absolute text-center bottom-0 w-full grid grid-cols-${players.length}`}>
+    <section className={`absolute text-center bottom-0 w-full grid grid-cols-${players.length} z-10`}>
       {players.map((player) => (
         <button
           key={player}

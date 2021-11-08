@@ -84,6 +84,8 @@ function App() {
 
     if(max > -1) {
       setWinner(maxPlayer!);
+    } else {
+      setWinner(undefined);
     }
     
   }, [scoreTarget, playerCount, players, rounds, teams]);

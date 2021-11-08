@@ -49,10 +49,18 @@ const GameComp: React.FC = () => {
     <>
       <main className="text-right text-white overflow-x-hidden">
         {teamNames.length === 3 && !!teamOnCall ? (
-          <div className="absolute px-10 top-0 w-full grid grid-cols-3">
+          <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
             <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teamNames.indexOf(teamOnCall)+1}`} />
           </div>
         ) : undefined}
+        {winner && (
+          <Winner 
+            newGame={() => history.push('/setup')}
+            rematch={restart}
+            winner={winner!}
+            deleteLast={() => deleteRound(rounds.length-1)}
+          />
+        )}
         {editIndex === undefined ? ( 
           <ScoreBoard 
             lastSumIndex={selectedRound}
@@ -83,46 +91,6 @@ const GameComp: React.FC = () => {
           editModeToggle={() => setDealerEdit(curr => !curr)}
           players={players}
         />
-        {/* <button
-          onClick={() => setEditIndex(rounds.length)}
-          // variant="contained"
-          // color="primary"
-          // fullWidth
-          // size="large"
-        >
-          Enter round
-        </button>
-        <button
-          onClick={() => setResetRequest(true)}
-          style={{marginTop: '0.5em'}}
-          // fullWidth
-          // size="small"
-        >
-          Reset
-        </button> */}
-        {winner && (
-          <Winner newGame={() => history.push('/setup')} rematch={restart} winner={winner!} />
-        )}
-        {/* <Dialog
-          open={resetRequest}
-          onClose={() => handleReset(false)}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-            Are you sure tou want to reset the match?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => handleReset(true)} color="primary">
-              Yes
-            </Button>
-            <Button onClick={() => handleReset(false)} color="primary" autoFocus>
-              No
-            </Button>
-          </DialogActions>
-        </Dialog> */}
       </main>
     </>
   );

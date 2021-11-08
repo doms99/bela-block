@@ -19,7 +19,7 @@ export interface Props {
 const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds, setEditIndex, lastSumIndex }) => {
   return (
     <div className="green-backdrop">
-      <section className={`grid grid-cols-${teams.length} mx-10 mb-8`}>
+      <section className={`grid grid-cols-${teams.length} mx-6 mb-8`}>
         {teams.map(name => (
           <TotalPoints
             key={name}
@@ -31,7 +31,7 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
         ))}
       </section>
       <section className="content-box h-50vh overflow-x-hidden
-                          overflow-y-auto py-4 pb-10"
+                          overflow-y-auto py-4 pb-10 mx-6"
       >
         {[...rounds].reverse().map((round, i) => {
           const index = rounds.length - 1 - i;

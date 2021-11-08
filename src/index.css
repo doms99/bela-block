@@ -26,7 +26,7 @@
   }
 
   .green-backdrop {
-    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-8 pb-5;
+    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-expanded-compensation pb-5;
   }
 
   .appearing-btn {
@@ -38,7 +38,7 @@
   }
 
   .content-box {
-    @apply text-center bg-white text-black ml-10 mr-10 pb-10 rounded-b-ellipse rounded-t-5xl;
+    @apply text-center bg-white text-black pb-10 rounded-b-ellipse rounded-t-5xl;
   }
 
   .rounded-indicator {

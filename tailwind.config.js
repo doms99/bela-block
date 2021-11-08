@@ -11,7 +11,8 @@ module.exports = {
         'primary-active': '#9bce7a',
         error: '#ea0038',
         'error-active': '#f75e83',
-        lime: colors.lime
+        lime: colors.lime,
+        'white-transparent': 'rgba(255, 255, 255, .3)'
       },
       height: {
         'custom-full': 'calc(100vh - 1px)',
@@ -27,6 +28,9 @@ module.exports = {
       },
       margin: {
         'expanded-compensation': '-10%',
+      },
+      padding: {
+        'expanded-compensation': '10%',
       },
       borderRadius: {
         ellipse: '125% 50%',

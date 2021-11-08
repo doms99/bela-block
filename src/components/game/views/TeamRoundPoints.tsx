@@ -6,26 +6,23 @@ export interface Props {
 }
 
 const TeamRoundPoints: React.FC<Props> = ({ points, declarations }) => {
-  const [marginValue, setMarginValue] = useState<number>(0);
   const spanRef = useRef<HTMLSpanElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   function callback() {
-    if(!!!spanRef.current) {
+    if(!spanRef.current || !divRef.current) {
       setTimeout(callback, 0);
       return;
     }
 
     const spanWidth = spanRef.current.getBoundingClientRect().width;
-
-    setMarginValue(spanWidth);
+    divRef.current.style.marginRight = `-${spanWidth}px`
   }
 
   if(!!declarations) setTimeout(callback, 0);
 
   return (
-    <div
-      style={{marginRight: `-${marginValue}px`}}
-    >
+    <div ref={divRef}>
       <span>{points}</span>
       {!!declarations && (
         <span 
