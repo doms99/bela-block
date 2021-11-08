@@ -1,7 +1,13 @@
-const colors = require('tailwindcss/colors')
-
 module.exports = {
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  purge: {
+    content: ['./src/**/*.{js,jsx,ts,tsx,css}', './public/index.html'],
+    safelist: [
+      'col-start-1',
+      'col-start-2',
+      'col-start-3',
+      'col-start-4',
+    ]
+  },
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
@@ -11,7 +17,6 @@ module.exports = {
         'primary-active': '#9bce7a',
         error: '#ea0038',
         'error-active': '#f75e83',
-        lime: colors.lime,
         'white-transparent': 'rgba(255, 255, 255, .3)'
       },
       height: {
