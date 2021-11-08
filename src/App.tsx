@@ -1,4 +1,4 @@
-import Game from "./components/game/Game";
+import Game from "./components/game/controllers/Game";
 import PlayersSetup from "./components/setup/PlayersSetup";
 import {
   BrowserRouter,
@@ -6,48 +6,11 @@ import {
   Route,
   Redirect
 } from "react-router-dom"; 
-import { createContext, useEffect, useState } from "react";
-import LocalStorageKey from './constants';
-import { createTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
-import AppBar from "./components/AppBar";
+import { createContext, useEffect, useMemo, useState } from "react";
+import { LocalStorageKey } from './constants';
+import { GameState, StateFunctions, TeamType, Round } from "./interfaces";
 
-export interface Round {
-  [key: string] : {
-    points: number,
-    declarations: number,
-    bonus: boolean
-  }
-};
-
-export interface TeamType {
-  name: string,
-  players: [string, string]
-}
-
-export interface State {
-  players: string[],
-  playerCount: number | undefined,
-  teams: [TeamType, TeamType] | undefined,
-  rounds: Round[],
-  dealer: string | undefined,
-  winner: string | undefined,
-  scoreTarget: number,
-  started: boolean
-}
-
-export type StateProperties = 'players' | 'playerCount' | 'teams' | 'points';
-
-export interface StateFunctions {
-  getState: () => State,
-  startGame: (players: string[], scoreTarget: number) => void,
-  restart: () => void,
-  reset: () => void,
-  editDealer: (player: string) => void,
-  enterRound: (round: Round) => void,
-  editRound: (round: Round, index: number) => void
-}
-
-const initialState: State = {
+const initialState: GameState = {
   players: [],
   playerCount: undefined,
   teams: undefined,
@@ -60,27 +23,37 @@ const initialState: State = {
 
 export const GlobalState = createContext<StateFunctions>({} as StateFunctions);
 
+const getInitialState = (): GameState => {
+  const loadedState = localStorage.getItem(LocalStorageKey)
+
+  if(!loadedState) return initialState;
+  const state = JSON.parse(loadedState) as GameState;
+
+  // if(state.players && 
+  //   state.playerCount &&
+  //   state.teams &&
+  //   state.rounds &&
+  //   state.dealer &&
+  //   state.winner &&
+  //   state.scoreTarget &&
+  //   state.started) return initialState;
+
+  return state;
+}
+
 function App() {
-  const [players, setPlayers] = useState<string[]>(initialState.players);
-  const [playerCount, setPlayerCount] = useState<number | undefined>(initialState.playerCount);
-  const [teams, setTeams] = useState<[TeamType, TeamType] | undefined>(initialState.teams);
-  const [rounds, setRounds] = useState<Round[]>(initialState.rounds);
-  const [dealer, setDealer] = useState<string | undefined>(initialState.dealer);
-  const [winner, setWinner] = useState<string | undefined>(initialState.winner);
-  const [scoreTarget, setScoreTarget] = useState<number>(initialState.scoreTarget);
-  const [started, setStarted] = useState<boolean>(initialState.started);
+  const state = useMemo(getInitialState, []);
+  
+  const [players, setPlayers] = useState<string[]>(state.players);
+  const [playerCount, setPlayerCount] = useState<number | undefined>(state.playerCount);
+  const [teams, setTeams] = useState<[TeamType, TeamType] | undefined>(state.teams);
+  const [rounds, setRounds] = useState<Round[]>(state.rounds);
+  const [dealer, setDealer] = useState<string | undefined>(state.dealer);
+  const [winner, setWinner] = useState<string | undefined>(state.winner);
+  const [scoreTarget, setScoreTarget] = useState<number>(state.scoreTarget);
+  const [started, setStarted] = useState<boolean>(state.started);
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        light: '#53ff4d',
-        main: '#20b31b',
-        dark: '#255c23',
-        contrastText: '#fff',
-      }
-    },
-  });
-
+  // Winner evaluation and setting
   useEffect(() => {
     if(!playerCount) return;
 
@@ -111,40 +84,42 @@ function App() {
 
     if(max > -1) {
       setWinner(maxPlayer!);
+    } else {
+      setWinner(undefined);
     }
     
   }, [scoreTarget, playerCount, players, rounds, teams]);
   
-  useEffect(() => {
-    const loadedState = localStorage.getItem(LocalStorageKey)
+  // useEffect(() => {
+  //   const loadedState = localStorage.getItem(LocalStorageKey)
 
-    if(!loadedState) return;
-    const state = JSON.parse(loadedState) as State;
+  //   if(!loadedState) return;
+  //   const state = JSON.parse(loadedState) as GameState;
 
-    if(state.players && 
-       state.playerCount &&
-       state.teams &&
-       state.rounds &&
-       state.dealer &&
-       state.winner &&
-       state.scoreTarget &&
-       state.started) return;
+  //   if(state.players && 
+  //      state.playerCount &&
+  //      state.teams &&
+  //      state.rounds &&
+  //      state.dealer &&
+  //      state.winner &&
+  //      state.scoreTarget &&
+  //      state.started) return;
   
-    setPlayers(state.players);
-    setPlayerCount(state.playerCount);
-    setTeams(state.teams);
-    setRounds(state.rounds);
-    setDealer(state.dealer);
-    setWinner(state.winner);
-    setScoreTarget(state.scoreTarget);
-    setStarted(state.started);
-  }, []);
+  //   setPlayers(state.players);
+  //   setPlayerCount(state.playerCount);
+  //   setTeams(state.teams);
+  //   setRounds(state.rounds);
+  //   setDealer(state.dealer);
+  //   setWinner(state.winner);
+  //   setScoreTarget(state.scoreTarget);
+  //   setStarted(state.started);
+  // }, []);
 
   useEffect(() => {
     localStorage.setItem(LocalStorageKey, JSON.stringify({players, playerCount, teams, rounds, dealer, winner, scoreTarget, started}));
   }, [players, playerCount, teams, rounds, dealer, winner, scoreTarget, started]);
 
-  const getState = (): State => {
+  const getState = (): GameState => {
     return {players, playerCount, teams, rounds, dealer, winner, scoreTarget, started};
   }
   
@@ -209,6 +184,17 @@ function App() {
     });
   }
 
+  const deleteRound = (index: number) => {
+    if(index < 0 || index > rounds.length-1) return;
+
+    setRounds(curr => {
+      const newRounds = [...curr];
+      newRounds.splice(index, 1);
+
+      return newRounds;
+    });
+  }
+
   const value = {
     getState,
     startGame,
@@ -216,29 +202,26 @@ function App() {
     reset,
     editDealer,
     enterRound,
-    editRound
+    editRound,
+    deleteRound
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <GlobalState.Provider value={value}>
-        <BrowserRouter>
-          <AppBar />
-          <Switch>
-            <Redirect exact from="/" to="/setup" />
+    <GlobalState.Provider value={value}>
+      <BrowserRouter>
+        <Switch>
+          <Redirect exact from="/" to="/setup" />
 
-            <Route path="/setup">
-              <PlayersSetup />
-            </Route>
-            <Route path="/game">
-              <Game />
-            </Route>
+          <Route path="/setup">
+            <PlayersSetup />
+          </Route>
+          <Route path="/game">
+            <Game />
+          </Route>
 
-          </Switch>
-        </BrowserRouter>
-      </GlobalState.Provider>
-    </ThemeProvider>
+        </Switch>
+      </BrowserRouter>
+    </GlobalState.Provider>
   );
 }
 
