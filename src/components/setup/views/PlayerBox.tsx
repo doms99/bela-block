@@ -16,8 +16,7 @@ const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, error }) => {
   }
 
   return (
-    <form 
-      onSubmit={(e) => e.preventDefault()} 
+    <div 
       className={`border-transparent focus-within:border-white border-8 
                   flex justify-center items-center flex-col 
                   text-center w-32 h-32 rounded-full bg-primary`}
@@ -31,7 +30,7 @@ const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, error }) => {
         className="appearance-none rounded-xl p-1 placeholder-white font-medium w-28 bg-transparent focus:outline-none text-white text-center"
         onChange={handleChange} 
       />
-    </form>
+    </div>
   );
 };
 

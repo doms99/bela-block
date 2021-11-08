@@ -16,9 +16,8 @@ const SittingOrder: React.FC<Props> = ({ playerNames, setName, error }) => {
   return (
     <div className="relative w-2/3 h-4/5 m-auto border-8 rounded-full border-white">
       {playerNames.map((name, index) => (
-        <div className={`absolute player-${index + 1}-${playerNames.length}-players`}>
+        <div key={index} className={`absolute player-${index + 1}-${playerNames.length}-players`}>
           <PlayerBox
-            key={index}
             name={name}
             playerNumber={index+1}
             setName={handleSetName}

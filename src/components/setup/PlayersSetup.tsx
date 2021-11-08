@@ -76,16 +76,22 @@ const PlayersSetup = () => {
     history.push('/game');
   }
 
+  const handleSubmit = (e: React.FormEvent) => {
+    console.log(e)
+    e.preventDefault();
+    start();
+  }
+
   return (
     <div className="text-right text-white overflow-x-hidden">
       <main className="green-backdrop pb-8 pt-8">
-        <div className="h-65vh w-full pt-12">
+        <form onSubmit={handleSubmit} className="h-65vh w-full pt-12">
           <SittingOrder 
             playerNames={playerNames.slice(0, playerCount)}
             setName={handleNameChange}
             error={startTried ? error : undefined}
           />
-        </div>
+        </form>
       </main>
       <div className="w-full -mt-12 h-24 flex justify-between">
         <div className="placeholder" />

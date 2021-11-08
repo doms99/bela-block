@@ -10,10 +10,10 @@ export interface Props {
 
 const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
   return (
-    <section className="absolute text-center bottom-0 w-full grid grid-cols-3">
+    <section className="absolute bottom-0 w-full grid grid-cols-3">
       <button
         key={2}
-        className={`font-bold text-2xl ${value === 2 ? "text-black" : "text-primary-active"}`}
+        className={`mt-auto font-bold text-2xl ${value === 2 ? "text-black" : "text-primary-active"}`}
         onClick={() => setValue(2)}
       >
         <Players2 className="w-11 m-auto" />
@@ -21,7 +21,7 @@ const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
       </button>
       <button
         key={3}
-        className={`font-bold text-2xl ${value === 3 ? "text-black" : "text-primary-active"}`}
+        className={`mt-auto font-bold text-2xl ${value === 3 ? "text-black" : "text-primary-active"}`}
         onClick={() => setValue(3)}
       >
         <Players3 className="w-16 m-auto" />
@@ -29,7 +29,7 @@ const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
       </button>
       <button
         key={4}
-        className={`font-bold text-2xl ${value === 4 ? "text-black" : "text-primary-active"}`}
+        className={`mt-auto font-bold text-2xl ${value === 4 ? "text-black" : "text-primary-active"}`}
         onClick={() => setValue(4)}
       >
         <Players4 className="w-16 m-auto" />
