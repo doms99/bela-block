@@ -6,6 +6,9 @@ module.exports = {
       'col-start-2',
       'col-start-3',
       'col-start-4',
+      'grid-cols-2',
+      'grid-cols-3',
+      'grid-cols-4'
     ]
   },
   darkMode: false, // or 'media' or 'class'
