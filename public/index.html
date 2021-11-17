@@ -41,22 +41,10 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script type="text/javascript">
-      const origHeight = window.innerHeight;
-      window.addEventListener('resize', () => {
-        const metaViewport = document.querySelector('meta[name=viewport]');
-
-        if(window.innerHeight < origHeight) {
-          metaViewport.setAttribute(
-            'content', 
-            'height=' + initialHeight + 'px, width=device-width, initial-scale=1.0'
-          );
-        } else {
-          metaViewport.setAttribute(
-            'content', 
-            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
-          );
-        }
-      })
+      document.querySelector('#root').style.height = `${window.innerHeight}px`;
+      // window.addEventListener('resize', () => {
+      //   document.querySelector('#root').style.height = `${window.innerHeight}px`;
+      // })
     </script>
   </body>
 </html>

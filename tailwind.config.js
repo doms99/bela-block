@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 module.exports = {
   purge: {
     content: ['./src/**/*.{js,jsx,ts,tsx,css}', './public/index.html'],
@@ -18,20 +20,16 @@ module.exports = {
         primary: '#70ba3f',
         'white-active': '#eaffdc',
         'primary-active': '#9bce7a',
-        error: '#ea0038',
+        'error': '#ea0038',
         'error-active': '#f75e83',
-        'white-transparent': 'rgba(255, 255, 255, .3)'
+        'white-transparent': 'rgba(255, 255, 255, .3)',
+        'gray': colors.gray
       },
       height: {
-        'custom-full': 'calc(100vh - 1px)',
-        '50vh': '50vh',
-        '65vh': '65vh',
         '90': '90%'
       },
       width: {
         expanded: '120%',
-        '50vh': '50vh',
-        '65vh': '65vh',
         '90': '90%'
       },
       margin: {
@@ -65,7 +63,8 @@ module.exports = {
       height: ['active'],
       borderWidth: ['active'],
       borderColor: ['focus-within'],
-      textColor: ['active']
+      textColor: ['active'],
+      display: ["group-hover"]
     }
   },
   plugins: [],

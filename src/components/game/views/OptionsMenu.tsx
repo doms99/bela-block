@@ -1,15 +1,13 @@
 import React from 'react';
 
 export interface Props {
-  position: {top: number, left: number},
   onClickOptions?: {name: string, action: () => void}[],
 }
 
-const OptionsMenu:React.FC<Props> = ({ position, onClickOptions }) => {
+const OptionsMenu:React.FC<Props> = ({ onClickOptions }) => {
   return (
     <ul
-      style={position}
-      className="rounded-md absolute pt-1 pb-1 pl-2 pr-2 z-20 bg-primary text-white text-left font-light text-md"
+      className="rounded-md py-2 pl-3 pr-4 z-20 bg-primary text-white text-left font-light text-md"
     >
       {onClickOptions?.map(option => (
         <li className="hover:text-primary-active" key={option.name}>

@@ -24,7 +24,7 @@ export interface Props {
 const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSelected, error, cancel, numberClick, backspace, clear, canSaveRound, saveRound }) => {
 
   return (
-    <div className="green-backdrop">
+    <>
       <section className={`grid grid-cols-${teams.length} mx-6`}>
         {teams.map((team, index) => (
           <EnteredPoints
@@ -36,10 +36,10 @@ const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSe
           />
         ))}
       </section>
-      <div className="h-8 w-full text-center">
+      <div className="h-8 w-full flex-none text-center">
           { error && <span className="text-lg font-bold">{error}</span> }
       </div>
-      <section className="h-50vh content-box mx-6">
+      <section className="h-full content-box mx-6">
         <div className="grid grid-cols-3 text-3xl h-full" >
           {Array.from(Array(9).keys()).map(num => (
             <button 
@@ -89,7 +89,7 @@ const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSe
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

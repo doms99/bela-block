@@ -47,7 +47,7 @@ const GameComp: React.FC = () => {
 
   return (
     <>
-      <main className="text-right text-white overflow-x-hidden">
+      <main className="relative h-full text-right text-white overflow-x-hidden">
         {teamNames.length === 3 && !!teamOnCall ? (
           <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
             <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teamNames.indexOf(teamOnCall)+1}`} />
@@ -61,29 +61,31 @@ const GameComp: React.FC = () => {
             deleteLast={() => deleteRound(rounds.length-1)}
           />
         )}
-        {editIndex === undefined ? ( 
-          <ScoreBoard 
-            lastSumIndex={selectedRound}
-            roundActions={[
-                {name: 'Edit', action: (index: number) => setEditIndex(index)}, 
-                {name: 'Rewind', action: (index: number) => setSelectedRound(index)},
-                {name: 'Delete', action: (index: number) => deleteRound(index)}
-              ]}
-            rounds={rounds}
-            scoreTarget={scoreTarget}
-            setEditIndex={setEditIndex}
-            teams={teamNames}
-          />
-        ) : (
-          <RoundEntry
-            teamOnCall={teamOnCall!}
-            teams={teamNames}
-            playerCount={playerCount!}
-            cancel={() => setEditIndex(undefined)}
-            pointsReport={(round: Round) => pointsReport(round, editIndex!)}
-            playerPoints={rounds[editIndex!]}
-          />
-        )}
+        <div className="green-backdrop h-3/4 flex flex-col">
+          {editIndex === undefined ? (
+            <ScoreBoard
+              lastSumIndex={selectedRound}
+              roundActions={[
+                  {name: 'Edit', action: (index: number) => setEditIndex(index)},
+                  {name: 'Rewind', action: (index: number) => setSelectedRound(index)},
+                  {name: 'Delete', action: (index: number) => deleteRound(index)}
+                ]}
+              rounds={rounds}
+              scoreTarget={scoreTarget}
+              setEditIndex={setEditIndex}
+              teams={teamNames}
+            />
+          ) : (
+            <RoundEntry
+              teamOnCall={teamOnCall!}
+              teams={teamNames}
+              playerCount={playerCount!}
+              cancel={() => setEditIndex(undefined)}
+              pointsReport={(round: Round) => pointsReport(round, editIndex!)}
+              playerPoints={rounds[editIndex!]}
+            />
+          )}
+        </div>
         <Dealer
           dealer={dealer!}
           setDealer={setDealer}

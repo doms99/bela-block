@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Round, RoundActions } from '../../../interfaces';
+import Dots from '../../icons/Dots';
 import OptionsMenu from '../views/OptionsMenu';
 import TeamRoundPoints from '../views/TeamRoundPoints';
 
@@ -12,21 +13,24 @@ export interface Props {
 }
 
 const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, index }) => {
-  const [menuAnchor, setMenuAnchor] = useState<{top: number, left: number}>();
+  const [clicked, setClicked] = useState<boolean>(false);
 
   const wrapCallback = (callback: (index: number) => void) => {
     return () => {
-      setMenuAnchor(undefined);
+      setClicked(false);
       callback(index);
     }
   }
 
-  const click =(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    setMenuAnchor({left: e.pageX, top: e.pageY});
-    window.addEventListener("mousedown", (ev) => {
-      if((ev.target as any).id === "round-points") return;
-
-      setMenuAnchor(undefined)
+  const click =(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      setClicked(true);
+    window.addEventListener("mousedown", () => {
+      setClicked(false)
+    }, {
+      once: true
+    });
+    window.addEventListener("touchstart", () => {
+      setClicked(false)
     }, {
       once: true
     })
@@ -34,9 +38,15 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
 
   return (
     <div 
-      onClick={menuAnchor ? undefined : click}
-      className={`grid grid-cols-${teams.length} px-5 border-primary ${selected ? "text-black" : "text-gray-400"} hover:bg-gray-100 bg-transparent text-xl font-medium`}
-    >
+      className={`group relative grid grid-cols-${teams.length}
+      px-5 border-primary ${selected ? "text-black" : "text-gray-400"}
+      hover:bg-gray-100 bg-transparent text-xl font-medium`}
+    > 
+      <button 
+        onClick={click}
+        className="hidden group-hover:block active:bg-gray-200 absolute left-0 ml-2 h-full px-2 rounded-md" >
+        <Dots/>
+      </button>
       {teams.map(team => (
         <TeamRoundPoints 
           key={team} 
@@ -44,13 +54,14 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
           declarations={round[team].declarations} 
         />
       ))}
-      {menuAnchor && 
-        <OptionsMenu 
-          position={menuAnchor} 
-          onClickOptions={onClickActions?.map(
-            action => ({...action, action: wrapCallback(action.action)})
-          )}
-        />
+      {clicked && 
+        <div className="absolute left-0 bottom-0 ml-2 transform translate-y-full z-50">
+          <OptionsMenu
+            onClickOptions={onClickActions?.map(
+              action => ({...action, action: wrapCallback(action.action)})
+            )}
+          />
+        </div>
       }
     </div>
   );

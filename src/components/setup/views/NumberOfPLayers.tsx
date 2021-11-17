@@ -10,7 +10,7 @@ export interface Props {
 
 const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
   return (
-    <section className="absolute bottom-0 w-full grid grid-cols-3">
+    <section className="absolute bottom-0 w-full grid grid-cols-3  z-50">
       <button
         key={2}
         className={`mt-auto font-bold text-2xl ${value === 2 ? "text-black" : "text-primary-active"}`}

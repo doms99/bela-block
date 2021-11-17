@@ -18,7 +18,7 @@ export interface Props {
 
 const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds, setEditIndex, lastSumIndex }) => {
   return (
-    <div className="green-backdrop">
+    <>
       <section className={`grid grid-cols-${teams.length} mx-6 mb-8`}>
         {teams.map(name => (
           <TotalPoints
@@ -30,22 +30,23 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
           />
         ))}
       </section>
-      <section className="content-box h-50vh overflow-x-hidden
-                          overflow-y-auto py-4 pb-10 mx-6"
-      >
-        {[...rounds].reverse().map((round, i) => {
-          const index = rounds.length - 1 - i;
-          return <RoundPoints
-            key={index}
-            onClickActions={roundActions}
-            round={round}
-            teams={teams}
-            selected={index <= lastSumIndex}
-            index={index}
-          />
-        })}
+      <section className="content-box relative h-full overflow-x-hidden py-4 pb-14 mx-6">
+        <div className="overflow-y-auto overflow-x-hidden h-full">
+          {[...rounds].reverse().map((round, i) => {
+            const index = rounds.length - 1 - i;
+            return <RoundPoints
+              key={index}
+              onClickActions={roundActions}
+              round={round}
+              teams={teams}
+              selected={index <= lastSumIndex}
+              index={index}
+            />
+          })}
+        </div>
+        {/* <div className="absolute bottom-0 w-full h-1/6 mb-14 bg-gradient-to-t from-white" /> */}
       </section>
-      <div className="w-full -mt-12 h-24 flex justify-between">
+      <div className="w-full -mt-12 h-24 flex justify-between z-50">
         <div className="placeholder" />
         <div className="mr-20 w-24 h-24">
           <button
@@ -56,7 +57,7 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
