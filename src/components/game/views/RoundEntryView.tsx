@@ -26,7 +26,7 @@ const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSe
   return (
     <>
       <section className={`grid grid-cols-${teams.length} mx-6`}>
-        {teams.map((team, index) => (
+        {teams.map((team) => (
           <EnteredPoints
             sugestion={sugestions[team]}
             points={round[team].points}

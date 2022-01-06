@@ -44,7 +44,6 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
             />
           })}
         </div>
-        {/* <div className="absolute bottom-0 w-full h-1/6 mb-14 bg-gradient-to-t from-white" /> */}
       </section>
       <div className="w-full -mt-12 h-24 flex justify-between z-50">
         <div className="placeholder" />
