@@ -30,3 +30,16 @@ export const adjustBonusesAndDeclarations = (playerPoints: Round): [Round, Bonus
 
   return [newPlayerPoints, bonuses];
 }
+
+export function defaultRound(...teams: string[]): Round {
+  const round: Round = {};
+  for(let team of teams) {
+    round[team] = { 
+      points: 0, 
+      declarations: 0,
+      bonus: false
+    }
+  }
+
+  return round;
+}

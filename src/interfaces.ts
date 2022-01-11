@@ -17,7 +17,6 @@ export interface TeamType {
 }
 export interface GameState {
   players: string[],
-  playerCount: number | undefined,
   teams: [TeamType, TeamType] | undefined,
   rounds: Round[],
   dealer: string | undefined,

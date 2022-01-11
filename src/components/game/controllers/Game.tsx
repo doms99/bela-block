@@ -1,5 +1,6 @@
-import RoundEntry from "./RoundEntry";
-import React, { useContext, useEffect, useState } from 'react';
+import RoundEntry3 from "./RoundEntry3";
+import RoundEntry2 from "./RoundEntry2";
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import ScoreBoard from '../views/ScoreBoard';
 import { GlobalState } from '../../../App';
 import { Round } from "../../../interfaces";
@@ -7,13 +8,12 @@ import Winner from '../views/Winner';
 import { useHistory } from 'react-router';
 import Dealer from '../views/Dealer';
 
-const GameComp: React.FC = () => {
+const Game: React.FC = () => {
   const { getState, editDealer, editRound, enterRound, restart, deleteRound } = useContext(GlobalState);
-  const { dealer, players, playerCount, rounds, teams, winner, scoreTarget } = getState();
+  const { dealer, players, rounds, teams, winner, scoreTarget } = getState();
 
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [selectedRound, setSelectedRound] = useState<number>(rounds.length - 1);
-  const [resetRequest, setResetRequest] = useState<boolean>(false);
   const [dealerEdit, setDealerEdit] = useState<boolean>(false);
   const history = useHistory();
 
@@ -34,16 +34,48 @@ const GameComp: React.FC = () => {
     setDealerEdit(false);
   }
 
-  const handleReset = (toReset: boolean) => {
-    if(toReset) restart();
-
-    setResetRequest(false);
-  }
-
   const teamNames = teams ? teams.map(team => team.name) : players;
-  const teamOnCall = playerCount !== 3 ? 
+  const teamOnCall = players.length !== 3 ? 
     undefined :
-    players[(players.indexOf(dealer!) + 1) % playerCount];
+    players[(players.indexOf(dealer!) + 1) % players.length];
+
+  let roundEntry: ReactElement | undefined = undefined;
+  switch(players.length) {
+    case 2: {
+      roundEntry = <RoundEntry2
+        team1={teamNames[0]}
+        team2={teamNames[1]}
+        playerCount={players.length}
+        teamPoints={rounds[editIndex!]}
+        cancel={() => setEditIndex(undefined)}
+        pointsReport={(round: Round) => pointsReport(round, editIndex!)}
+      />;
+      break;
+    }
+    case 3: {
+      roundEntry = <RoundEntry3
+        teamOnCall={teamOnCall!}
+        team1={teamNames[0]}
+        team2={teamNames[1]}
+        team3={teamNames[2]}
+        teamPoints={rounds[editIndex!]}
+        cancel={() => setEditIndex(undefined)}
+        pointsReport={(round: Round) => pointsReport(round, editIndex!)}
+      />;
+      break;
+    }
+    case 4: {
+      roundEntry = <RoundEntry2
+        team1={teamNames[0]}
+        team2={teamNames[1]}
+        playerCount={players.length}
+        teamPoints={rounds[editIndex!]}
+        cancel={() => setEditIndex(undefined)}
+        pointsReport={(round: Round) => pointsReport(round, editIndex!)}
+      />;
+      break;
+    }
+  }
 
   return (
     <>
@@ -62,6 +94,11 @@ const GameComp: React.FC = () => {
           />
         )}
         <div className="green-backdrop h-3/4 flex flex-col">
+          <div className={`grid grid-cols-${teamNames.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
+            {teamNames.map(team => (
+              <span>{team}</span>
+            ))} 
+          </div>
           {editIndex === undefined ? (
             <ScoreBoard
               lastSumIndex={selectedRound}
@@ -75,16 +112,7 @@ const GameComp: React.FC = () => {
               setEditIndex={setEditIndex}
               teams={teamNames}
             />
-          ) : (
-            <RoundEntry
-              teamOnCall={teamOnCall!}
-              teams={teamNames}
-              playerCount={playerCount!}
-              cancel={() => setEditIndex(undefined)}
-              pointsReport={(round: Round) => pointsReport(round, editIndex!)}
-              playerPoints={rounds[editIndex!]}
-            />
-          )}
+          ) : (roundEntry)}
         </div>
         <Dealer
           dealer={dealer!}
@@ -98,5 +126,4 @@ const GameComp: React.FC = () => {
   );
 };
 
-const Game = React.memo(GameComp);
-export default Game;
+export default React.memo(Game);

@@ -12,7 +12,6 @@ import { GameState, StateFunctions, TeamType, Round } from "./interfaces";
 
 const initialState: GameState = {
   players: [],
-  playerCount: undefined,
   teams: undefined,
   rounds: [],
   dealer: undefined,
@@ -45,7 +44,7 @@ function App() {
   const state = useMemo(getInitialState, []);
   
   const [players, setPlayers] = useState<string[]>(state.players);
-  const [playerCount, setPlayerCount] = useState<number | undefined>(state.playerCount);
+  const [playerCount, setPlayerCount] = useState<number | undefined>(state.players.length);
   const [teams, setTeams] = useState<[TeamType, TeamType] | undefined>(state.teams);
   const [rounds, setRounds] = useState<Round[]>(state.rounds);
   const [dealer, setDealer] = useState<string | undefined>(state.dealer);
@@ -120,7 +119,7 @@ function App() {
   }, [players, playerCount, teams, rounds, dealer, winner, scoreTarget, started]);
 
   const getState = (): GameState => {
-    return {players, playerCount, teams, rounds, dealer, winner, scoreTarget, started};
+    return {players, teams, rounds, dealer, winner, scoreTarget, started};
   }
   
   const startGame = (players: string[], scoreTarget: number) => {
@@ -159,7 +158,7 @@ function App() {
 
   const reset = () => {
     setPlayers(initialState.players);
-    setPlayerCount(initialState.playerCount);
+    setPlayerCount(initialState.players.length);
     setTeams(initialState.teams);
     setRounds(initialState.rounds);
     setDealer(initialState.dealer);

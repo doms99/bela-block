@@ -21,16 +21,18 @@ export interface Props {
   saveRound: () => void,
 }
 
-const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSelected, error, cancel, numberClick, backspace, clear, canSaveRound, saveRound }) => {
+const RoundEntryView: React.FC<Props> = ({ teams, sugestions, round, selected, setSelected, error, cancel, numberClick, backspace, clear, canSaveRound, saveRound }) => {
 
   return (
     <>
       <section className={`grid grid-cols-${teams.length} mx-6`}>
         {teams.map((team) => (
           <EnteredPoints
+            key={team}
             sugestion={sugestions[team]}
             points={round[team].points}
             declarations={round[team].declarations}
+            bonus={round[team].bonus}
             selected={selected.team === team ? selected.input : undefined}
             setSelected={(input: Input) => setSelected(team, input)}
           />
@@ -44,6 +46,7 @@ const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSe
           {Array.from(Array(9).keys()).map(num => (
             <button 
               className="no-bg-green"
+              key={num}
               onClick={() => numberClick(num+1)}
             >
               {num+1}
@@ -93,4 +96,4 @@ const RoundEntry: React.FC<Props> = ({ teams, sugestions, round, selected, setSe
   );
 };
 
-export default RoundEntry;
+export default RoundEntryView;
