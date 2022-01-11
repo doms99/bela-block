@@ -1,19 +1,18 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-  purge: {
-    content: ['./src/**/*.{js,jsx,ts,tsx,css}', './public/index.html'],
-    safelist: [
-      'col-start-1',
-      'col-start-2',
-      'col-start-3',
-      'col-start-4',
-      'grid-cols-2',
-      'grid-cols-3',
-      'grid-cols-4'
-    ]
-  },
-  darkMode: false, // or 'media' or 'class'
+  content: ['./src/**/*.{js,jsx,ts,tsx,css}', './public/index.html'],
+  safelist: [
+    'col-start-1',
+    'col-start-2',
+    'col-start-3',
+    'col-start-4',
+    'grid-cols-2',
+    'grid-cols-3',
+    'grid-cols-4'
+  ]
+  ,
+  darkMode: 'media', // or 'media' or 'class'
   theme: {
     extend: {
       colors: {
