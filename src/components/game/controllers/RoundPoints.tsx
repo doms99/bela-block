@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Round, RoundActions } from '../../../interfaces';
 import Dots from '../../icons/Dots';
-import OptionsMenu from '../views/OptionsMenu';
 import TeamRoundPoints from '../views/TeamRoundPoints';
 
 export interface Props {
