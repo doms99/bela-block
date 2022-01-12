@@ -210,14 +210,14 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Redirect exact from="/" to="/setup" />
-
+          {!started && <Redirect exact from="/game" to="/setup" />}
           <Route path="/setup">
             <PlayersSetup />
           </Route>
           <Route path="/game">
             <Game />
           </Route>
-
+          <Redirect from="/*" to="/setup" />
         </Switch>
       </BrowserRouter>
     </GlobalState.Provider>

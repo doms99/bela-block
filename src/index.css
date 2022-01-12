@@ -26,7 +26,7 @@
   }
 
   .green-backdrop {
-    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-expanded-compensation pb-5;
+    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-expanded-compensation py-5;
   }
 
   .appearing-btn {

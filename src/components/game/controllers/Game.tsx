@@ -7,6 +7,7 @@ import { Round } from "../../../interfaces";
 import Winner from '../views/Winner';
 import { useHistory } from 'react-router';
 import Dealer from '../views/Dealer';
+import Arrow from "../../icons/Arrow";
 
 const Game: React.FC = () => {
   const { getState, editDealer, editRound, enterRound, restart, deleteRound } = useContext(GlobalState);
@@ -79,6 +80,14 @@ const Game: React.FC = () => {
 
   return (
     <>
+      {/* {started && (
+        <button 
+          onClick={() => {history.push('/setup')}}
+          className="absolute top-0 left-0 mt-5 ml-6 z-50"
+        >
+          <Arrow className="h-7 stroke-primary-active"/>
+        </button>
+      )} */}
       <main className="relative h-full text-right text-white overflow-x-hidden">
         {teamNames.length === 3 && !!teamOnCall ? (
           <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">

@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import SittingOrder from './views/SittingOrder';
+import Arrow from '../icons/Arrow';
 import { GlobalState } from '../../App';
 import { useHistory } from 'react-router';
 import NumberOfPLayers from './views/NumberOfPLayers';
@@ -13,7 +14,8 @@ const PlayersSetup = () => {
   const [error, setError] = useState<PlayersError>();
   const [startTried, setStartTried] = useState<boolean>(false);
   const history = useHistory();
-  const { startGame } = useContext(GlobalState);
+  const { startGame, getState } = useContext(GlobalState);
+  const { started } = getState();
 
   const hasRepeatedNames = useCallback((): PlayersError | undefined => {
     const current = playerNames.slice(0, playerCount);
@@ -84,6 +86,14 @@ const PlayersSetup = () => {
 
   return (
     <div className="relative h-full text-right text-white overflow-x-hidden">
+      {started && (
+        <button 
+          onClick={() => {history.push('/game')}}
+          className="absolute top-0 right-0 mt-4 mr-5"
+        >
+          <Arrow className="h-7 stroke-primary-active rotate-180"/>
+        </button>
+      )}
       <form onSubmit={handleSubmit} className="green-backdrop h-3/4 pb-8 pt-20">
         <SittingOrder
           playerNames={playerNames.slice(0, playerCount)}
