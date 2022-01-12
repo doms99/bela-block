@@ -1,5 +1,5 @@
 import { bonusPoints } from "./constants";
-import { Bonus, Round } from "./interfaces";
+import { Bonus, GameState, Round } from "./interfaces";
 
 export const zeroRoundValues = (teams: string[]): [Round, Bonus] => {
   const pointsAndDeclarations = teams.reduce((obj, player) => ({...obj, [player]: { points: 0, declarations: 0 }}), {});
@@ -42,4 +42,40 @@ export function defaultRound(...teams: string[]): Round {
   }
 
   return round;
+}
+
+
+export function validState(state: GameState): boolean {
+  const objectKeys: {[key: string]: boolean} = {};
+  for(const key of Object.keys(state)) {
+    objectKeys[key] = true;
+  }
+
+  if(!objectKeys.players) return false;
+  if(!objectKeys.teams) return false;
+  if(!objectKeys.rounds) return false;
+  if(!objectKeys.dealer) return false;
+  if(!objectKeys.winner) return false;
+  if(!objectKeys.scoreTarget) return false;
+  if(!objectKeys.started) return false;
+  if(!objectKeys.finished) return false;
+
+  return true;
+
+//   for(const name of state.players) {
+//     if(typeof name !== "string") return false;
+//   }
+
+
+//     name: string,
+//   players: [string, string]
+
+// players: string[],
+// teams: [TeamType, TeamType] | undefined,
+// rounds: Round[],
+// dealer: string | undefined,
+// winner: string | undefined,
+// scoreTarget: number,
+// started: boolean,
+// finished: boolean
 }

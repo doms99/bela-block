@@ -22,7 +22,8 @@ export interface GameState {
   dealer: string | undefined,
   winner: string | undefined,
   scoreTarget: number,
-  started: boolean
+  started: boolean,
+  finished: boolean
 }
 export type StateProperties = 'players' | 'playerCount' | 'teams' | 'points';
 export interface StateFunctions {

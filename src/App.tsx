@@ -9,6 +9,7 @@ import {
 import { createContext, useEffect, useMemo, useState } from "react";
 import { LocalStorageKey } from './constants';
 import { GameState, StateFunctions, TeamType, Round } from "./interfaces";
+import { validState } from "./utils";
 
 const initialState: GameState = {
   players: [],
@@ -17,7 +18,8 @@ const initialState: GameState = {
   dealer: undefined,
   winner: undefined,
   scoreTarget: 1001,
-  started: false
+  started: false,
+  finished: false
 }
 
 export const GlobalState = createContext<StateFunctions>({} as StateFunctions);
@@ -28,16 +30,7 @@ const getInitialState = (): GameState => {
   if(!loadedState) return initialState;
   const state = JSON.parse(loadedState) as GameState;
 
-  // if(state.players && 
-  //   state.playerCount &&
-  //   state.teams &&
-  //   state.rounds &&
-  //   state.dealer &&
-  //   state.winner &&
-  //   state.scoreTarget &&
-  //   state.started) return initialState;
-
-  return state;
+  return validState(state) ? state : initialState;
 }
 
 function App() {
@@ -51,6 +44,7 @@ function App() {
   const [winner, setWinner] = useState<string | undefined>(state.winner);
   const [scoreTarget, setScoreTarget] = useState<number>(state.scoreTarget);
   const [started, setStarted] = useState<boolean>(state.started);
+  const [finished, setFinished] = useState(state.finished);
 
   // Winner evaluation and setting
   useEffect(() => {
@@ -83,6 +77,7 @@ function App() {
 
     if(max > -1) {
       setWinner(maxPlayer!);
+      setFinished(true);
     } else {
       setWinner(undefined);
     }
@@ -119,7 +114,7 @@ function App() {
   }, [players, playerCount, teams, rounds, dealer, winner, scoreTarget, started]);
 
   const getState = (): GameState => {
-    return {players, teams, rounds, dealer, winner, scoreTarget, started};
+    return {players, teams, rounds, dealer, winner, scoreTarget, started, finished};
   }
   
   const startGame = (players: string[], scoreTarget: number) => {
@@ -133,6 +128,7 @@ function App() {
     setScoreTarget(scoreTarget);
     setWinner(undefined);
     setStarted(true);
+    setFinished(false);
   
     setTeams(players.length === 4 ? [
       {
@@ -154,6 +150,7 @@ function App() {
   const restart = () => { 
     setRounds([]);
     setWinner(undefined);
+    setFinished(false);
   }
 
   const reset = () => {
@@ -163,6 +160,7 @@ function App() {
     setRounds(initialState.rounds);
     setDealer(initialState.dealer);
     setWinner(initialState.winner);
+    setFinished(false);
   }
 
   const enterRound = (round: Round) => {    
@@ -210,7 +208,11 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Redirect exact from="/" to="/setup" />
-          {!started && <Redirect exact from="/game" to="/setup" />}
+          {!started ? (
+            <Redirect exact from="/game" to="/setup" />
+          ) : (
+            <Redirect exact from="/setup" to="/game" />
+          )}
           <Route path="/setup">
             <PlayersSetup />
           </Route>

@@ -23,17 +23,7 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
   }
 
   const click =(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      setClicked(true);
-    window.addEventListener("mousedown", () => {
-      setClicked(false)
-    }, {
-      once: true
-    });
-    window.addEventListener("touchstart", () => {
-      setClicked(false)
-    }, {
-      once: true
-    })
+      setClicked(curr => !curr);
   }
 
   return (
@@ -54,15 +44,15 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
           declarations={round[team].declarations} 
         />
       ))}
-      {clicked && 
-        <div className="absolute left-0 bottom-0 ml-2 transform translate-y-full z-50">
+      {(clicked && !!onClickActions) && (
+        <div className="col-span-2">
           <OptionsMenu
-            onClickOptions={onClickActions?.map(
+            onClickOptions={onClickActions.map(
               action => ({...action, action: wrapCallback(action.action)})
             )}
           />
         </div>
-      }
+      )}
     </div>
   );
 };

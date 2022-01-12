@@ -15,7 +15,7 @@ const PlayersSetup = () => {
   const [startTried, setStartTried] = useState<boolean>(false);
   const history = useHistory();
   const { startGame, getState } = useContext(GlobalState);
-  const { started } = getState();
+  const { started, finished } = getState();
 
   const hasRepeatedNames = useCallback((): PlayersError | undefined => {
     const current = playerNames.slice(0, playerCount);
@@ -86,7 +86,7 @@ const PlayersSetup = () => {
 
   return (
     <div className="relative h-full text-right text-white overflow-x-hidden">
-      {started && (
+      {(started && !finished) && (
         <button 
           onClick={() => {history.push('/game')}}
           className="absolute top-0 right-0 mt-4 mr-5"

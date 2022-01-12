@@ -26,7 +26,7 @@ const TeamRoundPoints: React.FC<Props> = ({ points, declarations }) => {
       <span>{points}</span>
       {!!declarations && (
         <span 
-          className="text-sm pl-1 align-text-top font-bold top text-primary" 
+          className="text-sm pl-1 align-text-top font-bold text-primary" 
           ref={spanRef}
         >
           +{declarations}
