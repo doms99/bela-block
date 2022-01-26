@@ -41,10 +41,19 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script type="text/javascript">
-      document.querySelector('#root').style.height = `${window.innerHeight}px`;
-      // window.addEventListener('resize', () => {
-      //   document.querySelector('#root').style.height = `${window.innerHeight}px`;
-      // })
+      // const root = document.querySelector('#root');
+      // function sizeSetting() {
+      //   if(window.innerHeight >= window.innerWidth) {
+      //     root.style.height = `${window.innerHeight}px`;
+      //   } else {
+      //     root.style.height = 'calc(max(100vh, 620px))';
+      //     window.onresize = () => {
+      //       sizeSetting();
+      //     };
+      //   }
+      // }
+      // window.onload = sizeSetting;
+      document.querySelector('#root').style.height = `calc(min(100vh, ${window.innerHeight}px))`;
     </script>
   </body>
 </html>
