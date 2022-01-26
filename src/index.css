@@ -6,6 +6,10 @@
   html {
     -webkit-tap-highlight-color: transparent;
   }
+
+  #root {
+    min-height: 600px;
+  }
 }
 
 @layer components {
