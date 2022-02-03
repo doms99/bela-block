@@ -11,16 +11,10 @@ export interface Round {
     bonus: boolean
   }
 };
-export interface TeamType {
-  name: string,
-  players: [string, string]
-}
 export interface GameState {
   players: string[],
-  teams: [TeamType, TeamType] | undefined,
   rounds: Round[],
-  dealer: string | undefined,
-  winner: string | undefined,
+  dealer: string,
   scoreTarget: number,
   started: boolean,
   finished: boolean
@@ -37,22 +31,22 @@ export interface StateFunctions {
   deleteRound: (index: number) => void
 }
 export interface Sugestion {
-  text: string, 
+  text: string,
   callback: () => void
 }
 export type Input = 'points' | 'declarations';
 export interface SelectedInput {
-  team: string, 
+  team: string,
   input: Input
 }
 export interface RoundActions {
-  name: string, 
+  name: string,
   action: (index: number) => void
 }
 export interface IconProps {
   className?: string,
 }
 export interface PlayersError {
-  text: string, 
+  text: string,
   sources: number[]
 }
