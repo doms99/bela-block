@@ -11,15 +11,6 @@ export interface Round {
     bonus: boolean
   }
 };
-export interface GameState {
-  players: string[],
-  rounds: Round[],
-  dealer: string,
-  scoreTarget: number,
-  started: boolean,
-  finished: boolean
-}
-export type StateProperties = 'players' | 'playerCount' | 'teams' | 'points';
 export interface StateFunctions {
   getState: () => GameState,
   startGame: (players: string[], scoreTarget: number) => void,
@@ -45,8 +36,4 @@ export interface RoundActions {
 }
 export interface IconProps {
   className?: string,
-}
-export interface PlayersError {
-  text: string,
-  sources: number[]
 }

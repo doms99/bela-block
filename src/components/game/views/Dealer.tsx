@@ -1,37 +1,65 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useSelector } from '../../../redux/hooks';
+import { setDealer as dealerAction } from '../../../redux/slices/gameSlice';
 import CancelIcon from '../../icons/CancelIcon';
 import EditIcon from '../../icons/EditIcon';
 
-export interface Props {
+const Dealer: React.FC = () => {
+  const [editMode, setEditMode] = useState<boolean>(false);
+
+  const players = useSelector(state => state.game.players);
+  const dealer = useSelector(state => state.game.dealer);
+  const dispatch = useDispatch();
+
+  const setDealer = useCallback((dealer: string) => {
+    dispatch(dealerAction({dealer: dealer}));
+  }, [dispatch]);
+
+  const editModeToggle = useCallback(() => setEditMode(curr => !curr), []);
+
+  return (
+    <DealerView
+      players={players}
+      dealer={dealer}
+      editMode={editMode}
+
+      setDealer={setDealer}
+      editModeToggle={editModeToggle}
+    />
+  );
+};
+
+export default Dealer;
+
+export interface ViewProps {
   players: string[],
-  dealer: string,  
-  dealerEdit: boolean,
+  dealer: string,
+  editMode: boolean,
 
   setDealer: (player: string) => void,
   editModeToggle: () => void
 }
 
-const Dealer: React.FC<Props> = ({ players, dealer, setDealer, dealerEdit, editModeToggle }) => {
+export const DealerView: React.FC<ViewProps> = ({ players, dealer, setDealer, editMode, editModeToggle }) => {
+
   return (
-    <section className={`absolute text-center bottom-0 w-full grid grid-cols-${players.length} z-10`}>
+    <section className={`absolute text-center bottom-0 w-full grid grid-cols-${players.length} h-1/4 z-10`}>
       {players.map((player) => (
         <button
           key={player}
-          className={`font-bold text-2xl ${dealer === player || dealerEdit ? "text-black" : "text-primary-active"}`}
+          className={`font-bold text-2xl ${dealer === player || editMode ? "text-black" : "text-primary-active"}`}
           onClick={() => setDealer(player)}
         >
           {player}
         </button>
-        )
-      )}
-      <button 
+      ))}
+      <button
         className={`rounded-indicator bg-primary col-start-${players.indexOf(dealer!)+1}`}
         onClick={editModeToggle}
       >
-        {dealerEdit ? <CancelIcon className="w-3 m-auto mt-1" /> : <EditIcon className="w-3 m-auto mt-1" />}
+        {editMode ? <CancelIcon className="w-3 m-auto mt-1" /> : <EditIcon className="w-3 m-auto mt-1" />}
       </button>
     </section>
   );
 };
-
-export default Dealer;

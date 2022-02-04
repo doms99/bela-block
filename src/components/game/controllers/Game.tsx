@@ -1,87 +1,30 @@
-import RoundEntry3 from "./RoundEntry3";
-import RoundEntry2 from "./RoundEntry2";
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
-import ScoreBoard from '../views/ScoreBoard';
-import { GlobalState } from '../../../App';
+import RoundEntry from "./RoundEntry";
+import RoundEntry from "./RoundEntry";
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
+import ScoreBoardView from '../views/ScoreBoardView';
 import { Round } from "../../../interfaces";
 import Winner from '../views/Winner';
 import { useHistory } from 'react-router';
 import Dealer from '../views/Dealer';
-import Arrow from "../../icons/Arrow";
+import { useDispatch, useSelector } from "../../../redux/hooks";
+import { enterRound, setDealer as dealerAction } from "../../../redux/slices/gameSlice";
 
 const Game: React.FC = () => {
-  const { getState, editDealer, editRound, enterRound, restart, deleteRound } = useContext(GlobalState);
-  const { dealer, players, rounds, teams, winner, scoreTarget } = getState();
+  const dispatch = useDispatch();
+  const { dealer, players, rounds, scoreTarget } = useSelector(state => state.game);
 
-  const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [selectedRound, setSelectedRound] = useState<number>(rounds.length - 1);
-  const [dealerEdit, setDealerEdit] = useState<boolean>(false);
+  const [editIndex, setEditIndex] = useState<number>();
   const history = useHistory();
 
-  useEffect(() => setSelectedRound(rounds.length - 1), [rounds]);
 
-  
-  const pointsReport = (round: Round, index: number) => {
-    if(index === rounds.length) enterRound(round);
-    else editRound(round, index);
-
-    setEditIndex(undefined);
-  }
-
-  const setDealer = (player: string) => {
-    if(!dealerEdit) return;
-    
-    editDealer(player);
-    setDealerEdit(false);
-  }
-
-  const teamNames = teams ? teams.map(team => team.name) : players;
-  const teamOnCall = players.length !== 3 ? 
+  const teamOnCall = players.length !== 3 ?
     undefined :
     players[(players.indexOf(dealer!) + 1) % players.length];
-
-  let roundEntry: ReactElement | undefined = undefined;
-  switch(players.length) {
-    case 2: {
-      roundEntry = <RoundEntry2
-        team1={teamNames[0]}
-        team2={teamNames[1]}
-        playerCount={players.length}
-        teamPoints={rounds[editIndex!]}
-        cancel={() => setEditIndex(undefined)}
-        pointsReport={(round: Round) => pointsReport(round, editIndex!)}
-      />;
-      break;
-    }
-    case 3: {
-      roundEntry = <RoundEntry3
-        teamOnCall={teamOnCall!}
-        team1={teamNames[0]}
-        team2={teamNames[1]}
-        team3={teamNames[2]}
-        teamPoints={rounds[editIndex!]}
-        cancel={() => setEditIndex(undefined)}
-        pointsReport={(round: Round) => pointsReport(round, editIndex!)}
-      />;
-      break;
-    }
-    case 4: {
-      roundEntry = <RoundEntry2
-        team1={teamNames[0]}
-        team2={teamNames[1]}
-        playerCount={players.length}
-        teamPoints={rounds[editIndex!]}
-        cancel={() => setEditIndex(undefined)}
-        pointsReport={(round: Round) => pointsReport(round, editIndex!)}
-      />;
-      break;
-    }
-  }
 
   return (
     <>
       {/* {started && (
-        <button 
+        <button
           onClick={() => {history.push('/setup')}}
           className="absolute top-0 left-0 mt-5 ml-6 z-50"
         >
@@ -89,13 +32,13 @@ const Game: React.FC = () => {
         </button>
       )} */}
       <main className="relative h-full text-right text-white overflow-x-hidden">
-        {teamNames.length === 3 && !!teamOnCall ? (
+        {teams.length === 3 && !!teamOnCall ? (
           <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
-            <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teamNames.indexOf(teamOnCall)+1}`} />
+            <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teams.indexOf(teamOnCall)+1}`} />
           </div>
         ) : undefined}
         {winner && (
-          <Winner 
+          <Winner
             newGame={() => history.push('/setup')}
             rematch={restart}
             winner={winner!}
@@ -103,13 +46,13 @@ const Game: React.FC = () => {
           />
         )}
         <div className="green-backdrop h-3/4 flex flex-col">
-          <div className={`grid grid-cols-${teamNames.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
-            {teamNames.map(team => (
+          <div className={`grid grid-cols-${teams.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
+            {teams.map(team => (
               <span>{team}</span>
-            ))} 
+            ))}
           </div>
           {editIndex === undefined ? (
-            <ScoreBoard
+            <ScoreBoardView
               lastSumIndex={selectedRound}
               roundActions={[
                   {name: 'Edit', action: (index: number) => setEditIndex(index)},
@@ -119,7 +62,7 @@ const Game: React.FC = () => {
               rounds={rounds}
               scoreTarget={scoreTarget}
               setEditIndex={setEditIndex}
-              teams={teamNames}
+              teams={teams}
             />
           ) : (roundEntry)}
         </div>

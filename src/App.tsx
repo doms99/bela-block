@@ -7,6 +7,7 @@ import {
   Redirect
 } from "react-router-dom";
 import { useSelector } from "./redux/hooks";
+import { RoundEntry } from "./components/game/controllers/RoundEntry";
 
 
 function App() {
@@ -16,16 +17,20 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Redirect exact from="/" to="/setup" />
-          {!started ? (
-            <Redirect exact from="/game" to="/setup" />
-          ) : (
-            <Redirect exact from="/setup" to="/game" />
+          {!started && (
+            <>
+              <Redirect from="/game/round" to="/setup" />
+              <Redirect exact from="/game" to="/setup" />
+            </>
           )}
           <Route path="/setup">
             <PlayersSetup />
           </Route>
-          <Route path="/game">
+          <Route exact path="/game">
             <Game />
+          </Route>
+          <Route path="/game/round(/:index">
+            <RoundEntry />
           </Route>
           <Redirect from="/*" to="/setup" />
         </Switch>

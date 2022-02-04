@@ -1,22 +1,60 @@
+import React, { useCallback, useMemo, useState } from 'react';
 import { Round, RoundActions } from '../../../interfaces';
+import { useDispatch, useSelector } from '../../../redux/hooks';
+import { deleteRound } from '../../../redux/slices/gameSlice';
 import AddIcon from '../../icons/AddIcon';
-import RoundPoints from '../controllers/RoundPoints';
-import TotalPoints from './TotalPoints';
+import RoundPoints from './RoundPoints';
+import TotalPoints from '../views/TotalPoints';
+
+export interface Props {
+  setEditIndex: (index: number) => void,
+  teams: string[]
+}
+
+const ScoreBoard: React.FC<Props> = ({ setEditIndex, teams }) => {
+  const rounds = useSelector(state => state.game.rounds);
+  const scoreTarget = useSelector(state => state.game.scoreTarget);
+  const dispatch = useDispatch();
+
+  const [selectedRound, setSelectedRound] = useState<number>(rounds.length - 1);
+
+  const roundActions = useMemo(() => [
+    {name: 'Edit', action: (index: number) => setEditIndex(index)},
+    {name: 'Rewind', action: (index: number) => setSelectedRound(index)},
+    {name: 'Delete', action: (index: number) => dispatch(deleteRound({index}))}
+  ], [dispatch, setEditIndex]);
+
+  const addNewCallback = useCallback(() => setEditIndex(rounds.length), [rounds, setEditIndex]);
+
+  return (
+    <ScoreBoardView
+      lastSumIndex={selectedRound}
+      roundActions={roundActions}
+      rounds={rounds}
+      scoreTarget={scoreTarget}
+      addNewCallback={addNewCallback}
+      teams={teams}
+    />
+  );
+};
+
+export default ScoreBoard;
 
 export const sumOfPoints = (points: number[], declarations: number[]) => {
   return points.reduce((acc, curr) => acc + curr, 0) + declarations.reduce((acc, curr) => acc + curr, 0);
 }
 
-export interface Props {
+export interface ViewProps {
   rounds: Round[],
   teams: string[],
-  setEditIndex: (index: number) => void,
   lastSumIndex: number,
   scoreTarget: number,
-  roundActions: RoundActions[]
+  roundActions: RoundActions[],
+
+  addNewCallback: () => void
 }
 
-const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds, setEditIndex, lastSumIndex }) => {
+export const ScoreBoardView: React.FC<ViewProps> = ({ teams, roundActions, scoreTarget, rounds, addNewCallback, lastSumIndex }) => {
   return (
     <>
       <section className={`grid grid-cols-${teams.length} mx-6 mb-8`}>
@@ -51,7 +89,7 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
         <div className="mr-20 w-24 h-24">
           <button
             className="outlined-bnt text-primary hover:text-primary-active"
-            onClick={() => setEditIndex(rounds.length)}
+            onClick={addNewCallback}
           >
             <AddIcon className="w-4/6 m-auto" />
           </button>
@@ -60,5 +98,3 @@ const ScoreBoard: React.FC<Props> = ({ teams, roundActions, scoreTarget, rounds,
     </>
   );
 };
-
-export default ScoreBoard;

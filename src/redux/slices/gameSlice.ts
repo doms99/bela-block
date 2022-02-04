@@ -1,8 +1,20 @@
-import { createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit'
-import { GameState, Round } from '../../interfaces';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Round } from '../../interfaces';
+
+export type GameState = {
+  players: string[],
+  teams: string[],
+  teamOnCall?: string,
+  rounds: Round[],
+  dealer: string,
+  scoreTarget: number,
+  started: boolean,
+  finished: boolean
+}
 
 const initialState: GameState = {
   players: [],
+  teams: [],
   rounds: [],
   dealer: '',
   scoreTarget: 1001,
@@ -10,19 +22,26 @@ const initialState: GameState = {
   finished: false
 };
 
-export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>, 'game'>({
+export const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
     startGame(state, action: PayloadAction<{players: string[], scoreTarget: number}>) {
-      if(state.started) return;
       const { players, scoreTarget } = action.payload;
+
+      const teams = players.length === 4 ?
+                    [`${players[0]} and ${players[2]}`, `${players[1]} and ${players[3]}`] :
+                    players;
 
       state.started = true;
       state.finished = false;
       state.players = players;
+      state.teams = teams;
       state.rounds = [];
       state.dealer = players[Math.round(Math.random() * players.length)];
+      if(state.players.length === 3) {
+        state.teamOnCall = state.players[(state.players.indexOf(state.dealer) + 1) % state.players.length];
+      }
       state.scoreTarget = scoreTarget;
     },
     finishGame(state) {
@@ -36,6 +55,9 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>, 'g
       if(!state.players.includes(dealer)) return;
 
       state.dealer = dealer;
+      if(state.players.length === 3) {
+        state.teamOnCall = state.players[(state.players.indexOf(dealer) + 1) % state.players.length];
+      }
     },
     restart(state) {
       if(!state.started || !state.finished) return;
@@ -53,8 +75,11 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>, 'g
 
       if(index === undefined) {
         state.rounds = [...state.rounds, round];
-        state.dealer = state.players[(state.players.indexOf(state.dealer!) + 1) % state.players.length];
-        return
+        state.dealer = state.players[(state.players.indexOf(state.dealer) + 1) % state.players.length];
+        if(state.players.length === 3) {
+          state.teamOnCall = state.players[(state.players.indexOf(state.dealer) + 1) % state.players.length];
+        }
+        return;
       }
       if(index < 0 || index > state.players.length -1) return;
 
@@ -72,6 +97,6 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>, 'g
 });
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = gameSlice.actions;
+export const { startGame, finishGame, setDealer, restart, enterRound, deleteRound } = gameSlice.actions;
 
 export default gameSlice.reducer;
