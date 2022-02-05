@@ -25,10 +25,11 @@ module.exports = {
         'gray': colors.gray
       },
       height: {
-        '90': '90%'
+        '90': '90%',
+        'expanded': '120%'
       },
       width: {
-        expanded: '120%',
+        'expanded': '120%',
         '90': '90%'
       },
       margin: {
@@ -37,8 +38,12 @@ module.exports = {
       padding: {
         'expanded-compensation': '10%',
       },
+      translate: {
+        'expanded-compensation': '-10%',
+      },
       borderRadius: {
-        ellipse: '125% 50%',
+        'y-ellipse': '125% 50%',
+        'x-ellipse': '50% 125%',
         '4xl': '2em',
         '5xl': '5em'
       },
@@ -67,5 +72,5 @@ module.exports = {
     }
   },
   plugins: [],
-  
+
 }
