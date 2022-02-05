@@ -1,9 +1,9 @@
 import React from 'react';
 import { useCallback, useEffect, useState } from "react";
-import { bonusPoints } from '../../../constants';
-import { Input, Round, SelectedInput, Sugestion } from "../../../interfaces";
-import { defaultRound } from '../../../utils';
-import RoundEntryView from '../views/RoundEntryView';
+import { bonusPoints } from '../../constants';
+import { Input, Round, SelectedInput, Sugestion } from "../../interfaces";
+import { defaultRound } from '../../utils';
+import RoundEntryView from './RoundEntryView';
 
 export interface Props {
   team1: string,
@@ -15,7 +15,7 @@ export interface Props {
   cancel: () => void
 }
 
-const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, pointsReport, cancel }) => {  
+const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, pointsReport, cancel }) => {
   const [values, setValues] = useState<Round>(teamPoints ? teamPoints : defaultRound(team1, team2));
   const [selected, setSelected] = useState<SelectedInput>({team: team1, input: 'points'});
   const [error, setError] = useState<string>();
@@ -59,17 +59,17 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
 
     const team1Sum = values[team1].points + values[team1].declarations;
     const team2Sum = values[team2].points + values[team2].declarations;
-    
-    
+
+
     if(team1Sum < team2Sum && values[team1].points !== 0) setFallSuggestion([team1]);
     else if(team2Sum < team1Sum && values[team2].points !== 0) setFallSuggestion([team2]);
     else if(team2Sum === team1Sum && values[team1].points !== 0 && values[team2].points !== 0) setFallSuggestion([team1, team2]);
     else setFallSuggestion([]);
   }, [edited, values, team1, team2]);
 
-  function updateState(state: Round) {
+  const updateState = useCallback ((state: Round) => {
     if(playerCount !== 4) return state;
-    
+
     const otherTeam = selected.team === team1 ? team2 : team1;
     return {
       ...state,
@@ -78,9 +78,9 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
         points: Math.max(0, 162 - state[selected.team].points)
       }
     }
-  }
+  }, [playerCount, selected, team1, team2]);
 
-  function setValue(digit: number) {
+  const setValue = useCallback((digit: number) => {
     if(Math.floor(values[selected.team][selected.input]/100) !== 0) return;
 
     setFallen(undefined);
@@ -96,9 +96,9 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
 
       return newState;
     });
-  }
+  }, [selected, updateState, values]);
 
-  function clear() {    
+  const clear = useCallback(() => {
     setValues(curr => updateState({
       ...curr,
       [selected.team]: {
@@ -106,9 +106,9 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
         [selected.input]: 0
       }
     }));
-  }
+  }, [selected, updateState]);
 
-  function backspace() {
+  const backspace = useCallback(() => {
 
     setValues(curr => updateState({
       ...curr,
@@ -117,9 +117,9 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
         [selected.input]: Math.floor(curr[selected.team][selected.input] / 10)
       }
     }));
-  }
+  }, [selected, updateState]);
 
-  function end() {
+  const end = useCallback(() => {
     if(totalPoints() > 162) {
       setError("Can't enter more then 162 points");
 
@@ -134,7 +134,7 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
     }
 
     pointsReport(values);
-  }
+  }, [pointsReport, team1, team2, totalPoints, values]);
 
   function fall(team: string) {
     setFallen(team);
@@ -156,7 +156,7 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
   for(const team of [team1, team2]) {
     if(fallSuggestion.includes(team)) {
       suggestions[team] = {
-        text: "fall?", 
+        text: "fall?",
         callback: () => fall(team)
       }
     } else if(bonusSuggestion === team) {
@@ -168,7 +168,7 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, playerCount, teamPoints, po
   }
 
   return (
-    <RoundEntryView 
+    <RoundEntryView
       teams={[team1, team2]}
       round={values}
       error={error}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 export interface Props {
   points: number,
@@ -9,9 +9,9 @@ const TotalPoints: React.FC<Props> = ({ points, scoreTarget}) => {
   return (
     <div className="text-center w-full">
       <h1 className="font-extrabold text-4xl mb-2">{points}</h1>
-      <h3 className="font-medium text-md">{Math.max(0, scoreTarget - points)}</h3>      
+      <h3 className="font-medium text-md">{Math.max(0, scoreTarget - points)}</h3>
     </div>
   );
 };
 
-export default TotalPoints;
+export default memo(TotalPoints);

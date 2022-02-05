@@ -1,3 +1,5 @@
+import { GameState } from "./redux/slices/gameSlice";
+
 export interface Bonus {
   [key: string]: {
     value: number,

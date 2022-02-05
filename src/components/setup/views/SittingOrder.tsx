@@ -5,10 +5,10 @@ import PlayerBox from './PlayerBox';
 export interface Props {
   playerNames: string[],
   setName: (name: string, index: number) => void,
-  error?: PlayersError
+  errors: PlayersError
 }
 
-const SittingOrder: React.FC<Props> = ({ playerNames, setName, error }) => {
+const SittingOrder: React.FC<Props> = ({ playerNames, setName, errors }) => {
   const handleSetName = useCallback((name: string, playerNum: number) => {
     setName(name, playerNum-1);
   }, [setName]);
@@ -21,7 +21,7 @@ const SittingOrder: React.FC<Props> = ({ playerNames, setName, error }) => {
             name={name}
             playerNumber={index+1}
             setName={handleSetName}
-            error={error?.sources.includes(index)}
+            error={!!errors[index]}
           />
         </div>
       ))}

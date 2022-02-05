@@ -1,30 +1,29 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Round, RoundActions } from '../../../interfaces';
-import { useDispatch, useSelector } from '../../../redux/hooks';
-import { deleteRound } from '../../../redux/slices/gameSlice';
-import AddIcon from '../../icons/AddIcon';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { Round, RoundActions } from '../../interfaces';
+import { useDispatch, useSelector } from '../../redux/hooks';
+import { deleteRound } from '../../redux/slices/gameSlice';
+import AddIcon from '../icons/AddIcon';
 import RoundPoints from './RoundPoints';
-import TotalPoints from '../views/TotalPoints';
+import TotalPoints from './TotalPoints';
+import { useHistory } from 'react-router-dom';
 
-export interface Props {
-  setEditIndex: (index: number) => void,
-  teams: string[]
-}
 
-const ScoreBoard: React.FC<Props> = ({ setEditIndex, teams }) => {
+const ScoreBoard: React.FC = () => {
   const rounds = useSelector(state => state.game.rounds);
+  const teams = useSelector(state => state.game.teams);
   const scoreTarget = useSelector(state => state.game.scoreTarget);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [selectedRound, setSelectedRound] = useState<number>(rounds.length - 1);
 
   const roundActions = useMemo(() => [
-    {name: 'Edit', action: (index: number) => setEditIndex(index)},
+    {name: 'Edit', action: (index: number) => history.push(`/game/round/${index}`)},
     {name: 'Rewind', action: (index: number) => setSelectedRound(index)},
     {name: 'Delete', action: (index: number) => dispatch(deleteRound({index}))}
-  ], [dispatch, setEditIndex]);
+  ], [dispatch, history]);
 
-  const addNewCallback = useCallback(() => setEditIndex(rounds.length), [rounds, setEditIndex]);
+  const addNewCallback = useCallback(() => history.push('/game/round'), [history]);
 
   return (
     <ScoreBoardView
@@ -54,7 +53,7 @@ export interface ViewProps {
   addNewCallback: () => void
 }
 
-export const ScoreBoardView: React.FC<ViewProps> = ({ teams, roundActions, scoreTarget, rounds, addNewCallback, lastSumIndex }) => {
+export const ScoreBoardView: React.FC<ViewProps> = memo(({ teams, roundActions, scoreTarget, rounds, addNewCallback, lastSumIndex }) => {
   return (
     <>
       <section className={`grid grid-cols-${teams.length} mx-6 mb-8`}>
@@ -97,4 +96,4 @@ export const ScoreBoardView: React.FC<ViewProps> = ({ teams, roundActions, score
       </div>
     </>
   );
-};
+});

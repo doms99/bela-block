@@ -46,7 +46,7 @@
   }
 
   .rounded-indicator {
-    @apply mt-2 rounded-t-full w-16 h-8 m-auto;
+    @apply mt-2 rounded-t-full w-16 h-8 mx-auto;
   }
 }
 

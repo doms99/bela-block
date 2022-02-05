@@ -1,5 +1,4 @@
-import React, { ReactElement } from 'react';
-import { useSelector } from '../../../redux/hooks';
+import React, { memo, ReactElement } from 'react';
 
 export interface Props {
   main: ReactElement,
@@ -10,7 +9,7 @@ export interface Props {
 
 const GameWrapper: React.FC<Props> = ({ main, bottom, children }) => {
   return (
-    <div className="h-full">
+    <div className="h-full overflow-x-hidden flex justify-between flex-col">
       <div className="green-backdrop h-3/4 flex flex-col">
         {main}
       </div>
@@ -19,4 +18,4 @@ const GameWrapper: React.FC<Props> = ({ main, bottom, children }) => {
   );
 };
 
-export default GameWrapper;
+export default memo(GameWrapper);

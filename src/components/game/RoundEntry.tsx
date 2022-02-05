@@ -1,18 +1,21 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Round } from '../../../interfaces';
-import { useDispatch, useSelector } from '../../../redux/hooks';
-import { enterRound } from '../../../redux/slices/gameSlice';
+import { Round } from '../../interfaces';
+import { useDispatch, useSelector } from '../../redux/hooks';
+import { enterRound } from '../../redux/slices/gameSlice';
 import RoundEntry2 from './RoundEntry2';
 import RoundEntry3 from './RoundEntry3';
 
 const RoundEntry: React.FC = () => {
   const { index } = useParams<{index?: string}>();
-  let roundIndex: number | undefined;
-  if(index !== undefined) {
-    roundIndex = parseInt(index);
-    if(isNaN(roundIndex)) roundIndex = undefined;
-  }
+  const roundIndex = useMemo(() => {
+    if(index === undefined) return;
+
+    const temp = parseInt(index);
+    if(isNaN(temp)) return undefined;
+
+    return temp;
+  }, [index]);
   const round = useSelector(state => roundIndex !== undefined ? state.game.rounds[roundIndex] : undefined);
   const players = useSelector(state => state.game.players);
   const teams = useSelector(state => state.game.teams);
@@ -25,9 +28,9 @@ const RoundEntry: React.FC = () => {
   }, [history]);
 
   const finish = useCallback((round: Round) => {
-    dispatch(enterRound({round}));
+    dispatch(enterRound({round, index: roundIndex}));
     end();
-  }, [dispatch, end]);
+  }, [dispatch, end, roundIndex]);
 
   if(teams.length === 2) {
     return <RoundEntry2

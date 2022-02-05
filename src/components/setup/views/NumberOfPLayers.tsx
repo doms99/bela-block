@@ -10,7 +10,7 @@ export interface Props {
 
 const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
   return (
-    <section className="w-full grid grid-cols-3 z-50">
+    <section className="w-full grid grid-cols-3 pt-2 z-50">
       <button
         key={2}
         className={`mt-auto font-bold text-2xl ${value === 2 ? "text-black" : "text-primary-active"}`}
@@ -35,9 +35,7 @@ const NumberOfPLayers: React.FC<Props> = ({ value, setValue }) => {
         <Players4 className="w-16 m-auto" />
         <span>4 players</span>
       </button>
-      <div
-        className={`rounded-indicator bg-primary col-start-${value-1}`}
-      />
+      <div className={`rounded-indicator bg-primary col-start-${value-1}`} />
     </section>
   );
 };
