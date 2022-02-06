@@ -122,7 +122,7 @@ export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
   return (
     <GameWrapper
       main={(
-        <div className="relative h-full md:w-full md:flex">
+        <div className="relative h-full">
           {hasActivGame && (
             <button
               onClick={props.activeGameCallback}
@@ -131,14 +131,14 @@ export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
               <Arrow className="h-7 stroke-primary-active rotate-180"/>
             </button>
           )}
-          <form className="h-full md:w-full pb-8 pt-20">
+          <form className="green-backdrop h-full pb-8 pt-20">
             <SittingOrder
               playerNames={playerNames}
               setName={setName}
               errors={!!errors ? errors : playerNames.map(n => undefined)}
             />
           </form>
-          <div className="w-full md:w-auto md:h-full -mt-12 h-24 flex md:flex-col justify-between">
+          <div className="w-full -mt-12 h-24 flex justify-between">
             <div className="placeholder" />
             <button
               className="mr-16 w-24 h-24 outlined-bnt-flipped

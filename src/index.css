@@ -7,10 +7,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  body {
-    overflow: hidden;
-  }
-
   #root {
     min-height: 600px;
   }
@@ -34,11 +30,7 @@
   }
 
   .green-backdrop {
-    @apply bg-primary ml-expanded-compensation md:ml-0
-            md:relative md:top-1/2 md:-translate-y-1/2
-            w-expanded md:w-3/4 h-3/4 md:h-expanded
-            rounded-b-y-ellipse md:rounded-b-none md:rounded-r-x-ellipse
-            px-expanded-compensation md:px-5 py-5 md:py-expanded-compensation;
+    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-expanded-compensation py-5;
   }
 
   .appearing-btn {
@@ -50,12 +42,11 @@
   }
 
   .content-box {
-    @apply text-center bg-white text-black pb-10 rounded-b-y-ellipse rounded-t-5xl;
+    @apply text-center bg-white text-black pb-10 rounded-b-ellipse rounded-t-5xl;
   }
 
   .rounded-indicator {
-    @apply mt-2 md:mt-0 md:ml-2 rounded-t-full md:rounded-t-none md:rounded-l-full
-           w-16 md:w-8 h-8 md:h-16 mx-auto md:mx-0;
+    @apply mt-2 rounded-t-full w-16 h-8 mx-auto;
   }
 }
 
