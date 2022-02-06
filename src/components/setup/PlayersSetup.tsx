@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import SittingOrder from './views/SittingOrder';
+import SittingOrder from './SittingOrder';
 import Arrow from '../icons/Arrow';
 import { useHistory } from 'react-router';
-import NumberOfPLayers from './views/NumberOfPLayers';
+import NumberOfPLayers from './NumberOfPLayers';
 import ConfirmIcon from '../icons/ConfirmIcon';
 import GameWrapper from '../game/GameWrapper';
 import { useDispatch, useSelector } from '../../redux/hooks';
@@ -121,41 +121,40 @@ export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
 
   return (
     <GameWrapper
-      main={(
-        <div className="relative h-full">
-          {hasActivGame && (
-            <button
-              onClick={props.activeGameCallback}
-              className="absolute top-0 right-0 mt-4 mr-5"
-            >
-              <Arrow className="h-7 stroke-primary-active rotate-180"/>
-            </button>
-          )}
-          <form className="green-backdrop h-full pb-8 pt-20">
-            <SittingOrder
-              playerNames={playerNames}
-              setName={setName}
-              errors={!!errors ? errors : playerNames.map(n => undefined)}
-            />
-          </form>
-          <div className="w-full -mt-12 h-24 flex justify-between">
-            <div className="placeholder" />
-            <button
-              className="mr-16 w-24 h-24 outlined-bnt-flipped
-                       text-white hover:text-white-active"
-              onClick={startGame}
-            >
-              <ConfirmIcon className="w-4/6 m-auto" />
-            </button>
-          </div>
-        </div>
-      )}
       bottom={
         <NumberOfPLayers
           value={playerNames.length}
           setValue={setPlayerCount}
         />
       }
-    />
+    >
+      <div className="relative h-full">
+        {hasActivGame && (
+          <button
+            onClick={props.activeGameCallback}
+            className="absolute top-0 right-0 mt-4 mr-5"
+          >
+            <Arrow className="h-7 stroke-primary-active rotate-180"/>
+          </button>
+        )}
+        <form className="green-backdrop h-full pb-8 pt-20">
+          <SittingOrder
+            playerNames={playerNames}
+            setName={setName}
+            errors={!!errors ? errors : playerNames.map(n => undefined)}
+          />
+        </form>
+        <div className="w-full -mt-12 h-24 flex justify-between">
+          <div className="placeholder" />
+          <button
+            className="mr-16 w-24 h-24 outlined-bnt-flipped
+                      text-white hover:text-white-active"
+            onClick={startGame}
+          >
+            <ConfirmIcon className="w-4/6 m-auto" />
+          </button>
+        </div>
+      </div>
+    </GameWrapper>
   );
 });

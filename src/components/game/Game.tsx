@@ -29,26 +29,23 @@ export type ViewProps = {
 
 export const GameView: React.FC<ViewProps> = memo(({ teams, winner, teamOnCall }) => {
   return (
-    <GameWrapper
-      main={
-        <main className="h-full text-right text-white overflow-x-hidden">
-          {teams.length === 3 && (
-            <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
-              <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teams.indexOf(teamOnCall!)+1}`} />
-            </div>
-          )}
-          {winner && <Winner />}
-          <div className="h-full flex flex-col">
-            <div className={`grid grid-cols-${teams.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
-              {teams.map(team => (
-                <span key={team}>{team}</span>
-              ))}
-            </div>
-            <ScoreBoard />
+    <GameWrapper bottom={<Dealer />}>
+      <main className="h-full text-right text-white overflow-x-hidden">
+        {teams.length === 3 && (
+          <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
+            <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teams.indexOf(teamOnCall!)+1}`} />
           </div>
-        </main>
-      }
-      bottom={<Dealer />}
-    />
+        )}
+        {winner && <Winner />}
+        <div className="h-full flex flex-col">
+          <div className={`grid grid-cols-${teams.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
+            {teams.map(team => (
+              <span key={team}>{team}</span>
+            ))}
+          </div>
+          <ScoreBoard />
+        </div>
+      </main>
+    </GameWrapper>
   )
 });

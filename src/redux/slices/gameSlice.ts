@@ -81,9 +81,11 @@ export const gameSlice = createSlice({
     enterRound(state, action: PayloadAction<{round: Round, index?: number}>) {
       if(!state.started) return;
 
+      console.log(action.payload);
+
       const { round, index } = action.payload;
-      for(let player of state.players) {
-        if(!(player in round)) return;
+      for(let team of state.teams) {
+        if(!(team in round)) return;
       }
 
       if(index !== undefined) {

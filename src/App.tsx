@@ -29,7 +29,7 @@ function App() {
           <Route path="/game/round/:index?">
             <RoundEntry />
           </Route>
-          {/* <Redirect from="/*" to="/setup" /> */}
+          <Redirect from="/*" to="/setup" />
         </Switch>
       </BrowserRouter>
   );

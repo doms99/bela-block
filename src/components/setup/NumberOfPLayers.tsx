@@ -1,7 +1,7 @@
 import React from 'react';
-import Players2 from '../../icons/Players2';
-import Players3 from '../../icons/Players3';
-import Players4 from '../../icons/Players4';
+import Players2 from '../icons/Players2';
+import Players3 from '../icons/Players3';
+import Players4 from '../icons/Players4';
 
 export interface Props {
   value: number,

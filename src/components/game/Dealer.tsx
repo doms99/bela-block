@@ -45,7 +45,7 @@ export interface ViewProps {
 export const DealerView: React.FC<ViewProps> = memo(({ players, dealer, setDealer, editMode, editModeToggle }) => {
 
   return (
-    <section className={`absolute text-center bottom-0 w-full grid grid-cols-${players.length} z-10`}>
+    <section className={`text-center w-full grid grid-cols-${players.length} z-10`}>
       {players.map((player) => (
         <button
           key={player}

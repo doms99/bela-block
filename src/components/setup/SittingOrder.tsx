@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { PlayersError } from '../PlayersSetup';
+import { PlayersError } from './PlayersSetup';
 import PlayerBox from './PlayerBox';
 
 export interface Props {

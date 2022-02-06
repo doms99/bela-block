@@ -27,90 +27,87 @@ export interface Props {
 
 const RoundEntryView: React.FC<Props> = ({ teams, teamOnCall, sugestions, round, selected, setSelected, error, cancel, numberClick, backspace, clear, canSaveRound, saveRound }) => {
   return (
-    <GameWrapper
-      main={
-        <>
-          {!!teamOnCall && (
-            <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
-              <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teams.indexOf(teamOnCall)+1}`} />
-            </div>
-          )}
-          <div className={`grid grid-cols-${teams.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
-            {teams.map(team => (
-              <span key={team}>{team}</span>
-            ))}
-          </div>
-          <section className={`grid grid-cols-${teams.length} mx-6`}>
-            {teams.map((team) => (
-              <EnteredPoints
-                key={team}
-                team={team}
-                sugestion={sugestions[team]}
-                points={round[team].points}
-                declarations={round[team].declarations}
-                bonus={round[team].bonus}
-                selected={selected.team === team ? selected.input : undefined}
-                setSelected={setSelected}
-              />
-            ))}
-          </section>
-          <div className="h-8 w-full flex-none text-center">
-              { error && <span className="text-lg font-bold">{error}</span> }
-          </div>
-          <section className="h-full content-box mx-6">
-            <div className="grid grid-cols-3 text-3xl h-full" >
-              {Array.from(Array(9).keys()).map(num => (
-                <button
-                  className="no-bg-green"
-                  key={num}
-                  onClick={() => numberClick(num+1)}
-                >
-                  {num+1}
-                </button>
-              ))}
-              <button
-                className="no-bg-black"
-                onClick={backspace}
-              >
-                <BackspaceIcon className="w-6 m-auto" />
-              </button>
+    <GameWrapper bottom={<Dealer />}>
+      {!!teamOnCall && (
+        <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
+          <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teams.indexOf(teamOnCall)+1}`} />
+        </div>
+      )}
+      <div className="h-full flex flex-col">
+        <div className={`grid grid-cols-${teams.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
+          {teams.map(team => (
+            <span key={team}>{team}</span>
+          ))}
+        </div>
+        <section className={`grid grid-cols-${teams.length} mx-6`}>
+          {teams.map((team) => (
+            <EnteredPoints
+              key={team}
+              team={team}
+              sugestion={sugestions[team]}
+              points={round[team].points}
+              declarations={round[team].declarations}
+              bonus={round[team].bonus}
+              selected={selected.team === team ? selected.input : undefined}
+              setSelected={setSelected}
+            />
+          ))}
+        </section>
+        <div className="h-8 w-full flex-none text-center">
+            { error && <span className="text-lg text-white font-bold">{error}</span> }
+        </div>
+        <section className="h-full content-box mx-6">
+          <div className="grid grid-cols-3 text-3xl h-full" >
+            {Array.from(Array(9).keys()).map(num => (
               <button
                 className="no-bg-green"
-                onClick={() => numberClick(0)}
+                key={num}
+                onClick={() => numberClick(num+1)}
               >
-                {0}
+                {num+1}
               </button>
-              <button
-                className="no-bg-black"
-                onClick={clear}
-              >
-                <CancelIcon className="w-6 m-auto" />
-              </button>
-            </div>
-          </section>
-          <div className="w-full -mt-12 h-24 flex justify-between">
-            <div className="ml-20 w-24 h-24">
-              <button
-                className="outlined-bnt text-error hover:text-error-active"
-                onClick={cancel}
-              >
-                <CancelIcon className="w-2/4 m-auto" />
-              </button>
-            </div>
-            <div className="mr-20 w-24 h-24">
-              <button
-                className="outlined-bnt text-primary hover:text-primary-active"
-                disabled={!canSaveRound}
-                onClick={saveRound}
-              >
-                <ConfirmIcon className="w-4/6 m-auto"/>
-              </button>
-            </div>
+            ))}
+            <button
+              className="no-bg-black"
+              onClick={backspace}
+            >
+              <BackspaceIcon className="w-6 m-auto" />
+            </button>
+            <button
+              className="no-bg-green"
+              onClick={() => numberClick(0)}
+            >
+              {0}
+            </button>
+            <button
+              className="no-bg-black"
+              onClick={clear}
+            >
+              <CancelIcon className="w-6 m-auto" />
+            </button>
           </div>
-        </>
-      }
-      bottom={<Dealer />}
-    />
+        </section>
+        <div className="w-full -mt-12 h-24 flex justify-between">
+          <div className="ml-20 w-24 h-24">
+            <button
+              className="outlined-bnt text-error hover:text-error-active"
+              onClick={cancel}
+            >
+              <CancelIcon className="w-2/4 m-auto" />
+            </button>
+          </div>
+          <div className="mr-20 w-24 h-24">
+            <button
+              className="outlined-bnt text-primary hover:text-primary-active"
+              disabled={!canSaveRound}
+              onClick={saveRound}
+            >
+              <ConfirmIcon className="w-4/6 m-auto"/>
+            </button>
+          </div>
+        </div>
+      </div>
+    </GameWrapper>
   );
 };
 

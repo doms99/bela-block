@@ -7,6 +7,10 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  body {
+    overflow: hidden;
+  }
+
   #root {
     min-height: 600px;
   }
@@ -30,7 +34,7 @@
   }
 
   .green-backdrop {
-    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-expanded-compensation py-5;
+    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse px-expanded-compensation;
   }
 
   .appearing-btn {

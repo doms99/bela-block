@@ -82,6 +82,7 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
   }, [team1, team2, team3]);
 
   const setValue = useCallback((digit: number) => {
+    if(values[selected.team][selected.input] / 100 > 1) return;
     if(Math.floor(values[selected.team][selected.input]/100) !== 0) return;
 
     setFallen(false);
@@ -97,23 +98,31 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
   }, [edited, selected, updateState, values]);
 
   const clear = useCallback(() => {
-    setValues(curr => updateState({
-      ...curr,
-      [selected.team]: {
-        ...curr[selected.team],
-        [selected.input]: 0
-      }
-    }, edited));
+    setValues(curr => {
+      if(curr[selected.team][selected.input] === 0) return curr;
+
+      return updateState({
+        ...curr,
+        [selected.team]: {
+          ...curr[selected.team],
+          [selected.input]: 0
+        }
+      }, edited);
+    });
   },[edited, selected, updateState]);
 
   const backspace = useCallback(() => {
-    setValues(curr => updateState({
-      ...curr,
-      [selected.team]: {
-        ...curr[selected.team],
-        [selected.input]: Math.floor(curr[selected.team][selected.input] / 10)
-      }
-    }, edited));
+    setValues(curr => {
+      if(curr[selected.team][selected.input] === 0) return curr;
+
+      return updateState({
+        ...curr,
+        [selected.team]: {
+          ...curr[selected.team],
+          [selected.input]: Math.floor(curr[selected.team][selected.input] / 10)
+        }
+      }, edited);
+    });
   }, [edited, selected, updateState]);
 
   const end = useCallback(() => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Players1 from '../../icons/Players1';
+import Players1 from '../icons/Players1';
 
 export interface Props {
   name: string,
