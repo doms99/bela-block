@@ -1,10 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit';
 import gameReducers from './slices/gameSlice';
 
+const readState = localStorage.getItem('game');
+let parsedState;
+
+if(!!readState) {
+  parsedState = JSON.parse(readState);
+}
+
 const store = configureStore({
   reducer: {
     game: gameReducers
-  }
+  },
+  preloadedState: parsedState
+});
+
+store.subscribe(() => {
+  localStorage.setItem('game', JSON.stringify(store.getState()));
 });
 
 export default store;

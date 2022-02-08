@@ -88,23 +88,19 @@ const RoundEntryView: React.FC<Props> = ({ teams, teamOnCall, sugestions, round,
           </div>
         </section>
         <div className="w-full -mt-12 h-24 flex justify-between">
-          <div className="ml-20 w-24 h-24">
             <button
-              className="outlined-bnt text-error hover:text-error-active"
+              className="outlined-bnt ml-20 sm:ml-28 w-24 h-24 text-error hover:text-error-active"
               onClick={cancel}
             >
               <CancelIcon className="w-2/4 m-auto" />
             </button>
-          </div>
-          <div className="mr-20 w-24 h-24">
             <button
-              className="outlined-bnt text-primary hover:text-primary-active"
+              className="outlined-bnt mr-20 sm:mr-28 w-24 h-24 text-primary hover:text-primary-active"
               disabled={!canSaveRound}
               onClick={saveRound}
             >
               <ConfirmIcon className="w-4/6 m-auto"/>
             </button>
-          </div>
         </div>
       </div>
     </GameWrapper>

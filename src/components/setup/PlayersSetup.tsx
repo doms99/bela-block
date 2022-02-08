@@ -128,7 +128,6 @@ export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
         />
       }
     >
-      <div className="relative h-full">
         {hasActivGame && (
           <button
             onClick={props.activeGameCallback}
@@ -141,20 +140,18 @@ export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
           <SittingOrder
             playerNames={playerNames}
             setName={setName}
-            errors={!!errors ? errors : playerNames.map(n => undefined)}
+            errors={!!errors ? errors : playerNames.map(() => undefined)}
           />
         </form>
-        <div className="w-full -mt-12 h-24 flex justify-between">
-          <div className="placeholder" />
+        <div className="text-right px-20 sm:px-28 transition-all -mt-8 w-full">
           <button
-            className="mr-16 w-24 h-24 outlined-bnt-flipped
-                      text-white hover:text-white-active"
+            className="w-24 h-24 outlined-bnt-flipped
+                     text-white hover:text-white-active"
             onClick={startGame}
           >
             <ConfirmIcon className="w-4/6 m-auto" />
           </button>
         </div>
-      </div>
     </GameWrapper>
   );
 });

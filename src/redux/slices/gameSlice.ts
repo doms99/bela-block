@@ -26,7 +26,7 @@ const initialState: GameState = {
 
 export const gameSlice = createSlice({
   name: 'game',
-  initialState,
+  initialState: {...initialState},
   reducers: {
     startGame(state, action: PayloadAction<{players: string[], scoreTarget: number}>) {
       const { players, scoreTarget } = action.payload;
@@ -43,8 +43,11 @@ export const gameSlice = createSlice({
       state.dealer = players[Math.round(Math.random() * players.length)];
       if(players.length === 3) {
         state.teamOnCall = players[(players.indexOf(state.dealer) + 1) % state.players.length];
+      } else {
+        delete state.teamOnCall;
       }
       state.scoreTarget = scoreTarget;
+      delete state.winner;
     },
     setDealer(state, action: PayloadAction<{dealer: string}>) {
       if(!state.started) return;
@@ -69,9 +72,9 @@ export const gameSlice = createSlice({
       if(!state.started || !state.finished) return;
 
       state.started = initialState.started;
-      state.rounds = initialState.rounds;
-      state.teams = initialState.teams;
-      state.players = initialState.players;
+      state.rounds = [...initialState.rounds];
+      state.teams = [...initialState.teams];
+      state.players = [...initialState.players];
       state.dealer = initialState.dealer;
       state.scoreTarget = initialState.scoreTarget;
       state.finished = initialState.finished;
@@ -115,10 +118,10 @@ export const gameSlice = createSlice({
       state.rounds.splice(index, 1);
 
       const winner = checkForWinner(state.rounds, state.scoreTarget);
-      if(!winner) return;
-
-      state.finished = false;
-      delete state.winner;
+      if(!winner) {
+        state.finished = false;
+        delete state.winner;
+      }
     }
   }
 });

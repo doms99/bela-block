@@ -8,10 +8,12 @@ import {
 } from "react-router-dom";
 import { useSelector } from "./redux/hooks";
 import RoundEntry from "./components/game/RoundEntry";
+import Winner from "./components/game/Winner";
 
 
 function App() {
   const started = useSelector(state => state.game.started);
+  const winner = useSelector(state => state.game.winner);
 
   return (
       <BrowserRouter>
@@ -24,7 +26,7 @@ function App() {
             <PlayersSetup />
           </Route>
           <Route exact path="/game">
-            <Game />
+            {winner ? <Winner /> : <Game />}
           </Route>
           <Route path="/game/round/:index?">
             <RoundEntry />

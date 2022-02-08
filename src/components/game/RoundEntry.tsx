@@ -24,7 +24,7 @@ const RoundEntry: React.FC = () => {
   const history = useHistory();
 
   const end = useCallback(() => {
-    history.push('/game');
+    history.replace('/game');
   }, [history]);
 
   const finish = useCallback((round: Round) => {

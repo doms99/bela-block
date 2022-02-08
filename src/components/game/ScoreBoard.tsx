@@ -18,12 +18,12 @@ const ScoreBoard: React.FC = () => {
   const [selectedRound, setSelectedRound] = useState<number>(rounds.length - 1);
 
   const roundActions = useMemo(() => [
-    {name: 'Edit', action: (index: number) => history.push(`/game/round/${index}`)},
+    {name: 'Edit', action: (index: number) => history.replace(`/game/round/${index}`)},
     {name: 'Rewind', action: (index: number) => setSelectedRound(index)},
     {name: 'Delete', action: (index: number) => dispatch(deleteRound({index}))}
   ], [dispatch, history]);
 
-  const addNewCallback = useCallback(() => history.push('/game/round'), [history]);
+  const addNewCallback = useCallback(() => history.replace('/game/round'), [history]);
 
   return (
     <ScoreBoardView
@@ -83,16 +83,14 @@ export const ScoreBoardView: React.FC<ViewProps> = memo(({ teams, roundActions, 
         </div>
         {/* <div className="absolute bottom-0 w-full h-1/6 mb-14 bg-gradient-to-t from-white" /> */}
       </section>
-      <div className="w-full -mt-12 h-24 flex justify-between z-10">
-        <div className="placeholder" />
-        <div className="mr-20 w-24 h-24">
+      <div className="text-right px-20 sm:px-28 transition-all -mt-12 w-full z-50">
           <button
-            className="outlined-bnt text-primary hover:text-primary-active"
+            className="w-24 h-24 outlined-bnt
+                     text-primary hover:text-primary-active"
             onClick={addNewCallback}
           >
             <AddIcon className="w-4/6 m-auto" />
           </button>
-        </div>
       </div>
     </>
   );
