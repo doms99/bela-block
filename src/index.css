@@ -7,47 +7,72 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  body {
+    overflow: hidden;
+  }
+
   #root {
     min-height: 600px;
+    min-width: 320px;
   }
 }
 
-@layer components {
-  .no-bg-green {
-    @apply font-extrabold active:text-primary-active text-4xl text-primary;
+@keyframes f1t2 {
+  from {
+    margin-left: 0;
   }
 
-  .no-bg-black {
-    @apply font-extrabold active:text-gray-500 text-4xl text-black;
+  to {
+    margin-left: 33.33%;
+  }
+}
+
+@keyframes f1t3 {
+  from {
+    margin-left: 0;
   }
 
-  .outlined-bnt {
-    @apply rounded-full z-50 w-full h-full border-primary border-bold active:border-extra font-bold bg-white;
+  to {
+    margin-left: auto;
+  }
+}
+
+@keyframes f2t3 {
+  from {
+    margin-left: 33.33%;
   }
 
-  .outlined-bnt-flipped {
-    @apply rounded-full z-50 w-full h-full border-white border-bold active:border-extra font-bold bg-primary;
+  to {
+    margin-left: auto;
   }
+}
 
-  .green-backdrop {
-    @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse p-expanded-compensation py-5;
-  }
+.no-bg-green {
+  @apply font-extrabold active:text-primary-active text-4xl text-primary;
+}
 
-  .appearing-btn {
-    @apply transition-btn;
-  }
+.no-bg-black {
+  @apply font-extrabold active:text-gray-500 text-4xl text-black;
+}
 
-  .appearing-btn.appearing-invisible {
-    @apply h-0 w-0 border-0;
-  }
+.outlined-bnt {
+  @apply rounded-full z-50 border-primary border-bold active:border-extra font-bold bg-white;
+}
 
-  .content-box {
-    @apply text-center bg-white text-black pb-10 rounded-b-ellipse rounded-t-5xl;
-  }
+.outlined-bnt-flipped {
+  @apply rounded-full z-50 border-white border-bold active:border-extra font-bold bg-primary;
+}
 
-  .rounded-indicator {
-    @apply mt-2 rounded-t-full w-16 h-8 m-auto;
-  }
+.green-backdrop {
+  @apply bg-primary w-expanded ml-expanded-compensation rounded-b-ellipse px-expanded-compensation;
+}
+
+.content-box {
+  @apply text-center bg-white text-black pb-10 rounded-b-ellipse rounded-t-5xl;
+}
+
+.rounded-indicator {
+  @apply mt-2 rounded-t-full w-16 h-8 mx-auto;
 }
 
 .player-1-2-players, .player-1-3-players, .player-1-4-players {

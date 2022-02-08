@@ -1,3 +1,5 @@
+import { GameState } from "./redux/slices/gameSlice";
+
 export interface Bonus {
   [key: string]: {
     value: number,
@@ -11,21 +13,6 @@ export interface Round {
     bonus: boolean
   }
 };
-export interface TeamType {
-  name: string,
-  players: [string, string]
-}
-export interface GameState {
-  players: string[],
-  teams: [TeamType, TeamType] | undefined,
-  rounds: Round[],
-  dealer: string | undefined,
-  winner: string | undefined,
-  scoreTarget: number,
-  started: boolean,
-  finished: boolean
-}
-export type StateProperties = 'players' | 'playerCount' | 'teams' | 'points';
 export interface StateFunctions {
   getState: () => GameState,
   startGame: (players: string[], scoreTarget: number) => void,
@@ -37,22 +24,18 @@ export interface StateFunctions {
   deleteRound: (index: number) => void
 }
 export interface Sugestion {
-  text: string, 
+  text: string,
   callback: () => void
 }
 export type Input = 'points' | 'declarations';
 export interface SelectedInput {
-  team: string, 
+  team: string,
   input: Input
 }
 export interface RoundActions {
-  name: string, 
+  name: string,
   action: (index: number) => void
 }
 export interface IconProps {
   className?: string,
-}
-export interface PlayersError {
-  text: string, 
-  sources: number[]
 }

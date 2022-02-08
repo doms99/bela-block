@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 export interface Props {
   onClickOptions: {name: string, action: () => void}[],
@@ -20,4 +20,4 @@ const OptionsMenu:React.FC<Props> = ({ onClickOptions }) => {
   );
 };
 
-export default OptionsMenu;
+export default memo(OptionsMenu);

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Round, RoundActions } from '../../../interfaces';
-import Dots from '../../icons/Dots';
-import OptionsMenu from '../views/OptionsMenu';
-import TeamRoundPoints from '../views/TeamRoundPoints';
+import React, { memo, useState } from 'react';
+import { bonusPoints } from '../../constants';
+import { Round, RoundActions } from '../../interfaces';
+import Dots from '../icons/Dots';
+import OptionsMenu from './OptionsMenu';
+import TeamRoundPoints from './TeamRoundPoints';
 
 export interface Props {
   round: Round,
@@ -27,21 +28,21 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
   }
 
   return (
-    <div 
+    <div
       className={`group relative grid grid-cols-${teams.length}
       px-5 border-primary ${selected ? "text-black" : "text-gray-400"}
       hover:bg-gray-100 bg-transparent text-xl font-medium`}
-    > 
-      <button 
+    >
+      <button
         onClick={click}
         className="hidden group-hover:block active:bg-gray-200 absolute left-0 ml-2 h-full px-2 rounded-md" >
         <Dots/>
       </button>
       {teams.map(team => (
-        <TeamRoundPoints 
-          key={team} 
-          points={round[team].points} 
-          declarations={round[team].declarations} 
+        <TeamRoundPoints
+          key={team}
+          points={round[team].points}
+          declarations={round[team].declarations + (round[team].bonus ? bonusPoints : 0)}
         />
       ))}
       {(clicked && !!onClickActions) && (
@@ -57,4 +58,4 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
   );
 };
 
-export default RoundPoints;
+export default memo(RoundPoints);

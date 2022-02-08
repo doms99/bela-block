@@ -1,5 +1,6 @@
 import { bonusPoints } from "./constants";
-import { Bonus, GameState, Round } from "./interfaces";
+import { Bonus, Round } from "./interfaces";
+import { GameState } from "./redux/slices/gameSlice";
 
 export const zeroRoundValues = (teams: string[]): [Round, Bonus] => {
   const pointsAndDeclarations = teams.reduce((obj, player) => ({...obj, [player]: { points: 0, declarations: 0 }}), {});
@@ -34,8 +35,8 @@ export const adjustBonusesAndDeclarations = (playerPoints: Round): [Round, Bonus
 export function defaultRound(...teams: string[]): Round {
   const round: Round = {};
   for(let team of teams) {
-    round[team] = { 
-      points: 0, 
+    round[team] = {
+      points: 0,
       declarations: 0,
       bonus: false
     }

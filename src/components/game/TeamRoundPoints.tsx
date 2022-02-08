@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { memo, useRef } from 'react';
 
 export interface Props {
   points: number,
@@ -25,8 +25,8 @@ const TeamRoundPoints: React.FC<Props> = ({ points, declarations }) => {
     <div ref={divRef}>
       <span>{points}</span>
       {!!declarations && (
-        <span 
-          className="text-sm pl-1 align-text-top font-bold text-primary" 
+        <span
+          className="text-sm pl-1 align-text-top font-bold text-primary"
           ref={spanRef}
         >
           +{declarations}
@@ -36,4 +36,4 @@ const TeamRoundPoints: React.FC<Props> = ({ points, declarations }) => {
   );
 };
 
-export default TeamRoundPoints;
+export default memo(TeamRoundPoints);
