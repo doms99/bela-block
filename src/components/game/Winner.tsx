@@ -45,8 +45,9 @@ export type ViewProps = {
 
 export const WinnerView: React.FC<ViewProps> = memo(({ winner, rematch, newGame, deleteLast }) => {
   return (
-    <GameWrapper>
-      <section className="content-box text-center text-white bg-primary p-6 m-auto">
+    <div className="backdrop">
+      <section className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                          min-w-max content-box text-center text-white bg-primary p-6 m-auto z-50">
         <b className="text-2xl font-bold">{winner}</b><br/>
         <span className="text-lg font-normal" >win's this match</span>
         <div className="grid grid-cols-2 gap-2 mt-6">
@@ -55,6 +56,6 @@ export const WinnerView: React.FC<ViewProps> = memo(({ winner, rematch, newGame,
           <button className="py-2 mx-12 font-normal hover:bg-primary-active rounded-full col-start-1 col-end-3" onClick={deleteLast}>Delete last</button>
         </div>
       </section>
-    </GameWrapper>
+    </div>
   );
 });

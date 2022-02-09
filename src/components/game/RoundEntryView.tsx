@@ -56,7 +56,7 @@ const RoundEntryView: React.FC<Props> = ({ teams, teamOnCall, sugestions, round,
         <div className="h-8 w-full flex-none text-center">
             { error && <span className="text-lg text-white font-bold">{error}</span> }
         </div>
-        <section className="h-full content-box mx-6">
+        <section className="h-full content-box bg-white mx-6">
           <div className="grid grid-cols-3 text-3xl h-full" >
             {Array.from(Array(9).keys()).map(num => (
               <button
@@ -89,13 +89,13 @@ const RoundEntryView: React.FC<Props> = ({ teams, teamOnCall, sugestions, round,
         </section>
         <div className="w-full -mt-12 h-24 flex justify-between">
             <button
-              className="outlined-bnt ml-20 sm:ml-28 w-24 h-24 text-error hover:text-error-active"
+              className="outlined-bnt ml-16 sm:ml-28 w-24 h-24 text-error hover:text-error-active"
               onClick={cancel}
             >
               <CancelIcon className="w-2/4 m-auto" />
             </button>
             <button
-              className="outlined-bnt mr-20 sm:mr-28 w-24 h-24 text-primary hover:text-primary-active"
+              className="outlined-bnt mr-16 sm:mr-28 w-24 h-24 text-primary hover:text-primary-active"
               disabled={!canSaveRound}
               onClick={saveRound}
             >

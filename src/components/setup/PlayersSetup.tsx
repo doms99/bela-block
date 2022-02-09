@@ -143,7 +143,7 @@ export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
             errors={!!errors ? errors : playerNames.map(() => undefined)}
           />
         </form>
-        <div className="text-right px-20 sm:px-28 transition-all -mt-8 w-full">
+        <div className="text-right px-16 sm:px-28 transition-all -mt-8 w-full">
           <button
             className="w-24 h-24 outlined-bnt-flipped
                      text-white hover:text-white-active"

@@ -26,7 +26,8 @@ function App() {
             <PlayersSetup />
           </Route>
           <Route exact path="/game">
-            {winner ? <Winner /> : <Game />}
+            {winner && <Winner />}
+            <Game />
           </Route>
           <Route path="/game/round/:index?">
             <RoundEntry />

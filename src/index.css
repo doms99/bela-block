@@ -17,34 +17,15 @@
   }
 }
 
-@keyframes f1t2 {
-  from {
-    margin-left: 0;
-  }
-
-  to {
-    margin-left: 33.33%;
-  }
-}
-
-@keyframes f1t3 {
-  from {
-    margin-left: 0;
-  }
-
-  to {
-    margin-left: auto;
-  }
-}
-
-@keyframes f2t3 {
-  from {
-    margin-left: 33.33%;
-  }
-
-  to {
-    margin-left: auto;
-  }
+.backdrop::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, .4);
+  z-index: 40;
 }
 
 .no-bg-green {
@@ -68,7 +49,7 @@
 }
 
 .content-box {
-  @apply text-center bg-white text-black pb-10 rounded-b-ellipse rounded-t-5xl;
+  @apply text-center pb-10 rounded-b-ellipse rounded-t-5xl;
 }
 
 .rounded-indicator {
