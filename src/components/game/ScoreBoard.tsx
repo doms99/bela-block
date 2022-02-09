@@ -67,7 +67,7 @@ export const ScoreBoardView: React.FC<ViewProps> = memo(({ teams, roundActions, 
           />
         ))}
       </section>
-      <section className="content-box relative h-full overflow-x-hidden py-4 pb-14 mx-6">
+      <section className="content-box bg-white relative h-full overflow-x-hidden py-4 pb-14 mx-6">
         <div className="overflow-y-auto overflow-x-hidden h-full">
           {[...rounds].reverse().map((round, i) => {
             const index = rounds.length - 1 - i;
@@ -83,7 +83,7 @@ export const ScoreBoardView: React.FC<ViewProps> = memo(({ teams, roundActions, 
         </div>
         {/* <div className="absolute bottom-0 w-full h-1/6 mb-14 bg-gradient-to-t from-white" /> */}
       </section>
-      <div className="text-right px-20 sm:px-28 transition-all -mt-12 w-full z-50">
+      <div className="text-right px-16 sm:px-28 transition-all -mt-12 w-full z-30">
           <button
             className="w-24 h-24 outlined-bnt
                      text-primary hover:text-primary-active"
