@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-spring/web": "^9.4.3",
     "@reduxjs/toolkit": "^1.7.2",
     "express": "^4.17.1",
     "react": "^17.0.2",

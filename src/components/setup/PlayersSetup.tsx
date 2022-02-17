@@ -93,7 +93,8 @@ const PlayersSetup = () => {
   return (
     <PlayersSetupView
       hasActivGame={gameInProgress}
-      playerNames={playerNames.slice(0, playerCount)}
+      playerNames={playerNames}
+      numberOfPlayers={playerCount}
       errors={startTried ? errors : undefined}
 
       activeGameCallback={activeGameCallback}
@@ -108,22 +109,24 @@ export default PlayersSetup;
 
 export type ViewProps = {
   hasActivGame: boolean,
-  activeGameCallback?: () => void,
   playerNames: string[],
+  numberOfPlayers: number,
   errors?: PlayersError,
+
+  activeGameCallback?: () => void,
   setName: (name: string, index: number) => void,
   setPlayerCount: (number: number) => void,
   startGame: () => void
 }
 
 export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
-  const { hasActivGame, playerNames, errors, setName, setPlayerCount, startGame } = props;
+  const { hasActivGame, playerNames, numberOfPlayers, errors, setName, setPlayerCount, startGame } = props;
 
   return (
     <GameWrapper
       bottom={
         <NumberOfPLayers
-          value={playerNames.length}
+          value={numberOfPlayers}
           setValue={setPlayerCount}
         />
       }
@@ -139,6 +142,7 @@ export const PlayersSetupView: React.FC<ViewProps> = memo((props) => {
         <form className="green-backdrop h-full pb-8 pt-20">
           <SittingOrder
             playerNames={playerNames}
+            numberOfPlayers={numberOfPlayers}
             setName={setName}
             errors={!!errors ? errors : playerNames.map(() => undefined)}
           />

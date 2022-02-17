@@ -19,7 +19,8 @@ const PlayerBox: React.FC<Props> = ({ name, setName, playerNumber, error }) => {
     <div
       className={`border-transparent focus-within:border-white border-8
                   flex justify-center items-center flex-col
-                  text-center w-32 h-32 rounded-full bg-primary`}
+                  text-center w-32 h-32 rounded-full bg-primary
+                  transition-all`}
     >
       <Players1 className={`${error ? "text-error" : "text-white"} mb-2 h-6`} />
       <input

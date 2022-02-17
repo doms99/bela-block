@@ -1,4 +1,4 @@
-import React, { memo, useRef } from 'react';
+import React, { memo, useCallback, useRef } from 'react';
 
 export interface Props {
   points: number,
@@ -6,23 +6,15 @@ export interface Props {
 }
 
 const TeamRoundPoints: React.FC<Props> = ({ points, declarations }) => {
-  const spanRef = useRef<HTMLSpanElement>(null);
-  const divRef = useRef<HTMLDivElement>(null);
+  const spanRef = useCallback((ref: null | HTMLDivElement) => {
+    if(ref == null) return;
 
-  function callback() {
-    if(!spanRef.current || !divRef.current) {
-      setTimeout(callback, 0);
-      return;
-    }
-
-    const spanWidth = spanRef.current.getBoundingClientRect().width;
-    divRef.current.style.marginRight = `-${spanWidth}px`
-  }
-
-  if(!!declarations) setTimeout(callback, 0);
+    const width = ref.offsetWidth;
+    ref.parentElement!.style.marginRight = `-${width}px`
+  }, []);
 
   return (
-    <div ref={divRef}>
+    <div>
       <span>{points}</span>
       {!!declarations && (
         <span

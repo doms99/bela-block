@@ -9,7 +9,10 @@ module.exports = {
     'col-start-4',
     'grid-cols-2',
     'grid-cols-3',
-    'grid-cols-4'
+    'grid-cols-4',
+    'w-1/2',
+    'w-1/3',
+    'w-1/4',
   ]
   ,
   darkMode: 'media', // or 'media' or 'class'

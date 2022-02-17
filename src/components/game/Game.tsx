@@ -4,6 +4,7 @@ import Dealer from './Dealer';
 import { useSelector } from "../../redux/hooks";
 import GameWrapper from "./GameWrapper";
 import ScoreBoard from "./ScoreBoard";
+import Slider from '../Slider';
 
 const Game: React.FC = () => {
   const teams = useSelector(state => state.game.teams);
@@ -32,8 +33,10 @@ export const GameView: React.FC<ViewProps> = memo(({ teams, winner, teamOnCall }
     <GameWrapper bottom={<Dealer />}>
       <main className="h-full text-right text-white overflow-x-hidden">
         {teams.length === 3 && (
-          <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
-            <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teams.indexOf(teamOnCall!)+1}`} />
+          <div className="absolute top-0 w-full px-6 ">
+            <Slider divisions={3} value={teams.indexOf(teamOnCall!)+1}>
+              <div className={`rounded-b-full w-8 h-4 m-auto bg-white`} />
+            </Slider>
           </div>
         )}
         <div className="h-full flex flex-col">
