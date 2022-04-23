@@ -52,6 +52,8 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
         return;
       }
     }
+
+    setBonusSuggestion(undefined);
   }, [values, selected, fallen, team1, team2, team3]);
 
   // fall suggestion
@@ -114,7 +116,8 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
         ...curr,
         [selected.team]: {
           ...curr[selected.team],
-          [selected.input]: 0
+          [selected.input]: 0,
+          bonus: false,
         }
       }, newEdited);
     });
@@ -127,11 +130,14 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
     setValues(curr => {
       if(curr[selected.team][selected.input] === 0) return curr;
 
+      const points = Math.floor(curr[selected.team][selected.input] / 10);
+
       return updateState({
         ...curr,
         [selected.team]: {
           ...curr[selected.team],
-          [selected.input]: Math.floor(curr[selected.team][selected.input] / 10)
+          [selected.input]: points,
+          bonus: false,
         }
       }, newEdited);
     });
