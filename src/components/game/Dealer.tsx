@@ -51,7 +51,7 @@ export const DealerView: React.FC<ViewProps> = memo(({ players, dealer, setDeale
           <button
             key={player}
             className={`font-bold text-2xl ${dealer === player || editMode ? "text-black" : "text-primary-active"}`}
-            onClick={() => setDealer(player)}
+            onClick={editMode ? () => setDealer(player) : undefined}
           >
             {player}
           </button>
