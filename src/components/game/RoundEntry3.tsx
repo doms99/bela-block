@@ -104,6 +104,9 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
   }, [edited, selected, updateState, values]);
 
   const clear = useCallback(() => {
+    const newEdited = [...edited, selected.team];
+    setEdited(newEdited)
+
     setValues(curr => {
       if(curr[selected.team][selected.input] === 0) return curr;
 
@@ -113,11 +116,14 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
           ...curr[selected.team],
           [selected.input]: 0
         }
-      }, edited);
+      }, newEdited);
     });
   },[edited, selected, updateState]);
 
   const backspace = useCallback(() => {
+    const newEdited = [...edited, selected.team];
+    setEdited(newEdited)
+
     setValues(curr => {
       if(curr[selected.team][selected.input] === 0) return curr;
 
@@ -127,17 +133,11 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
           ...curr[selected.team],
           [selected.input]: Math.floor(curr[selected.team][selected.input] / 10)
         }
-      }, edited);
+      }, newEdited);
     });
   }, [edited, selected, updateState]);
 
   const end = useCallback(() => {
-    if(totalPoints() > 162) {
-      setError("Can't enter more then 162 points");
-
-      return;
-    }
-
     for(const team of [team1, team2, team3]) {
       if(values[team].points === 0) {
         values[team].declarations = 0;
@@ -146,7 +146,7 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
     }
 
     pointsReport(values);
-  }, [pointsReport, totalPoints, team1, team2, team3, values]);
+  }, [pointsReport, team1, team2, team3, values]);
 
   const suggestions: {[key: string]: Sugestion} = {};
   for(const team of [team1, team2, team3]) {
