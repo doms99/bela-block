@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useCallback, useEffect, useState } from "react";
 import { bonusPoints } from '../../constants';
 import { Input, Round, SelectedInput, Sugestion } from "../../interfaces";
@@ -65,7 +65,6 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
     const othersSum = values[others[0]].points + values[others[0]].declarations +
                       values[others[1]].points + values[others[1]].declarations;
 
-
     if(teamOCSum <= othersSum && values[teamOnCall].points !== 0) setFallSuggestion(true);
     else setFallSuggestion(false)
   }, [edited, values, team1, team2, team3, teamOnCall]);
@@ -74,13 +73,17 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
     if(eded.length !== 2) return state;
 
     const unedited = [team1, team2, team3].filter(t => !eded.includes(t))[0];
-    return {
+    const res = {
       ...state,
       [unedited]: {
         ...state[unedited],
         points: Math.max(0, 162 - state[eded[0]].points - state[eded[1]].points)
       }
-    }
+    };
+
+    console.log({state, res});
+
+    return res;
   }, [team1, team2, team3]);
 
   const setValue = useCallback((digit: number) => {
@@ -89,7 +92,7 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
 
     setFallen(false);
     const newEdited = edited.includes(selected.team) ? edited : [...edited, selected.team];
-    setEdited(newEdited)
+    setEdited(newEdited);
     setValues(curr => {
       const newState = {
         ...curr,
@@ -106,8 +109,8 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
   }, [edited, selected, updateState, values]);
 
   const clear = useCallback(() => {
-    const newEdited = [...edited, selected.team];
-    setEdited(newEdited)
+    const newEdited = edited.includes(selected.team) ? edited : [...edited, selected.team];
+    setEdited(newEdited);
 
     setValues(curr => {
       if(curr[selected.team][selected.input] === 0) return curr;
@@ -124,8 +127,8 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
   },[edited, selected, updateState]);
 
   const backspace = useCallback(() => {
-    const newEdited = [...edited, selected.team];
-    setEdited(newEdited)
+    const newEdited = edited.includes(selected.team) ? edited : [...edited, selected.team];
+    setEdited(newEdited);
 
     setValues(curr => {
       if(curr[selected.team][selected.input] === 0) return curr;
@@ -144,19 +147,49 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
   }, [edited, selected, updateState]);
 
   const end = useCallback(() => {
-    for(const team of [team1, team2, team3]) {
-      if(values[team].points === 0) {
-        values[team].declarations = 0;
-        continue;
-      }
+    const reportPoints = {...values};
+
+    if(reportPoints[team1].points === 0) {
+      reportPoints[team1].declarations = 0;
+    }
+    if(reportPoints[team2].points === 0) {
+      reportPoints[team2].declarations = 0;
+    }
+    if(reportPoints[team3].points === 0) {
+      reportPoints[team3].declarations = 0;
     }
 
-    pointsReport(values);
-  }, [pointsReport, team1, team2, team3, values]);
+    if(fallen || fallSuggestion) {
+      reportPoints[teamOnCall].points = 0;
+      reportPoints[teamOnCall].declarations = 0;
+      reportPoints[teamOnCall].bonus = false;
+    }
+
+    pointsReport(reportPoints);
+  }, [pointsReport, team1, team2, team3, values, fallen, fallSuggestion, teamOnCall]);
+
+  function fall() {
+    console.log("fall");
+
+    setFallen(true);
+    setValues(curr => {
+      const newValues = {...curr};
+      newValues[teamOnCall].points = 0;
+      newValues[teamOnCall].declarations = 0;
+      newValues[teamOnCall].bonus = false;
+
+      return newValues;
+    });
+  }
 
   const suggestions: {[key: string]: Sugestion} = {};
   for(const team of [team1, team2, team3]) {
-    if(bonusSuggestion === team) {
+    if(team === teamOnCall && fallSuggestion) {
+      suggestions[team] = {
+        text: "fall?",
+        callback: fall,
+      }
+    } else if(bonusSuggestion === team) {
       suggestions[team] = {
         text: `+${bonusPoints} points`,
         callback: () => setValues(curr => ({...curr, [team]: {...curr[team], bonus: !curr[team].bonus}}))
@@ -164,20 +197,11 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
     }
   }
 
-  const roundValue = !fallSuggestion ? values : {
-    ...values,
-    [teamOnCall]: {
-      points: 0,
-      declarations: 0,
-      bonus: false
-    }
-  };
-
   return (
     <RoundEntryView
       teams={[team1, team2, team3]}
       teamOnCall={teamOnCall}
-      round={roundValue}
+      round={values}
       error={error}
       sugestions={suggestions}
       canSaveRound={!!!error}
