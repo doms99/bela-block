@@ -47,7 +47,7 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
     if(!!fallen) return;
 
     for(let team of [team1, team2, team3]) {
-      if(values[team].points === 162 && selected.team === team) {
+      if(values[team].points === 162) {
         setBonusSuggestion(team);
         return;
       }
@@ -88,13 +88,19 @@ const RoundEntry: React.FC<Props> = ({ team1, team2, team3, teamOnCall, teamPoin
     setFallen(false);
     const newEdited = edited.includes(selected.team) ? edited : [...edited, selected.team];
     setEdited(newEdited)
-    setValues(curr => updateState({
+    setValues(curr => {
+      const newState = {
         ...curr,
         [selected.team]: {
           ...curr[selected.team],
           [selected.input]: curr[selected.team][selected.input]*10 + digit
         }
-      }, newEdited));
+      };
+
+      if(selected.input === 'declarations') return newState;
+
+      return updateState(newState, newEdited);
+    });
   }, [edited, selected, updateState, values]);
 
   const clear = useCallback(() => {
