@@ -10,10 +10,11 @@ export interface Props {
   teams: string[],
   onClickActions?: RoundActions[],
   selected: boolean,
-  index: number
+  index: number,
+  first?: boolean,
 }
 
-const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, index }) => {
+const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, index, first }) => {
   const [clicked, setClicked] = useState<boolean>(false);
 
   const wrapCallback = (callback: (index: number) => void) => {
@@ -31,11 +32,11 @@ const RoundPoints: React.FC<Props> = ({ round, teams, onClickActions, selected, 
     <div
       className={`group relative grid grid-cols-${teams.length}
       px-5 border-primary ${selected ? "text-black" : "text-gray-400"}
-      hover:bg-gray-100 bg-transparent text-xl font-medium`}
+      hover:bg-gray-100 bg-transparent ${first ? 'text-2xl bg-gray-100' : 'text-xl'} font-medium`}
     >
       <button
         onClick={click}
-        className="hidden group-hover:block active:bg-gray-200 absolute left-0 ml-2 h-full px-2 rounded-md" >
+        className="group-hover:block active:bg-gray-200 absolute left-0 ml-2 h-full px-2 rounded-md" >
         <Dots/>
       </button>
       {teams.map(team => (

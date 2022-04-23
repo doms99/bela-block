@@ -78,6 +78,7 @@ export const ScoreBoardView: React.FC<ViewProps> = memo(({ teams, roundActions, 
               teams={teams}
               selected={index <= lastSumIndex}
               index={index}
+              first={i === 0}
             />
           })}
         </div>
