@@ -4,8 +4,6 @@ import { Input, SelectedInput, Sugestion } from "../../interfaces";
 import BackspaceIcon from "../icons/BackspaceIcon";
 import CancelIcon from "../icons/CancelIcon";
 import ConfirmIcon from "../icons/ConfirmIcon";
-import GameWrapper from "./GameWrapper";
-import Dealer from "./Dealer";
 import EnteredPoints from "./EnteredPoints";
 
 export interface Props {
@@ -27,12 +25,7 @@ export interface Props {
 
 const RoundEntryView: React.FC<Props> = ({ teams, teamOnCall, sugestions, round, selected, setSelected, error, cancel, numberClick, backspace, clear, canSaveRound, saveRound }) => {
   return (
-    <GameWrapper bottom={<Dealer />}>
-      {!!teamOnCall && (
-        <div className="absolute top-0 w-full px-6 grid grid-cols-3 ">
-          <div className={`rounded-b-full w-8 h-4 m-auto bg-white col-start-${teams.indexOf(teamOnCall)+1}`} />
-        </div>
-      )}
+    <>
       <div className="h-full flex flex-col">
         <div className={`grid grid-cols-${teams.length} mx-6 mb-2 text-center font-medium text-md text-primary-active`}>
           {teams.map(team => (
@@ -103,7 +96,7 @@ const RoundEntryView: React.FC<Props> = ({ teams, teamOnCall, sugestions, round,
             </button>
         </div>
       </div>
-    </GameWrapper>
+    </>
   );
 };
 

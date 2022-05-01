@@ -1,5 +1,5 @@
 import { animated, useSpring } from '@react-spring/web';
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
 export type Props = {
   divisions: number,
@@ -8,10 +8,11 @@ export type Props = {
 }
 
 const Slider: React.FC<Props> = ({ children, divisions, value, className }) => {
-  const prevVal = useRef(value);
+  const prevVal = useRef<number>(value);
   const [props, animate] = useSpring(() => ({ marginLeft: `${(value - 1) * 100/divisions}%` }))
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    console.log(prevVal.current, value);
     if(prevVal.current === value) return;
 
     animate.start({ marginLeft: `${(value - 1) * 100/divisions}%` });

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useCallback, useEffect, useState } from "react";
 import { bonusPoints } from '../../constants';
 import { Input, Round, SelectedInput, Sugestion } from "../../interfaces";
